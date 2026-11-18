@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gold and Nasdaq</title>
+<!-- shell.html: the one page of round 12 (dev/v4_loop/round12/PLAN_R12.md, builder S), built by tools/build_combined.js into dist/gold_nasdaq.html.
+     Three tabs ("Gold or Nasdaq", "Gold", "Nasdaq"), each a plain <iframe src> of a sibling file (gc_or_nq_focus.html, price_travel_curves.html,
+     price_travel_curves_nq.html) made the first time its tab is shown and then kept, hidden, so the user's place in it stays. Every exchange with a
+     frame is a postMessage (from disk the frames are other origins); the settings hub (settings_hub.js, inlined) keeps each market's settings. -->
+<style>
+/* the studies' colour tokens and theme rule (src/price_travel_curves.v4.html): light by default, dark when the system asks for it unless
+   data-theme="light", dark when data-theme="dark" */
+:root{
+  --bg:#f3f4f6;--surface:#fbfbfc;--surface-2:#eceef2;--line:#d6d9e0;--line-soft:#e6e8ee;
+  --ink:#1b1f29;--ink-2:#4b5262;--ink-3:#5f6675;
+  --accent:#2a5fa6;--accent-ink:#ffffff;--accent-soft:#dde7f5;--focus:#2a5fa6;--warn:#8a5a00;--warn-soft:#f7ecd2;
+  --font-ui:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+  --font-data:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#16181d;--surface:#1d2026;--surface-2:#252932;--line:#363b47;--line-soft:#2b3039;
+    --ink:#e7e9ee;--ink-2:#b4b9c5;--ink-3:#9aa1b0;
+    --accent:#6ea3e8;--accent-ink:#0f1520;--accent-soft:#223652;--focus:#8db8f0;--warn:#e0b450;--warn-soft:#3d3218;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16181d;--surface:#1d2026;--surface-2:#252932;--line:#363b47;--line-soft:#2b3039;
+  --ink:#e7e9ee;--ink-2:#b4b9c5;--ink-3:#9aa1b0;
+  --accent:#6ea3e8;--accent-ink:#0f1520;--accent-soft:#223652;--focus:#8db8f0;--warn:#e0b450;--warn-soft:#3d3218;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none !important}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-ui);font-size:15px;line-height:1.45;display:flex;flex-direction:column;min-height:100vh;min-height:100dvh;overflow-x:hidden}
+button{font:inherit;font-size:.84rem;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:3px;padding:5px 11px;cursor:pointer;min-height:32px}
+button:hover{border-color:var(--ink-3)}
+button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.top{flex:none;background:var(--surface);border-bottom:1px solid var(--line);padding:8px max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px))}
+.tabs{display:flex;gap:2px;overflow-x:auto;max-width:1180px;margin:0 auto}
+.tabs button{background:none;border:0;border-bottom:2px solid transparent;border-radius:0;padding:9px 14px;font-size:.95rem;color:var(--ink-2);white-space:nowrap;min-height:40px}
+.tabs button[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.sbar{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:6px 22px;max-width:1180px;margin:0 auto;padding:8px 0 9px;border-top:1px solid var(--line-soft)}
+.mk{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;min-width:0}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:.84rem;color:var(--ink-2);padding:3px 10px 3px 8px;border:1px solid var(--line);border-radius:999px;background:var(--surface-2);max-width:100%}
+.chip::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--ink-3)}
+.chip[data-source="yours"]{color:var(--ink);border-color:var(--accent);background:var(--accent-soft)}
+.chip[data-source="yours"]::before{background:var(--accent)}
+.mk .msg{flex-basis:100%;margin:0;font-size:.8rem;color:var(--ink-2);min-height:0}
+.mk .msg:empty{display:none}
+.mk .msg[data-kind="refused"]{color:var(--warn)}
+main{flex:1 1 auto;position:relative;min-height:420px}
+.panel{position:absolute;inset:0;display:flex;flex-direction:column}
+.panel iframe{flex:1 1 auto;width:100%;height:100%;border:0;display:block;background:var(--bg)}
+.note{margin:14px auto 0;max-width:72ch;padding:0 16px;font-size:.9rem;color:var(--ink-2)}
+.note[data-missing]{color:var(--warn);background:var(--warn-soft);border:1px solid var(--line);border-radius:3px;padding:10px 14px}
+.panel .note + iframe{margin-top:8px}
+@media (max-width:600px){.sbar{grid-template-columns:1fr}.tabs button{padding:9px 10px}.mk button{font-size:.8rem;padding:5px 9px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="tabs" role="tablist" aria-label="Pages">
+    <button type="button" role="tab" id="tab-focus" data-tab="focus" aria-controls="panel-focus" aria-selected="false" tabindex="-1">Gold or Nasdaq</button>
+    <button type="button" role="tab" id="tab-gc" data-tab="gc" aria-controls="panel-gc" aria-selected="false" tabindex="-1">Gold</button>
+    <button type="button" role="tab" id="tab-nq" data-tab="nq" aria-controls="panel-nq" aria-selected="false" tabindex="-1">Nasdaq</button>
+  </div>
+  <section class="sbar" aria-label="Trend, swing and whipsaw settings of each market">
+    <div class="mk" data-market="gc" role="group" aria-label="Gold settings">
+      <span class="chip" data-chip="gc" data-source="study">Gold: the study's settings</span>
+      <button type="button" data-open="gc">Set yours in the Gold tab</button>
+      <button type="button" data-save="gc">Save settings to a file</button>
+      <button type="button" data-load="gc">Load settings from a file</button>
+      <input type="file" accept=".json,application/json" data-file="gc" hidden aria-hidden="true" tabindex="-1">
+      <button type="button" data-study="gc" aria-pressed="false">Use the study's settings in the comparison</button>
+      <p class="msg" data-msg="gc" role="status" aria-live="polite"></p>
+    </div>
+    <div class="mk" data-market="nq" role="group" aria-label="Nasdaq settings">
+      <span class="chip" data-chip="nq" data-source="study">Nasdaq: the study's settings</span>
+      <button type="button" data-open="nq">Set yours in the Nasdaq tab</button>
+      <button type="button" data-save="nq">Save settings to a file</button>
+      <button type="button" data-load="nq">Load settings from a file</button>
+      <input type="file" accept=".json,application/json" data-file="nq" hidden aria-hidden="true" tabindex="-1">
+      <button type="button" data-study="nq" aria-pressed="false">Use the study's settings in the comparison</button>
+      <p class="msg" data-msg="nq" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+</header>
+<main>
+  <div class="panel" role="tabpanel" id="panel-focus" data-panel="focus" aria-labelledby="tab-focus" hidden>
+    <p class="note" data-loading="focus" role="status">Loading the comparison…</p>
+    <p class="note" data-missing="focus" hidden></p>
+  </div>
+  <div class="panel" role="tabpanel" id="panel-gc" data-panel="gc" aria-labelledby="tab-gc" hidden>
+    <p class="note" data-loading="gc" role="status">Loading the gold study and its ten years of data (about 30 MB)…</p>
+    <p class="note" data-missing="gc" hidden></p>
+  </div>
+  <div class="panel" role="tabpanel" id="panel-nq" data-panel="nq" aria-labelledby="tab-nq" hidden>
+    <p class="note" data-loading="nq" role="status">Loading the Nasdaq study and its ten years of data (about 30 MB)…</p>
+    <p class="note" data-missing="nq" hidden></p>
+  </div>
+</main>
+<script data-module="settings_hub.js">
+// settings_hub.js: the settings hub of the one page gold_nasdaq.html (round 12, builder S; dev/v4_loop/round12/PLAN_R12.md "The settings hub",
+// "Message contract"). Pure logic, no DOM: the shell (src/combined/shell.html) hands it the messages of the two study frames and asks it for the
+// comparison frame's `state`, the chip texts, the file to save and the answer to a file the user loads.
+// Per market ('gc' gold, 'nq' Nasdaq) it keeps the last `settings` message of that market's study frame (sets and defaults merged by set key; the
+// point scale and the saved sets replaced), when the settings last changed (changedAt: the first message after a different one; null when the hub
+// has only ever seen one), the switch "Use the study's settings in the comparison", and a loaded file not yet handed to its study frame (pending).
+// All of it is kept under its own storage key KEY ('ptc.hub.v1') so the comparison has the user's settings on the next visit before a study tab is
+// opened; storage that is missing or throws changes nothing but the memory across visits. The last tab shown is kept there too.
+// The comparison uses each market's '5_30' set (5-minute candles, half-hour rows). state(): { ptc: 1, type: 'state', v: 1, gc: M, nq: M } with
+// M = { source: 'yours' | 'study', at, th, scale, name }: 'study' (th, scale, at null) when no settings are known, the switch is on, or the '5_30'
+// thresholds and the scale are the study's (the set's own defaults, no fixed whipsaw share, 3 / 1 / -1); else 'yours' with the '5_30' thresholds
+// as the card holds them (th.share while its whipsaw share is fixed) and the market's own scale. The plan's scale rule (the study's 3 / 1 / -1
+// unless both markets carry the same other scale) is comparisonScale(state): the reader applies it, since `state` carries each market's scale.
+// The file (fileText): { app: 'price-travel-curves', kind: 'label-settings', v: 1, instrument, savedAt, sets, scale, saved }, named
+// label-settings-gold-YYYY-MM-DD.json / label-settings-nasdaq-…json (the local date). parseFile refuses, with one plain sentence each: an empty or
+// too large file, text that is not a JSON object, another app or kind, a newer version, the other market's file, settings that cannot be read
+// (sets, scale, saved of the wrong shape). Unknown keys are dropped; numbers are NOT clamped here: the card clamps them as it clamps typed ones.
+// UMD: node `module.exports = SettingsHub`; browser `window.SettingsHub`.
+(function (root, factory) {
+  const api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  else root.SettingsHub = api;
+}(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  'use strict';
+  const KEY = 'ptc.hub.v1', V = 1, FILE_V = 1, APP = 'price-travel-curves', KIND = 'label-settings', MAX_BYTES = 2e6;
+  const MARKETS = Object.freeze({ gc: Object.freeze({ id: 'GC', name: 'Gold', word: 'gold' }), nq: Object.freeze({ id: 'NQ', name: 'Nasdaq', word: 'nasdaq' }) });
+  const MKS = ['gc', 'nq'], TABS = ['focus', 'gc', 'nq'];
+  const SET_KEYS = ['1_15', '1_30', '5_30', '5_60', '15_60'], SAVED_SETS = ['1', '5_30', '5_60', '15_60'], COMPARE_SET = '5_30';
+  const STUDY_SCALE = Object.freeze({ T: 3, S: 1, W: -1 });
+  const NUM_KEYS = ['cut', 'dead', 'trendNet', 'ma1', 'ma5', 'refDays', 'share'], W_KEYS = ['fake', 'quiet', 'overlap', 'small'];
+  const WHY = {
+    empty: 'This file is empty. Nothing was changed.',
+    big: 'This file is too large to be a settings file. Nothing was changed.',
+    damaged: 'This file could not be read as settings: it is damaged or not a settings file. Nothing was changed.',
+    foreign: 'This file was not made by “Save settings to a file” on this page. Nothing was changed.',
+    future: 'This settings file was made by a newer version of this page. Nothing was changed.',
+    other: mk => 'This is a ' + (mk === 'gc' ? 'gold' : 'Nasdaq') + ' settings file. Load it with the ' + MARKETS[mk].name + ' button. Nothing was changed.' };
+
+  const isObj = o => !!o && typeof o === 'object' && !Array.isArray(o);
+  const fin = v => typeof v === 'number' && isFinite(v);
+  const clone = o => o == null ? o : JSON.parse(JSON.stringify(o));
+  const canon = v => JSON.stringify(v, (k, x) => isObj(x) ? Object.keys(x).sort().reduce((o, q) => (o[q] = x[q], o), {}) : x);
+  const pad2 = n => String(n).padStart(2, '0');
+  const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const localDay = ms => { const d = new Date(ms); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); };
+  const hm = ms => { const d = new Date(ms); return pad2(d.getHours()) + ':' + pad2(d.getMinutes()); };
+  const dayMon = ms => { const d = new Date(ms); return d.getDate() + ' ' + MON[d.getMonth()]; };
+
+  // ---- the shapes (a set's thresholds, the scale, the saved sets): readable or not; never clamped here
+  function thOk(t) { if (!isObj(t)) return false; for (const k of NUM_KEYS) if (t[k] !== undefined && !fin(t[k])) return false;
+    if (t.w !== undefined && (!isObj(t.w) || W_KEYS.some(k => t.w[k] !== undefined && !fin(t.w[k])))) return false;
+    for (const k of ['broken', 'ma5Line']) if (t[k] !== undefined && typeof t[k] !== 'string' && !fin(t[k])) return false; return true; }
+  const scaleOk = s => isObj(s) && ['T', 'S', 'W'].every(k => fin(s[k]));
+  const savedOk = a => Array.isArray(a) && a.every(x => isObj(x) && typeof x.name === 'string' && x.name.trim() !== '' && SAVED_SETS.includes(x.set) && thOk(x.th));
+  // only the known set keys; a set's own unknown keys dropped (the card reads none of them)
+  const TH_KEYS = ['len', 'cut', 'dead', 'trendNet', 'ma1', 'ma5', 'ma5Line', 'broken', 'w', 'refDays', 'share'];
+  function cleanTh(t) { const o = {}; for (const k of TH_KEYS) if (t[k] !== undefined) o[k] = k === 'w' ? W_KEYS.reduce((w, q) => (t.w[q] !== undefined && (w[q] = t.w[q]), w), {}) : t[k]; return o; }
+  function cleanSets(s) { const o = {}; for (const k of SET_KEYS) if (isObj(s[k]) && thOk(s[k])) o[k] = cleanTh(s[k]); return o; }
+  const cleanSaved = a => a.map(x => ({ set: x.set, name: x.name, th: cleanTh(x.th) }));
+  const cleanScale = s => ({ T: s.T, S: s.S, W: s.W });
+
+  // ---- the file
+  function fileName(mk, ms) { return 'label-settings-' + MARKETS[mk].word + '-' + localDay(ms) + '.json'; }
+  function serialise(mk, s, ms) {
+    return JSON.stringify({ app: APP, kind: KIND, v: FILE_V, instrument: MARKETS[mk].id, savedAt: new Date(ms).toISOString(), sets: clone(s.sets), scale: clone(s.scale), saved: clone(s.saved) }, null, 2) + '\n'; }
+  // parseFile(text, mk) -> { ok: true, file: { instrument, savedAt, sets, scale, saved } } | { ok: false, code, why }
+  function parseFile(text, mk) { const no = code => ({ ok: false, code, why: code === 'other' ? WHY.other(mk === 'gc' ? 'nq' : 'gc') : WHY[code] });
+    if (!MARKETS[mk]) throw new Error('SettingsHub.parseFile: market must be gc or nq');
+    if (typeof text !== 'string' || text.trim() === '') return no('empty');
+    if (text.length > MAX_BYTES) return no('big');
+    let f; try { f = JSON.parse(text.charCodeAt(0) === 0xFEFF ? text.slice(1) : text); } catch (e) { return no('damaged'); }
+    if (!isObj(f)) return no('damaged');
+    if (f.app !== APP || f.kind !== KIND) return no('foreign');
+    if (!Number.isInteger(f.v) || f.v < 1) return no('damaged');
+    if (f.v > FILE_V) return no('future');
+    const ids = MKS.map(k => MARKETS[k].id); if (!ids.includes(f.instrument)) return no('damaged');
+    if (f.instrument !== MARKETS[mk].id) return no('other');
+    if (!isObj(f.sets) || SET_KEYS.some(k => f.sets[k] !== undefined && !thOk(f.sets[k]))) return no('damaged');
+    const sets = cleanSets(f.sets); if (!Object.keys(sets).length) return no('damaged');
+    if (!scaleOk(f.scale) || !savedOk(f.saved)) return no('damaged');
+    return { ok: true, file: { instrument: f.instrument, savedAt: typeof f.savedAt === 'string' ? f.savedAt : null, sets, scale: cleanScale(f.scale), saved: cleanSaved(f.saved) } }; }
+
+  // a settings message of a study frame, checked (instrument of the frame's market; sets readable; scale and saved of their shape)
+  function readSettings(mk, m) { if (!isObj(m) || m.ptc !== 1 || m.type !== 'settings' || m.instrument !== MARKETS[mk].id || !isObj(m.sets)) return null;
+    const sets = cleanSets(m.sets); if (!Object.keys(sets).length) return null;
+    const defaults = isObj(m.defaults) ? cleanSets(m.defaults) : {};
+    return { sets, defaults, scale: scaleOk(m.scale) ? cleanScale(m.scale) : null, saved: savedOk(m.saved) ? cleanSaved(m.saved) : [], at: fin(m.at) ? m.at : null }; }
+
+  // the '5_30' thresholds and the scale against the study's: the set's own defaults (len aside), no fixed share, 3 / 1 / -1
+  function asStudy(s) { const th = s && s.sets[COMPARE_SET], d = s && s.defaults[COMPARE_SET]; if (!th || !d) return false;
+    const strip = t => { const o = Object.assign({}, t); delete o.len; if (o.refDays === 20) delete o.refDays; return o; };
+    return th.share == null && canon(strip(th)) === canon(strip(d)) && canon(s.scale || STUDY_SCALE) === canon(STUDY_SCALE); }
+
+  // the plan's scale rule for the comparison: the study's 3 / 1 / -1 unless both markets carry the same other scale (then that one); differ: whether
+  // the two markets' own scales differ (the panel then says the study's scale is used)
+  function comparisonScale(st) { const a = st && st.gc && st.gc.scale || STUDY_SCALE, b = st && st.nq && st.nq.scale || STUDY_SCALE;
+    if (canon(cleanScale(a)) === canon(cleanScale(b))) return { scale: cleanScale(a), differ: false };
+    return { scale: Object.assign({}, STUDY_SCALE), differ: true }; }
+
+  function create(o) { o = o || {}; const now = typeof o.now === 'function' ? o.now : () => Date.now();
+    let storage = o.storage !== undefined ? o.storage : null;
+    if (o.storage === undefined) { try { storage = typeof localStorage !== 'undefined' ? localStorage : null; } catch (e) { storage = null; } }
+    const blank = () => ({ s: null, at: null, study: false, pending: null });
+    let S = { tab: null, gc: blank(), nq: blank() };
+    // read once, with care: anything but { v: 1, ... } of the right shape reads as nothing (a market at a time)
+    try { const t = storage ? storage.getItem(KEY) : null, j = t ? JSON.parse(t) : null;
+      if (isObj(j) && j.v === V) { if (TABS.includes(j.tab)) S.tab = j.tab;
+        for (const mk of MKS) { const x = j[mk]; if (!isObj(x)) continue; const m = blank();
+          if (isObj(x.s) && isObj(x.s.sets)) { const sets = cleanSets(x.s.sets); if (Object.keys(sets).length) m.s = { sets, defaults: isObj(x.s.defaults) ? cleanSets(x.s.defaults) : {}, scale: scaleOk(x.s.scale) ? cleanScale(x.s.scale) : null, saved: savedOk(x.s.saved) ? cleanSaved(x.s.saved) : [] }; }
+          m.at = m.s && fin(x.at) ? x.at : null; m.study = x.study === true;
+          if (isObj(x.pending) && isObj(x.pending.sets)) { const sets = cleanSets(x.pending.sets); if (Object.keys(sets).length && scaleOk(x.pending.scale) && savedOk(x.pending.saved)) m.pending = { sets, scale: cleanScale(x.pending.scale), saved: cleanSaved(x.pending.saved), sent: false, from: typeof x.pending.from === 'string' ? x.pending.from : '' }; }
+          S[mk] = m; } } } catch (e) { /* blocked or malformed: start from nothing */ }
+    const persist = () => { try { if (!storage) return; const out = { v: V, tab: S.tab };
+      for (const mk of MKS) { const m = S[mk]; out[mk] = { s: m.s, at: m.at, study: m.study, pending: m.pending ? { sets: m.pending.sets, scale: m.pending.scale, saved: m.pending.saved, from: m.pending.from } : null }; }
+      storage.setItem(KEY, JSON.stringify(out)); } catch (e) { /* storage blocked: this visit still works */ } };
+    const check = mk => { if (!MARKETS[mk]) throw new Error('SettingsHub: market must be gc or nq, not ' + mk); return S[mk]; };
+    const applyMsg = (mk, p) => ({ ptc: 1, type: 'apply-settings', instrument: MARKETS[mk].id, v: 1, sets: clone(p.sets), scale: clone(p.scale), saved: clone(p.saved) });
+    // merge one message: sets and defaults by set key, scale and saved replaced; changedAt moves when what the comparison or the file holds changed
+    function merge(mk, r) { const m = S[mk], prev = m.s, next = { sets: Object.assign({}, prev ? prev.sets : {}, r.sets), defaults: Object.assign({}, prev ? prev.defaults : {}, r.defaults),
+        scale: r.scale || (prev && prev.scale) || Object.assign({}, STUDY_SCALE), saved: r.saved };
+      const ch = !prev || canon([prev.sets, prev.scale, prev.saved]) !== canon([next.sets, next.scale, next.saved]);
+      if (ch && prev) m.at = r.at != null ? r.at : now(); m.s = next; return ch; }
+
+    // onSettings(mk, msg): a `settings` message of mk's study frame. Returns { ok, changed, apply } where apply is the apply-settings message the
+    // shell must send to that frame now (a loaded file waiting for it), else null. A message while a file is waiting is not merged (the frame's
+    // old settings); the frame's answer to the apply is (and ends the wait).
+    function onSettings(mk, msg) { const m = check(mk), r = readSettings(mk, msg); if (!r) return { ok: false, changed: false, apply: null };
+      if (m.pending && !m.pending.sent) { m.pending.sent = true; return { ok: true, changed: false, apply: applyMsg(mk, m.pending) }; }
+      if (m.pending) m.pending = null;
+      const changed = merge(mk, r); persist(); return { ok: true, changed, apply: null }; }
+    // loadFile(mk, text, { alive }): the user's file for mk's button. Refused: { ok: false, why } and nothing changes. Accepted: the hub holds the
+    // file's settings now (the comparison uses them at once; changedAt = now) and hands them to the study frame: apply (the message to send now)
+    // when the frame is alive, else when the frame first speaks (onSettings), also on a later visit; sentence: what the user is told.
+    function loadFile(mk, text, opt) { const m = check(mk), r = parseFile(text, mk); if (!r.ok) return { ok: false, why: r.why, apply: null };
+      const f = r.file, alive = !!(opt && opt.alive), name = opt && typeof opt.name === 'string' ? opt.name : '';
+      m.s = { sets: Object.assign({}, m.s ? m.s.sets : {}, f.sets), defaults: m.s ? m.s.defaults : {}, scale: f.scale, saved: f.saved }; m.at = now();
+      m.pending = { sets: f.sets, scale: f.scale, saved: f.saved, sent: alive, from: name }; persist();
+      const nm = MARKETS[mk].name, fn = name ? '“' + name + '”' : 'the file';
+      const sentence = alive ? 'Loaded ' + fn + ': the ' + nm + ' tab and the comparison now use these settings.' : 'Loaded ' + fn + ': the comparison uses these settings now; the ' + nm + ' tab takes them when you open it.';
+      return { ok: true, why: '', apply: alive ? applyMsg(mk, m.pending) : null, sentence }; }
+    // the file of mk's settings (what the hub holds: the study frame's last message, or a loaded file), or null when nothing is known
+    function fileText(mk) { const m = check(mk); if (!m.s) return null; const s = m.pending ? m.pending : m.s; return serialise(mk, { sets: s.sets, scale: s.scale, saved: s.saved }, now()); }
+    function source(mk) { const m = S[mk]; return !m.s || m.study || (!m.pending && asStudy(m.s)) ? 'study' : 'yours'; }
+    // the chip: "Gold: the study's settings" (none known, or the same as the study's), "Gold: the study's settings (yours are kept in the Gold tab)"
+    // (the switch), "Gold: your settings from a file, loaded 12:41" (waiting for the tab), "Gold: your settings, changed 12:41" (today; another day
+    // "changed 17 Nov 12:41"), "Gold: your settings" (changed before the hub first heard of them)
+    function chip(mk) { const m = check(mk), nm = MARKETS[mk].name;
+      if (!m.s) return nm + ': the study\'s settings';
+      if (m.study) return nm + ': the study\'s settings (yours are kept in the ' + nm + ' tab)';
+      if (source(mk) === 'study') return nm + ': the study\'s settings';
+      const when = m.at == null ? '' : (localDay(m.at) === localDay(now()) ? hm(m.at) : dayMon(m.at) + ' ' + hm(m.at));
+      if (m.pending && !m.pending.sent) return nm + ': your settings from a file' + (when ? ', loaded ' + when : '');
+      return nm + ': your settings' + (when ? ', changed ' + when : ''); }
+    function marketState(mk) { const m = S[mk], src = source(mk), s = m.pending || m.s;
+      if (src === 'study' || !s || !s.sets[COMPARE_SET]) return { source: 'study', at: null, th: null, scale: null, name: chip(mk) };
+      return { source: 'yours', at: m.at, th: clone(s.sets[COMPARE_SET]), scale: clone(s.scale || STUDY_SCALE), name: chip(mk) }; }
+    function state() { return { ptc: 1, type: 'state', v: 1, gc: marketState('gc'), nq: marketState('nq') }; }
+    function setUseStudy(mk, on) { const m = check(mk); if (m.study === !!on) return false; m.study = !!on; persist(); return true; }
+    function setTab(tab) { if (!TABS.includes(tab) || S.tab === tab) return; S.tab = tab; persist(); }
+    return { onSettings, loadFile, fileText, fileName: mk => (check(mk), fileName(mk, now())), state, chip, source, known: mk => !!check(mk).s,
+      useStudy: mk => check(mk).study, setUseStudy, waiting: mk => !!(check(mk).pending && !check(mk).pending.sent),
+      tab: () => S.tab, setTab, snapshot: () => clone(S) }; }
+
+  return { create, parseFile, serialise, fileName, comparisonScale, readSettings, KEY, MARKETS, SET_KEYS, SAVED_SETS, COMPARE_SET, STUDY_SCALE, WHY, TABS }; }));
+</script>
+<script data-shell>
+// The shell (PLAN_R12 "Files", "Message contract", "The settings hub"). Messages are read only from a frame this page made (ev.source) and only
+// when they are objects with ptc: 1; unknown types are ignored. Gold / Nasdaq frame -> 'settings' (into the hub; a loaded file waiting for that
+// frame goes back as 'apply-settings'); comparison frame -> 'get-state' (answered with 'state'), 'open-tab' (that tab is shown). 'state' is sent
+// to the comparison frame whenever it changes.
+(function () {
+  'use strict';
+  const H = typeof SettingsHub !== 'undefined' ? SettingsHub : null, doc = document, $ = s => doc.querySelector(s);
+  const TABS = ['focus', 'gc', 'nq'], MKS = ['gc', 'nq'];
+  const FILES = { focus: 'gc_or_nq_focus.html', gc: 'price_travel_curves.html', nq: 'price_travel_curves_nq.html' };
+  const TITLE = { focus: 'Gold or Nasdaq: the comparison', gc: 'Gold: the study', nq: 'Nasdaq: the study' };
+  const WHAT = { focus: 'The comparison', gc: 'The gold study', nq: 'The Nasdaq study' };
+  const NAME = { gc: 'Gold', nq: 'Nasdaq' };
+  const WAIT_MS = 8000;   // after a frame's load event, the time its page has to speak before the shell says the file is missing
+  if (!H) { const p = $('[data-loading="focus"]'); if (p) p.textContent = 'This page could not start: its settings part is missing. Build it again with tools/build_combined.js.'; return; }
+  let store = null; try { store = window.localStorage || null; } catch (e) { store = null; }
+  const hub = H.create({ storage: store });
+  const frames = {}; let cur = null, lastState = '';
+  const tabBtn = t => $('[role="tab"][data-tab="' + t + '"]'), panel = t => $('[data-panel="' + t + '"]');
+  const winOf = t => { const f = frames[t]; try { return f && f.el.contentWindow || null; } catch (e) { return null; } };
+  const post = (t, m) => { const w = winOf(t); if (!w) return false; try { w.postMessage(m, '*'); return true; } catch (e) { return false; } };
+  function sendState(force) { if (!frames.focus) return; const st = hub.state(), key = JSON.stringify(st); if (!force && key === lastState) return; if (post('focus', st)) lastState = key; }
+  function spoke(t) { const f = frames[t]; if (!f || f.spoke) return; f.spoke = true; clearTimeout(f.timer); $('[data-loading="' + t + '"]').hidden = true; $('[data-missing="' + t + '"]').hidden = true; }
+  function missing(t) { const f = frames[t]; if (!f || f.spoke) return; $('[data-loading="' + t + '"]').hidden = true; const p = $('[data-missing="' + t + '"]');
+    p.textContent = WHAT[t] + ' did not open here. Its file, ' + FILES[t] + ', must sit in the same folder as this page, with the data folder beside it.'; p.hidden = false; }
+  function makeFrame(t) { const el = doc.createElement('iframe'), f = frames[t] = { el, spoke: false, timer: null };
+    el.setAttribute('src', FILES[t]); el.setAttribute('title', TITLE[t]); el.setAttribute('data-frame', t);
+    el.addEventListener('load', () => { if (f.spoke) return; clearTimeout(f.timer); f.timer = setTimeout(() => missing(t), WAIT_MS); });
+    panel(t).appendChild(el); }
+  // ---- tabs: a roving tabindex, arrow keys, Home and End (WAI-ARIA tabs, automatic activation); the last tab is remembered
+  function select(t, focus) { if (!TABS.includes(t)) t = 'focus'; cur = t; hub.setTab(t);
+    for (const k of TABS) { const b = tabBtn(k), on = k === t; b.setAttribute('aria-selected', on ? 'true' : 'false'); b.setAttribute('tabindex', on ? '0' : '-1'); panel(k).hidden = !on; }
+    if (!frames[t]) makeFrame(t);
+    if (focus) { try { tabBtn(t).focus(); } catch (e) { /* focus is a convenience */ } } }
+  $('[role="tablist"]').addEventListener('click', ev => { const b = ev.target && ev.target.closest ? ev.target.closest('[role="tab"]') : null; if (b) select(b.getAttribute('data-tab'), true); });
+  $('[role="tablist"]').addEventListener('keydown', ev => { const i = TABS.indexOf(cur), n = TABS.length;
+    const j = ev.key === 'ArrowRight' ? (i + 1) % n : ev.key === 'ArrowLeft' ? (i - 1 + n) % n : ev.key === 'Home' ? 0 : ev.key === 'End' ? n - 1 : -1;
+    if (j < 0) return; if (ev.preventDefault) ev.preventDefault(); select(TABS[j], true); });
+  // ---- the settings bar
+  function say(mk, text, kind) { const p = $('[data-msg="' + mk + '"]'); p.textContent = text; if (kind) p.setAttribute('data-kind', kind); else p.removeAttribute('data-kind'); }
+  function renderBar() { for (const mk of MKS) { const c = $('[data-chip="' + mk + '"]'), text = hub.chip(mk); if (c.textContent !== text) c.textContent = text; c.setAttribute('data-source', hub.state()[mk].source);
+    $('[data-open="' + mk + '"]').hidden = hub.known(mk); $('[data-study="' + mk + '"]').setAttribute('aria-pressed', hub.useStudy(mk) ? 'true' : 'false'); } }
+  function saveFile(mk) { const text = hub.fileText(mk);
+    if (!text) { say(mk, 'Nothing to save yet: open the ' + NAME[mk] + ' tab once, so its settings are known here.'); return; }
+    const name = hub.fileName(mk);
+    try { const url = URL.createObjectURL(new Blob([text], { type: 'application/json' })), a = doc.createElement('a'); a.href = url; a.download = name; a.hidden = true;
+      doc.body.appendChild(a); a.click(); a.remove(); setTimeout(() => { try { URL.revokeObjectURL(url); } catch (e) { /* gone already */ } }, 30000);
+      say(mk, 'Saved as “' + name + '” (your browser puts it with your downloads).'); }
+    catch (e) { say(mk, 'This browser did not let the page save a file.', 'refused'); } }
+  function loadText(mk, text, name) { const r = hub.loadFile(mk, text, { alive: !!(frames[mk] && frames[mk].spoke), name });
+    if (!r.ok) { say(mk, r.why, 'refused'); return; } if (r.apply) post(mk, r.apply); say(mk, r.sentence); renderBar(); sendState(); }
+  function onFile(mk, input) { const file = input.files && input.files[0]; if (!file) return;
+    if (file.size > 2e6) { say(mk, H.WHY.big, 'refused'); return; }
+    let fr; try { fr = new FileReader(); } catch (e) { say(mk, 'This browser did not let the page read the file. Nothing was changed.', 'refused'); return; }
+    fr.onload = () => loadText(mk, String(fr.result == null ? '' : fr.result), file.name || '');
+    fr.onerror = () => say(mk, 'This file could not be read. Nothing was changed.', 'refused');
+    fr.readAsText(file); }
+  for (const mk of MKS) {
+    $('[data-open="' + mk + '"]').addEventListener('click', () => select(mk, true));
+    $('[data-save="' + mk + '"]').addEventListener('click', () => saveFile(mk));
+    const inp = $('[data-file="' + mk + '"]');
+    $('[data-load="' + mk + '"]').addEventListener('click', () => { try { inp.value = ''; } catch (e) { /* some browsers refuse; the same file then does not fire change twice */ } inp.click(); });
+    inp.addEventListener('change', () => onFile(mk, inp));
+    $('[data-study="' + mk + '"]').addEventListener('click', () => { hub.setUseStudy(mk, !hub.useStudy(mk)); say(mk, ''); renderBar(); sendState(); }); }
+  // ---- the frames' messages
+  window.addEventListener('message', ev => { const d = ev && ev.data; if (!d || typeof d !== 'object' || d.ptc !== 1) return;
+    const t = TABS.find(k => frames[k] && ev.source != null && ev.source === winOf(k)); if (!t) return; spoke(t);
+    if (t === 'focus') { if (d.type === 'get-state') sendState(true); else if (d.type === 'open-tab' && MKS.includes(d.tab)) select(d.tab, true); return; }
+    if (d.type === 'settings') { const r = hub.onSettings(t, d); if (r.apply) post(t, r.apply); if (r.ok) { renderBar(); sendState(); } } });
+  renderBar(); select(hub.tab() || 'focus', false);
+  try { globalThis.GoldNasdaqShell = Object.freeze({ hub, frames, select, current: () => cur }); } catch (e) { /* tests read the DOM */ }
+})();
+</script>
+</body>
+</html>

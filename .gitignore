@@ -1,0 +1,42 @@
+# Environment variables & credentials
+.env
+.env.*
+*.env
+.envrc
+*.pem
+*.key
+*.p12
+*.pfx
+*secret*
+*credential*
+
+# Privacy folders, internal agent state & raw archives
+privacy/
+private/
+*privacy*/
+*private*/
+_archive/
+.claude/
+.agents/
+.codex/
+.gemini/
+.work-coordinator/
+.runtime/
+.yolo_recovery/
+CLAUDE.md
+CLAUDE.local.md
+GEMINI.md
+AGENTS.md
+work.md
+.work.md.lock
+dev/
+raw/
+proto*/
+
+# OS & editor files
+.DS_Store
+._*
+__MACOSX/
+Thumbs.db
+*.swp
+*~
