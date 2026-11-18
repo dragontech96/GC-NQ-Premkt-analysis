@@ -12,7 +12,11 @@ Interactive static web application for Gold (`GC`) and Nasdaq (`NQ`) futures ses
 1. **Gold or Nasdaq** (`gc_or_nq_focus.html`) — Side-by-side comparison across sessions and market clocks, with a live recalculation panel driven by per-market label settings.
 2. **Gold** (`price_travel_curves.html`) — 10-year and recent 1-minute Gold (`GC`) study with configurable Trend / Swing / Whipsaw label settings.
 3. **Nasdaq** (`price_travel_curves_nq.html`) — 10-year and recent 1-minute Nasdaq (`NQ`) study with configurable Trend / Swing / Whipsaw label settings.
+4. **Label playground** — The labelling part of the Gold or Nasdaq study on its own (a Gold / Nasdaq switch): label real charts from the ten years as whipsaw, swing or trend and the page works out the label settings, with the whipsaw-to-swing scale beside it. It changes the same settings as the Gold and Nasdaq tabs.
+5. **Curve playground** — The simulator on its own: made-up candles from trend, swing, whipsaw and spike knobs, and what the method measures on them. It uses no real prices and changes no settings.
+
+The two playgrounds are views of the Gold and Nasdaq study pages, not separate files.
 
 ## Custom Settings Persistence
 
-Settings adjusted inside the **Gold** or **Nasdaq** tabs are stored locally in browser storage (`localStorage`) and can also be exported to or loaded from `.json` files directly via the shell bar (`Save settings to a file` / `Load settings from a file`).
+Settings adjusted inside the **Gold** or **Nasdaq** tabs (or in the **Label playground**) are stored locally in browser storage (`localStorage`) and can also be exported to or loaded from `.json` files directly via the shell bar (`Save settings to a file` / `Load settings from a file`).

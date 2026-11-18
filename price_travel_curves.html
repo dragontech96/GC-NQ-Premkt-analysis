@@ -283,7 +283,7 @@ html:has(#research-method:target){overflow:hidden}
   #research-method .rm-legend{margin-left:0}
 }
 </style>
-<meta name="ptc-build" content="2026-11-18 f21132f1">
+<meta name="ptc-build" content="2026-11-18 6637db1b">
 </head>
 <body>
 <div class="wrap">
@@ -6492,6 +6492,7 @@ const NQ = !!INS && INS.id === 'NQ', SP = INS && typeof INS.storagePrefix === 's
 const priceTxt = v => { if (!NQ) return '$' + v.toFixed(2); const r = Math.round(v * 100), a = Math.abs(r); return (r < 0 ? '−' : '') + String(Math.floor(a / 100)).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '.' + String(a % 100).padStart(2, '0') + ' pts'; };
 
 const CSS = [
+'[data-ptc-off]{display:none !important}',   // round 13: a part of the page a playground view of the one page switched off (setView)
 '.pt-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px}',
 '.pt-head h2{margin:0}',
 '.pt-body [hidden]{display:none}',
@@ -8005,9 +8006,41 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
         if (Object.keys(th).length) { op.thresholds = th; op.share = sh === null ? 'scale' : sh; } }
       if (d.scale && typeof d.scale === 'object') { const w = {}; for (const [a, b] of [['T', 'T'], ['S', 'R'], ['W', 'W']]) if (d.scale[a] !== undefined) w[b] = d.scale[a]; if (Object.keys(w).length) op.weights = w; }
       setOptions(op); render(); }
+    // ---- round 13 (dev/v4_loop/round13/PLAN_R13.md): the views of the one page's two playground tabs. The shell shows this same frame under
+    // "Label playground" and "Curve playground" and says which part of the page to show: { ptc: 1, type: 'view', view: 'study' | 'label' | 'lab' }.
+    // A part is switched off with the attribute data-ptc-off (hidden by the card's CSS), never with `hidden`, which the page sets and clears itself.
+    // 'label': the page's tab that holds the card, and of the page only the card's chart rows, banner, likelihood block (the quiz, the scale,
+    // the saved settings) and what each label means with its example. 'lab': the Curve lab (the page's Play tab unless a lab tab is on already) without the study's two tabs and the watch
+    // panel. 'study': everything, and the page's tab of before the first playground view, unless the viewer chose another tab inside the view.
+    // The page's own names live in VIEW_PAGE only (src/price_travel_curves.v4.html cannot hold this: its text is hashed into the stored results).
+    // (the tab selectors are put together here: the page's tests list the page's tabs by reading the built page's text for that attribute)
+    const viewTabSel = v => '.tabs button[data-view=' + JSON.stringify(v) + ']';
+    const VIEW_PAGE = { tab: viewTabSel, on: '.tabs button[aria-selected="true"]', lab: ['cases', 'play', 'csv'], labOpen: 'play',
+      labOff: ['#watch-panel', viewTabSel('gc10y'), viewTabSel('gcrecent')].join(', ') };
+    let viewNow = 'study', viewTab = null, viewPut = null;
+    const pageTab = () => { const b = doc.querySelector(VIEW_PAGE.on); return b ? b.getAttribute('data-view') : null; };
+    const pageGo = v => { const b = v && pageTab() !== v ? doc.querySelector(VIEW_PAGE.tab(v)) : null; if (b) b.click(); };
+    const cardTab = () => { const p = rootEl.closest ? rootEl.closest('[role="tabpanel"]') : null, b = p && p.getAttribute('aria-labelledby') ? doc.getElementById(p.getAttribute('aria-labelledby')) : null; return b ? b.getAttribute('data-view') : null; };
+    function setView(v) { if (!['study', 'label', 'lab'].includes(v) || v === viewNow) return;
+      const off = e => { if (e.nodeType === 1 && e.localName !== 'script' && e.localName !== 'style') e.setAttribute('data-ptc-off', ''); };
+      for (const e of doc.querySelectorAll('[data-ptc-off]')) e.removeAttribute('data-ptc-off');
+      if (viewNow === 'study') viewTab = pageTab();
+      viewNow = v;
+      if (v === 'label') { pageGo(cardTab());
+        for (let n = rootEl; n !== doc.body && n.parentNode && n.parentNode.nodeType === 1; n = n.parentNode) for (const s of n.parentNode.children) if (s !== n) off(s);
+        for (const s of rootEl.children) if (s !== el.msg && s !== el.body) off(s);
+        const keep = [el.chartCtl, el.banner, el.lik, el.setNote, el.defs, el.exOut, el.exWrap]; for (const s of el.body.children) if (!keep.includes(s)) off(s); }
+      else if (v === 'lab') { if (!VIEW_PAGE.lab.includes(pageTab())) pageGo(VIEW_PAGE.labOpen); for (const e of doc.querySelectorAll(VIEW_PAGE.labOff)) off(e); }
+      else if (pageTab() === viewPut) pageGo(viewTab);
+      viewPut = v === 'study' ? null : pageTab();
+      if (v === 'study') doc.documentElement.removeAttribute('data-ptc-view'); else doc.documentElement.setAttribute('data-ptc-view', v);
+      render();
+      // the page draws its charts again on a resize (the parts that come back were sized while they were off), and the view starts at its top
+      try { const E = BW.Event || (typeof Event === 'function' ? Event : null); if (E && typeof BW.dispatchEvent === 'function') BW.dispatchEvent(new E('resize')); if (typeof BW.scrollTo === 'function') BW.scrollTo(0, 0); } catch (e) { /* a convenience */ } }
     function onBridgeMsg(ev) { if (!BW || destroyed || !ev || ev.source !== BW.parent) return; const d = ev.data; if (!d || typeof d !== 'object' || d.ptc !== 1) return;
       if (d.type === 'get-settings') bridgeSend(true);
-      else if (d.type === 'apply-settings' && d.instrument === BR_ID) { bridgeApply(d); bridgeSend(true); } }
+      else if (d.type === 'apply-settings' && d.instrument === BR_ID) { bridgeApply(d); bridgeSend(true); }
+      else if (d.type === 'view') { try { setView(d.view); } catch (e) { /* a page without these parts stays the whole study */ } } }
     // Save (E3, E6): the settings in force for the slot length on show under the typed name, or "My settings {n}" with the smallest n not in use; an
     // existing name is replaced on the second press only; the built-in name is refused; a new name past SAVED_MAX is refused
     function savedSaveNow() { const ln = curLen(), cur = ln ? thOf(ln) : null, arm = savedArm; savedArm = null; if (!cur) return;
@@ -12576,6 +12609,6 @@ const Core = (() => {
 <p class="rm-foot">Research notes for one trader's own use; not trading advice. <a href="#rm-close">← Back to the page</a></p>
 </div>
 </section><!-- /research-method -->
-<p class="build-stamp" id="build-stamp">Price Travel Curves v4 · Build 2026-11-18 · f21132f1</p>
+<p class="build-stamp" id="build-stamp">Price Travel Curves v4 · Build 2026-11-18 · 6637db1b</p>
 </body>
 </html>

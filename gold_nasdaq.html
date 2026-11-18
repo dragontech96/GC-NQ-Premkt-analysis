@@ -7,7 +7,10 @@
 <!-- shell.html: the one page of round 12 (dev/v4_loop/round12/PLAN_R12.md, builder S), built by tools/build_combined.js into dist/gold_nasdaq.html.
      Three tabs ("Gold or Nasdaq", "Gold", "Nasdaq"), each a plain <iframe src> of a sibling file (gc_or_nq_focus.html, price_travel_curves.html,
      price_travel_curves_nq.html) made the first time its tab is shown and then kept, hidden, so the user's place in it stays. Every exchange with a
-     frame is a postMessage (from disk the frames are other origins); the settings hub (settings_hub.js, inlined) keeps each market's settings. -->
+     frame is a postMessage (from disk the frames are other origins); the settings hub (settings_hub.js, inlined) keeps each market's settings.
+     Round 13 (dev/v4_loop/round13/PLAN_R13.md): two playground tabs that make no frame of their own. "Label playground" shows the Gold or the
+     Nasdaq study's frame (the market switch above it) told to show only its labelling part; "Curve playground" shows a study's frame told to show
+     only its Curve lab. One frame per market, so the settings changed in a playground are that market's settings everywhere. -->
 <style>
 /* the studies' colour tokens and theme rule (src/price_travel_curves.v4.html): light by default, dark when the system asks for it unless
    data-theme="light", dark when data-theme="dark" */
@@ -54,6 +57,9 @@ button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);
 .mk .msg{flex-basis:100%;margin:0;font-size:.8rem;color:var(--ink-2);min-height:0}
 .mk .msg:empty{display:none}
 .mk .msg[data-kind="refused"]{color:var(--warn)}
+.vbar{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;max-width:1180px;margin:0 auto;padding:8px 0 9px;border-top:1px solid var(--line-soft)}
+.vbar p{flex:1 1 420px;margin:0;max-width:92ch;font-size:.86rem;color:var(--ink-2)}
+.vmk{display:flex;align-items:center;gap:6px;font-size:.84rem;color:var(--ink-2)}
 main{flex:1 1 auto;position:relative;min-height:420px}
 .panel{position:absolute;inset:0;display:flex;flex-direction:column}
 .panel iframe{flex:1 1 auto;width:100%;height:100%;border:0;display:block;background:var(--bg)}
@@ -69,6 +75,19 @@ main{flex:1 1 auto;position:relative;min-height:420px}
     <button type="button" role="tab" id="tab-focus" data-tab="focus" aria-controls="panel-focus" aria-selected="false" tabindex="-1">Gold or Nasdaq</button>
     <button type="button" role="tab" id="tab-gc" data-tab="gc" aria-controls="panel-gc" aria-selected="false" tabindex="-1">Gold</button>
     <button type="button" role="tab" id="tab-nq" data-tab="nq" aria-controls="panel-nq" aria-selected="false" tabindex="-1">Nasdaq</button>
+    <button type="button" role="tab" id="tab-label" data-tab="label" aria-controls="panel-gc" aria-selected="false" tabindex="-1">Label playground</button>
+    <button type="button" role="tab" id="tab-lab" data-tab="lab" aria-controls="panel-gc" aria-selected="false" tabindex="-1">Curve playground</button>
+  </div>
+  <div class="vbar" data-vbar="label" hidden>
+    <p>Label real charts from the ten years as whipsaw, swing or trend, and the page works out the settings from your answers. They are the same settings the Gold and Nasdaq tabs and the comparison use.</p>
+    <div class="vmk" role="group" aria-label="Market to label">
+      <span>Market:</span>
+      <button type="button" data-play-market="gc" aria-pressed="true">Gold</button>
+      <button type="button" data-play-market="nq" aria-pressed="false">Nasdaq</button>
+    </div>
+  </div>
+  <div class="vbar" data-vbar="lab" hidden>
+    <p>Made-up candles from knobs you set (trend, swing, whipsaw, spikes), and what the method measures on them. Nothing here uses real prices, and nothing here changes your settings.</p>
   </div>
   <section class="sbar" aria-label="Trend, swing and whipsaw settings of each market">
     <div class="mk" data-market="gc" role="group" aria-label="Gold settings">
@@ -113,7 +132,8 @@ main{flex:1 1 auto;position:relative;min-height:420px}
 // point scale and the saved sets replaced), when the settings last changed (changedAt: the first message after a different one; null when the hub
 // has only ever seen one), the switch "Use the study's settings in the comparison", and a loaded file not yet handed to its study frame (pending).
 // All of it is kept under its own storage key KEY ('ptc.hub.v1') so the comparison has the user's settings on the next visit before a study tab is
-// opened; storage that is missing or throws changes nothing but the memory across visits. The last tab shown is kept there too.
+// opened; storage that is missing or throws changes nothing but the memory across visits. The last tab shown is kept there too, and (round 13,
+// dev/v4_loop/round13/PLAN_R13.md) the market the "Label playground" tab is on (playMarket: 'gc' until the user picks Nasdaq).
 // The comparison uses each market's '5_30' set (5-minute candles, half-hour rows). state(): { ptc: 1, type: 'state', v: 1, gc: M, nq: M } with
 // M = { source: 'yours' | 'study', at, th, scale, name }: 'study' (th, scale, at null) when no settings are known, the switch is on, or the '5_30'
 // thresholds and the scale are the study's (the set's own defaults, no fixed whipsaw share, 3 / 1 / -1); else 'yours' with the '5_30' thresholds
@@ -132,7 +152,7 @@ main{flex:1 1 auto;position:relative;min-height:420px}
   'use strict';
   const KEY = 'ptc.hub.v1', V = 1, FILE_V = 1, APP = 'price-travel-curves', KIND = 'label-settings', MAX_BYTES = 2e6;
   const MARKETS = Object.freeze({ gc: Object.freeze({ id: 'GC', name: 'Gold', word: 'gold' }), nq: Object.freeze({ id: 'NQ', name: 'Nasdaq', word: 'nasdaq' }) });
-  const MKS = ['gc', 'nq'], TABS = ['focus', 'gc', 'nq'];
+  const MKS = ['gc', 'nq'], TABS = ['focus', 'gc', 'nq', 'label', 'lab'];
   const SET_KEYS = ['1_15', '1_30', '5_30', '5_60', '15_60'], SAVED_SETS = ['1', '5_30', '5_60', '15_60'], COMPARE_SET = '5_30';
   const STUDY_SCALE = Object.freeze({ T: 3, S: 1, W: -1 });
   const NUM_KEYS = ['cut', 'dead', 'trendNet', 'ma1', 'ma5', 'refDays', 'share'], W_KEYS = ['fake', 'quiet', 'overlap', 'small'];
@@ -209,16 +229,16 @@ main{flex:1 1 auto;position:relative;min-height:420px}
     let storage = o.storage !== undefined ? o.storage : null;
     if (o.storage === undefined) { try { storage = typeof localStorage !== 'undefined' ? localStorage : null; } catch (e) { storage = null; } }
     const blank = () => ({ s: null, at: null, study: false, pending: null });
-    let S = { tab: null, gc: blank(), nq: blank() };
+    let S = { tab: null, play: 'gc', gc: blank(), nq: blank() };
     // read once, with care: anything but { v: 1, ... } of the right shape reads as nothing (a market at a time)
     try { const t = storage ? storage.getItem(KEY) : null, j = t ? JSON.parse(t) : null;
-      if (isObj(j) && j.v === V) { if (TABS.includes(j.tab)) S.tab = j.tab;
+      if (isObj(j) && j.v === V) { if (TABS.includes(j.tab)) S.tab = j.tab; if (MKS.includes(j.play)) S.play = j.play;
         for (const mk of MKS) { const x = j[mk]; if (!isObj(x)) continue; const m = blank();
           if (isObj(x.s) && isObj(x.s.sets)) { const sets = cleanSets(x.s.sets); if (Object.keys(sets).length) m.s = { sets, defaults: isObj(x.s.defaults) ? cleanSets(x.s.defaults) : {}, scale: scaleOk(x.s.scale) ? cleanScale(x.s.scale) : null, saved: savedOk(x.s.saved) ? cleanSaved(x.s.saved) : [] }; }
           m.at = m.s && fin(x.at) ? x.at : null; m.study = x.study === true;
           if (isObj(x.pending) && isObj(x.pending.sets)) { const sets = cleanSets(x.pending.sets); if (Object.keys(sets).length && scaleOk(x.pending.scale) && savedOk(x.pending.saved)) m.pending = { sets, scale: cleanScale(x.pending.scale), saved: cleanSaved(x.pending.saved), sent: false, from: typeof x.pending.from === 'string' ? x.pending.from : '' }; }
           S[mk] = m; } } } catch (e) { /* blocked or malformed: start from nothing */ }
-    const persist = () => { try { if (!storage) return; const out = { v: V, tab: S.tab };
+    const persist = () => { try { if (!storage) return; const out = { v: V, tab: S.tab, play: S.play };
       for (const mk of MKS) { const m = S[mk]; out[mk] = { s: m.s, at: m.at, study: m.study, pending: m.pending ? { sets: m.pending.sets, scale: m.pending.scale, saved: m.pending.saved, from: m.pending.from } : null }; }
       storage.setItem(KEY, JSON.stringify(out)); } catch (e) { /* storage blocked: this visit still works */ } };
     const check = mk => { if (!MARKETS[mk]) throw new Error('SettingsHub: market must be gc or nq, not ' + mk); return S[mk]; };
@@ -265,9 +285,10 @@ main{flex:1 1 auto;position:relative;min-height:420px}
     function state() { return { ptc: 1, type: 'state', v: 1, gc: marketState('gc'), nq: marketState('nq') }; }
     function setUseStudy(mk, on) { const m = check(mk); if (m.study === !!on) return false; m.study = !!on; persist(); return true; }
     function setTab(tab) { if (!TABS.includes(tab) || S.tab === tab) return; S.tab = tab; persist(); }
+    function setPlayMarket(mk) { if (!MKS.includes(mk) || S.play === mk) return; S.play = mk; persist(); }
     return { onSettings, loadFile, fileText, fileName: mk => (check(mk), fileName(mk, now())), state, chip, source, known: mk => !!check(mk).s,
       useStudy: mk => check(mk).study, setUseStudy, waiting: mk => !!(check(mk).pending && !check(mk).pending.sent),
-      tab: () => S.tab, setTab, snapshot: () => clone(S) }; }
+      tab: () => S.tab, setTab, playMarket: () => S.play, setPlayMarket, snapshot: () => clone(S) }; }
 
   return { create, parseFile, serialise, fileName, comparisonScale, readSettings, KEY, MARKETS, SET_KEYS, SAVED_SETS, COMPARE_SET, STUDY_SCALE, WHY, TABS }; }));
 </script>
@@ -275,11 +296,14 @@ main{flex:1 1 auto;position:relative;min-height:420px}
 // The shell (PLAN_R12 "Files", "Message contract", "The settings hub"). Messages are read only from a frame this page made (ev.source) and only
 // when they are objects with ptc: 1; unknown types are ignored. Gold / Nasdaq frame -> 'settings' (into the hub; a loaded file waiting for that
 // frame goes back as 'apply-settings'); comparison frame -> 'get-state' (answered with 'state'), 'open-tab' (that tab is shown). 'state' is sent
-// to the comparison frame whenever it changes.
+// to the comparison frame whenever it changes. Round 13: a tab is not a frame any more. FRAMES are the three frames; frameOf(tab) is the frame a
+// tab shows ("Label playground": the market of its switch; "Curve playground": the gold study, or the Nasdaq study when only that one is open)
+// and VIEW the part of a study its tab asks for, sent to the study's frame as { ptc: 1, type: 'view', view } once its page has spoken.
 (function () {
   'use strict';
   const H = typeof SettingsHub !== 'undefined' ? SettingsHub : null, doc = document, $ = s => doc.querySelector(s);
-  const TABS = ['focus', 'gc', 'nq'], MKS = ['gc', 'nq'];
+  const TABS = ['focus', 'gc', 'nq', 'label', 'lab'], FRAMES = ['focus', 'gc', 'nq'], MKS = ['gc', 'nq'], PLAY = ['label', 'lab'];
+  const VIEW = { gc: 'study', nq: 'study', label: 'label', lab: 'lab' };
   const FILES = { focus: 'gc_or_nq_focus.html', gc: 'price_travel_curves.html', nq: 'price_travel_curves_nq.html' };
   const TITLE = { focus: 'Gold or Nasdaq: the comparison', gc: 'Gold: the study', nq: 'Nasdaq: the study' };
   const WHAT = { focus: 'The comparison', gc: 'The gold study', nq: 'The Nasdaq study' };
@@ -288,12 +312,14 @@ main{flex:1 1 auto;position:relative;min-height:420px}
   if (!H) { const p = $('[data-loading="focus"]'); if (p) p.textContent = 'This page could not start: its settings part is missing. Build it again with tools/build_combined.js.'; return; }
   let store = null; try { store = window.localStorage || null; } catch (e) { store = null; }
   const hub = H.create({ storage: store });
-  const frames = {}; let cur = null, lastState = '';
+  const frames = {}, want = {}; let cur = null, lastState = '', labAt = null;
   const tabBtn = t => $('[role="tab"][data-tab="' + t + '"]'), panel = t => $('[data-panel="' + t + '"]');
   const winOf = t => { const f = frames[t]; try { return f && f.el.contentWindow || null; } catch (e) { return null; } };
   const post = (t, m) => { const w = winOf(t); if (!w) return false; try { w.postMessage(m, '*'); return true; } catch (e) { return false; } };
   function sendState(force) { if (!frames.focus) return; const st = hub.state(), key = JSON.stringify(st); if (!force && key === lastState) return; if (post('focus', st)) lastState = key; }
-  function spoke(t) { const f = frames[t]; if (!f || f.spoke) return; f.spoke = true; clearTimeout(f.timer); $('[data-loading="' + t + '"]').hidden = true; $('[data-missing="' + t + '"]').hidden = true; }
+  const frameOf = t => t === 'label' ? hub.playMarket() : t === 'lab' ? (labAt = labAt || (frames.gc || !frames.nq ? 'gc' : 'nq')) : t;
+  function sendView(t) { if (want[t] && frames[t] && frames[t].spoke) post(t, { ptc: 1, type: 'view', view: want[t] }); }
+  function spoke(t) { const f = frames[t]; if (!f || f.spoke) return; f.spoke = true; clearTimeout(f.timer); $('[data-loading="' + t + '"]').hidden = true; $('[data-missing="' + t + '"]').hidden = true; sendView(t); }
   function missing(t) { const f = frames[t]; if (!f || f.spoke) return; $('[data-loading="' + t + '"]').hidden = true; const p = $('[data-missing="' + t + '"]');
     p.textContent = WHAT[t] + ' did not open here. Its file, ' + FILES[t] + ', must sit in the same folder as this page, with the data folder beside it.'; p.hidden = false; }
   function makeFrame(t) { const el = doc.createElement('iframe'), f = frames[t] = { el, spoke: false, timer: null };
@@ -301,9 +327,15 @@ main{flex:1 1 auto;position:relative;min-height:420px}
     el.addEventListener('load', () => { if (f.spoke) return; clearTimeout(f.timer); f.timer = setTimeout(() => missing(t), WAIT_MS); });
     panel(t).appendChild(el); }
   // ---- tabs: a roving tabindex, arrow keys, Home and End (WAI-ARIA tabs, automatic activation); the last tab is remembered
-  function select(t, focus) { if (!TABS.includes(t)) t = 'focus'; cur = t; hub.setTab(t);
-    for (const k of TABS) { const b = tabBtn(k), on = k === t; b.setAttribute('aria-selected', on ? 'true' : 'false'); b.setAttribute('tabindex', on ? '0' : '-1'); panel(k).hidden = !on; }
-    if (!frames[t]) makeFrame(t);
+  function select(t, focus) { if (!TABS.includes(t)) t = 'focus'; cur = t; hub.setTab(t); const f = frameOf(t);
+    for (const k of TABS) { const b = tabBtn(k), on = k === t; b.setAttribute('aria-selected', on ? 'true' : 'false'); b.setAttribute('tabindex', on ? '0' : '-1'); }
+    for (const k of FRAMES) panel(k).hidden = k !== f;
+    for (const k of PLAY) $('[data-vbar="' + k + '"]').hidden = k !== t;
+    for (const mk of MKS) $('[data-play-market="' + mk + '"]').setAttribute('aria-pressed', hub.playMarket() === mk ? 'true' : 'false');
+    if (PLAY.includes(t)) tabBtn(t).setAttribute('aria-controls', 'panel-' + f);
+    panel(f).setAttribute('aria-labelledby', 'tab-' + t);
+    if (!frames[f]) makeFrame(f);
+    if (VIEW[t]) { want[f] = VIEW[t]; sendView(f); }
     if (focus) { try { tabBtn(t).focus(); } catch (e) { /* focus is a convenience */ } } }
   $('[role="tablist"]').addEventListener('click', ev => { const b = ev.target && ev.target.closest ? ev.target.closest('[role="tab"]') : null; if (b) select(b.getAttribute('data-tab'), true); });
   $('[role="tablist"]').addEventListener('keydown', ev => { const i = TABS.indexOf(cur), n = TABS.length;
@@ -334,10 +366,11 @@ main{flex:1 1 auto;position:relative;min-height:420px}
     const inp = $('[data-file="' + mk + '"]');
     $('[data-load="' + mk + '"]').addEventListener('click', () => { try { inp.value = ''; } catch (e) { /* some browsers refuse; the same file then does not fire change twice */ } inp.click(); });
     inp.addEventListener('change', () => onFile(mk, inp));
-    $('[data-study="' + mk + '"]').addEventListener('click', () => { hub.setUseStudy(mk, !hub.useStudy(mk)); say(mk, ''); renderBar(); sendState(); }); }
+    $('[data-study="' + mk + '"]').addEventListener('click', () => { hub.setUseStudy(mk, !hub.useStudy(mk)); say(mk, ''); renderBar(); sendState(); });
+    $('[data-play-market="' + mk + '"]').addEventListener('click', () => { hub.setPlayMarket(mk); select('label', false); }); }
   // ---- the frames' messages
   window.addEventListener('message', ev => { const d = ev && ev.data; if (!d || typeof d !== 'object' || d.ptc !== 1) return;
-    const t = TABS.find(k => frames[k] && ev.source != null && ev.source === winOf(k)); if (!t) return; spoke(t);
+    const t = FRAMES.find(k => frames[k] && ev.source != null && ev.source === winOf(k)); if (!t) return; spoke(t);
     if (t === 'focus') { if (d.type === 'get-state') sendState(true); else if (d.type === 'open-tab' && MKS.includes(d.tab)) select(d.tab, true); return; }
     if (d.type === 'settings') { const r = hub.onSettings(t, d); if (r.apply) post(t, r.apply); if (r.ok) { renderBar(); sendState(); } } });
   renderBar(); select(hub.tab() || 'focus', false);
