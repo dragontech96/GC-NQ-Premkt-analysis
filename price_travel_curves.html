@@ -218,12 +218,13 @@ a.term{color:inherit;text-decoration:underline dotted;text-underline-offset:2px}
 .candle-ind label{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
 </style>
 <style id="research-method-style">
-/* Research method: a section of the one page, built in by build_standalone.py. Closed unless it is the link target; no script. */
-#research-method{display:none;--rm-good:#2f7d4f;--rm-mid:#8a5a00;--rm-low:#a8432f}
+/* Research method: a section of the one page, built in by build_standalone.py. Closed unless it is the link target; no script.
+   Round 14 (PLAN_R14 section 10): one first screen, then five folds (details), closed at first. */
+#research-method{display:none;--rm-low:#a8432f}
 @media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]) #research-method{--rm-good:#6fc08f;--rm-mid:#e0b450;--rm-low:#e88a76}
+  :root:not([data-theme="light"]) #research-method{--rm-low:#e88a76}
 }
-:root[data-theme="dark"] #research-method{--rm-good:#6fc08f;--rm-mid:#e0b450;--rm-low:#e88a76}
+:root[data-theme="dark"] #research-method{--rm-low:#e88a76}
 #research-method:target{display:block;position:fixed;inset:0;z-index:50;overflow:auto;overscroll-behavior:contain;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.6;outline:none}
 html:has(#research-method:target){overflow:hidden}
 .rm-open{margin:2px 0 10px;font-size:.9rem}
@@ -232,58 +233,34 @@ html:has(#research-method:target){overflow:hidden}
 #research-method .rm-back{position:sticky;top:0;z-index:1;margin:0;padding:10px 20px;background:var(--bg);border-bottom:1px solid var(--line);font-size:.9rem;font-weight:600}
 #research-method .rm-main{max-width:820px;margin:0 auto;padding:28px 20px 80px}
 #research-method .rm-kicker{font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 10px}
-#research-method h1{font-size:clamp(1.7rem,5vw,2.5rem);line-height:1.12;letter-spacing:-.02em;margin:0 0 14px}
-#research-method .rm-lede{font-size:1.15rem;color:var(--ink-2);margin:0 0 8px}
-#research-method h2{font-size:1.4rem;letter-spacing:-.01em;margin:48px 0 12px;padding-top:18px;border-top:1px solid var(--line)}
-#research-method h3{font-size:1rem;margin:24px 0 6px;color:var(--ink);text-transform:none;letter-spacing:0}
+#research-method h1{font-size:clamp(1.7rem,5vw,2.4rem);line-height:1.12;letter-spacing:-.02em;margin:0 0 14px}
+#research-method .rm-lede{font-size:1.08rem;color:var(--ink);margin:0 0 12px}
+#research-method h3{font-size:1rem;margin:22px 0 6px;color:var(--ink);text-transform:none;letter-spacing:0}
 #research-method p{margin:0 0 14px;text-wrap:pretty}
 #research-method ul{margin:0 0 14px;padding-left:22px}
-#research-method ol{margin:0 0 14px;padding-left:22px}
 #research-method li{margin:0 0 7px}
 #research-method b{font-weight:650}
-#research-method .rm-tldr{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:24px 0 6px}
-#research-method .rm-tl{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:6px;padding:16px 16px 8px}
-#research-method .rm-tl.rm-worth{border-top-color:var(--rm-good)}
-#research-method .rm-tl.rm-stop{border-top-color:var(--rm-low)}
-#research-method .rm-tl h3{margin:0 0 8px;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase}
-#research-method .rm-tl ul{padding-left:18px;font-size:.95rem;line-height:1.5}
-#research-method .rm-tl li{margin-bottom:9px}
-#research-method .rm-one{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:6px;padding:14px 18px;margin:14px 0 0;font-size:1.08rem}
-#research-method .rm-steps{list-style:none;padding:0;counter-reset:rm}
-#research-method .rm-steps>li{counter-increment:rm;position:relative;padding:0 0 4px 46px;margin-bottom:16px}
-#research-method .rm-steps>li::before{content:counter(rm);position:absolute;left:0;top:0;width:30px;height:30px;border-radius:50%;border:1.5px solid var(--accent);color:var(--accent);font-weight:700;font-size:.85rem;display:grid;place-items:center}
+#research-method .rm-keep{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--rm-low);border-radius:6px;padding:12px 18px 4px;margin:16px 0 8px}
+#research-method .rm-keep-h{font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:var(--ink-2);margin:0 0 6px}
+#research-method .rm-folds{margin-top:30px;border-bottom:1px solid var(--line)}
+#research-method details{border-top:1px solid var(--line)}
+#research-method summary{cursor:pointer;padding:14px 0;color:var(--ink);font-size:1.12rem;font-weight:650}
+#research-method summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#research-method details[open]{padding-bottom:12px}
 #research-method .rm-scroll{overflow-x:auto;margin:0 0 16px}
 #research-method table{border-collapse:collapse;width:100%;font-size:.9rem;line-height:1.4;font-variant-numeric:tabular-nums}
 #research-method th{position:static;background:none;padding:8px 10px;text-align:left;vertical-align:bottom;white-space:normal;border-bottom:1px solid var(--line);color:var(--ink-2);font-size:.8rem;font-weight:600;text-transform:none;letter-spacing:0}
 #research-method td{padding:8px 10px;text-align:left;vertical-align:top;white-space:normal;border-bottom:1px solid var(--line)}
 #research-method th.rm-n{text-align:right;white-space:nowrap}
 #research-method td.rm-n{text-align:right;white-space:nowrap}
-#research-method figure{margin:18px 0 20px}
-#research-method .rm-barrow{display:grid;grid-template-columns:62px 1fr;gap:10px;align-items:center;margin-bottom:8px}
-#research-method .rm-lab{font-size:.85rem;font-weight:600;color:var(--ink-2)}
-#research-method .rm-bar{display:flex;height:30px;border-radius:4px;overflow:hidden;font-size:.82rem;font-weight:600;color:var(--stack-ink)}
-#research-method .rm-bar div{display:grid;place-items:center;white-space:nowrap}
-#research-method .rm-t{background:var(--trend)}
-#research-method .rm-s{background:var(--swing)}
-#research-method .rm-w{background:var(--whip)}
-#research-method .rm-legend{font-size:.82rem;color:var(--ink-2);display:flex;flex-wrap:wrap;gap:4px 16px;margin:6px 0 0 72px}
-#research-method .rm-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px}
-#research-method figcaption{font-size:.85rem;color:var(--ink-2);margin-top:8px}
-#research-method .rm-trust{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:999px;border:1.5px solid currentColor;white-space:nowrap}
-#research-method .rm-hi{color:var(--rm-good)}
-#research-method .rm-md{color:var(--rm-mid)}
-#research-method .rm-lo{color:var(--rm-low)}
 #research-method .rm-note{font-size:.92rem;color:var(--ink-2)}
-#research-method code{font-family:var(--font-data);font-size:.85rem;background:var(--surface-2);padding:1px 5px;border-radius:3px;overflow-wrap:anywhere}
-#research-method .rm-foot{margin-top:56px;padding-top:16px;border-top:1px solid var(--line);font-size:.88rem;color:var(--ink-2)}
+#research-method .rm-foot{margin-top:40px;font-size:.88rem;color:var(--ink-2)}
 @media (max-width:720px){
-  #research-method .rm-tldr{grid-template-columns:1fr}
   #research-method .rm-main{padding:22px 16px 60px}
   #research-method .rm-back{padding:10px 16px}
-  #research-method .rm-legend{margin-left:0}
 }
 </style>
-<meta name="ptc-build" content="2026-11-18 6637db1b">
+<meta name="ptc-build" content="2026-11-21 9eafc3c4">
 </head>
 <body>
 <div class="wrap">
@@ -4519,14 +4496,16 @@ else root.DayTypeCard = DayTypeCard;
   function watchModule(I) { if (I.WatchSchedule) return I.WatchSchedule; if (typeof WatchSchedule !== 'undefined') return WatchSchedule; // eslint-disable-line no-undef
     try { return typeof require === 'function' ? require('./watch_schedule.js') : null; } catch (err) { return null; } }
   function watch(I) {
-    const q = 'When should I watch? (12:00–01:00 SGT)';
+    // round 14 (U27; JUDGEMENT J1): "when to watch" is answered from the settings by the points card (the points item, first in the list); this
+    // fixed rule is named by what it measures, and its line says "moves most" and "least": Watch and Idle are the words of the card's tiers
+    const q = 'When does the market usually move most? (12:00–01:00 SGT; a fixed rule that does not follow your settings)';
     if (!I.watch) return waitItem(q, 'watch', I, 'The watch schedule appears when the precomputed results include it.', '#watch-panel');
     const WS = watchModule(I); if (!WS || typeof WS.answerText !== 'function') return { q, a: 'Cannot say: the watch-schedule module is not loaded.', stats: '', level: 'info', link: '#watch-panel' };
     const T = WS.answerText(I.watch, { nowMs: isNum(I.nowMs) ? I.nowMs : Date.now(), recentLevel: I.recentLevel, events: I.events });
     // round 5 (V; AMENDMENT_1 D2): one line with a link to the panel above the tabs, which carries the paragraph and its statistics; the times are
     // answerText's own numbers (the season in force now), so the line and the panel cannot disagree.
     const N = T.numbers || {}, season = N.season === 'EDT' ? 'US summer' : 'US winter';
-    const a = (N.watch && N.watch.length ? 'Watch ' + list(N.watch) + ' SGT' : 'No stretch stands out as busy') + (N.idle && N.idle.length ? '; idle ' + list(N.idle) : N.quietest ? '; quietest ' + N.quietest : '')
+    const a = (N.watch && N.watch.length ? 'Moves most ' + list(N.watch) + ' SGT' : 'No stretch stands out as busy') + (N.idle && N.idle.length ? '; least ' + list(N.idle) : N.quietest ? '; quietest ' + N.quietest : '')
       + '; the rest is ordinary (' + season + ', now).';
     return { q, a, stats: '', level: 'info', link: '#watch-panel', linkText: 'show me the timeline ↑', numbers: T.numbers }; }
 
@@ -4541,7 +4520,8 @@ else root.DayTypeCard = DayTypeCard;
     const P = I.points; if (!P) return null;
     const q = 'Which of my hours score the most points?', w = P.weights || {}, text = String(P.text || '').trim(), first = String(P.first || '').trim();
     const numbers = { most: P.most || '', fewest: P.fewest || '', slotLen: P.slotLen, season: P.season, labelSet: P.labelSet, weights: w, first };
-    if (first) return { q, a: first, stats: text.startsWith(first) ? text.slice(first.length).trim() : text, level: 'info', link: '#points-card', linkText: 'show me the points ↓', numbers };
+    // round 14: the card's first sentence is its "When to watch, at your settings" sentence, so the line answers that question
+    if (first) return { q: 'When should I watch, at my settings?', a: first, stats: text.startsWith(first) ? text.slice(first.length).trim() : text, level: 'info', link: '#points-card', linkText: 'show me the points ↓', numbers };
     const wt = [w.T, w.R, w.W].every(isNum) ? ' ' + [w.T, w.R, w.W].map(minus).join(' / ') + (isNum(w.C) && w.C !== 0 ? ' / ' + minus(w.C) : '') : '';
     const how = ' (' + [P.slotLen ? P.slotLen + '-minute slots' : '', P.season || '', (POINT_SET[P.labelSet] || 'stored labels') + wt].filter(Boolean).join(', ') + ')';
     const a = P.most ? 'Most points: ' + P.most + ' SGT; fewest: ' + P.fewest + ' SGT' + how + '.'
@@ -4641,7 +4621,7 @@ else root.DayTypeCard = DayTypeCard;
   // slot (slot verdicts against copies), seventy (trend days and leans, both defined against copies), daytypes (the day-type test), whip (the slot
   // table's Whipsaw verdict, now a lab item), power (what chance alone gives) and slotRecent (the slot verdicts). The Curve lab's "Your CSV" tab keeps
   // its lines except seventy and daytypes, whose cards (trend days, day types) are no longer mounted on any tab.
-  const IDS = { '10y': ['watch', 'points', 'moves', 'recentLink'], csv: ['moves', 'legs', 'slot', 'whip'], recent: ['match'] };
+  const IDS = { '10y': ['points', 'watch', 'moves', 'recentLink'], csv: ['moves', 'legs', 'slot', 'whip'], recent: ['match'] };
 
   // ---------- layout (builder U, round 3; D3 §4.1 and §4.3) ----------
   const wordCount = s => nWords(s);
@@ -6446,6 +6426,118 @@ if (typeof module === 'object' && module.exports) module.exports = EyeCalib;
 else root.EyeCalib = EyeCalib;
 })(typeof globalThis !== 'undefined' ? globalThis : this);
 </script>
+<script data-module="watch_tiers.js" data-worker="skip">// watch_tiers.js: "When to watch, at your settings" (round 14, builder C; dev/v4_loop/round14/PLAN_R14.md section 4, frozen before any number
+// was computed with it). The user (U27): "the setting should reflect when should I watch timing as well". The points card hands this module the
+// labels it shows (thresholds, lookback, broken-trend switch and fixed whipsaw share in force) of the rows of the user's hours on the season on
+// show, and the point scale in force; the module says which rows score above the other rows of the same day often enough, in both halves of the
+// ten years, to be called Watch, which below them (Idle), and which neither (Ordinary). It re-reads stored labels only: no new analysis.
+//
+// The rule (PLAN 4), with the constants of RULE:
+//   pool: the rows given (the card gives the rows wholly inside the hours); a row-day without a label has no points;
+//   paired dates: a date counts when at least max(minRowsPerDay, ceil(dayCover * rows in the pool)) rows have points on it;
+//   advantage of a row on a paired date: its points minus the mean points of the other rows of the pool that have points on that date;
+//   per group of dates G (all years; the two periods of the stored split): n dates with an advantage, K calendar weeks among them
+//   (week = floor((dayNumber + 3) / 7), Monday to Sunday), D the mean advantage, SE = sqrt(K / (K - 1) * sum over weeks of (sum over the week's
+//   dates of (advantage - D))^2) / n (weeks as blocks; undefined when K < 2);
+//   support: n >= minDates and K >= minWeeks in each period, else tier 'few' ("too few days");
+//   spread R = largest minus smallest of the three label points; R = 0: state 'flat', no tiers;
+//   Watch: D_all >= max(zAll * SE_all, floorShare * R) and D_p >= zPeriod * SE_p in both periods; Idle: the mirror image; Ordinary: every other
+//   supported row, with split: true when the all-years test passed and a period did not;
+//   states: 'ok', 'none' (no Watch and no Idle row), 'flat', 'nohours' (no row given), 'nodata' (no date, or no row-day with points).
+// Neighbouring rows of one tier join into one window; text() makes the sentence from the result only.
+//
+// compute(input, rule?) -> result. input = { dates: [dayNumber] (the season's stored trade dates), split: { cut, labels } (dates <= cut are the
+//   first period), scale: { T, S, W } (points per label), rows: [{ key, from, to, obs }] in Singapore clock order (from / to: minutes of the
+//   Singapore day; obs: one character per date, 'T' trend, 'R' or 'S' swing, 'W' whipsaw, anything else no label) }.
+//   result = { state, rule, R, need, paired, rows: [{ key, from, to, score, days, tier, split, all, periods: [p1, p2] }], windows: [{ tier, from,
+//   to, keys }] }; score = the plain score (mean points per row-day over every date of the season with a label, per 100 days; days = those
+//   row-days); all / periods[q] = { n, weeks, D, SE } with D and SE per 100 days (SE null when K < 2); tier 'watch' | 'idle' | 'ordinary' | 'few'
+//   (null in the states flat, nohours and nodata).
+// text(result, opts) -> { sentence, caveat, context }: opts = { fixedShare (bool), season, setName, profileName }.
+// UMD: node module.exports = WatchTiers; browser window.WatchTiers. Pure: no DOM, no globals read, deterministic.
+(function (root, factory) {
+  const api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  else root.WatchTiers = api;
+}(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  'use strict';
+  const RULE = Object.freeze({ dayCover: 0.8, minRowsPerDay: 2, minDates: 40, minWeeks: 10, zAll: 2, zPeriod: 1, floorShare: 0.03 });
+  const TIERS = Object.freeze(['watch', 'ordinary', 'idle', 'few']);
+  const fin = v => typeof v === 'number' && v === v && isFinite(v);
+  const pad2 = n => (n < 10 ? '0' : '') + n;
+  const hhmm = m => { m = ((Math.round(m) % 1440) + 1440) % 1440; return pad2(Math.floor(m / 60)) + ':' + pad2(m % 60); };
+  const weekOf = d => Math.floor((d + 3) / 7);
+  // the points of one label character under the scale ('R' is the card's swing code, 'S' the plan's); NaN = no label
+  const ptsOf = (ch, sc) => ch === 'T' ? +sc.T : ch === 'R' || ch === 'S' ? +sc.S : ch === 'W' ? +sc.W : NaN;
+  // n, weeks, D and SE of the advantages a (index -> value, NaN = none) over the date indices in idx, in points per row-day
+  function blockStats(a, idx, dates) { const wk = new Map(); let n = 0, s = 0;
+    for (const w of idx) { const v = a[w]; if (!fin(v)) continue; n++; s += v; }
+    if (!n) return { n: 0, weeks: 0, D: NaN, SE: NaN };
+    const D = s / n; for (const w of idx) { const v = a[w]; if (!fin(v)) continue; const k = weekOf(dates[w]); wk.set(k, (wk.get(k) || 0) + (v - D)); }
+    const K = wk.size; let ss = 0; for (const x of wk.values()) ss += x * x;
+    return { n, weeks: K, D, SE: K >= 2 ? Math.sqrt(K / (K - 1) * ss) / n : NaN }; }
+  const out100 = g => ({ n: g.n, weeks: g.weeks, D: fin(g.D) ? 100 * g.D : null, SE: fin(g.SE) ? 100 * g.SE : null });
+
+  function compute(input, rule) { const C = Object.assign({}, RULE, rule || {}), I = input || {}, dates = Array.isArray(I.dates) ? I.dates : [], rows0 = Array.isArray(I.rows) ? I.rows : [];
+    const sc = I.scale || {}, vals = [+sc.T, +sc.S, +sc.W], R = vals.every(fin) ? Math.max.apply(null, vals) - Math.min.apply(null, vals) : NaN;
+    const cut = I.split && fin(+I.split.cut) ? +I.split.cut : Infinity, nD = dates.length, nR = rows0.length;
+    const base = { rule: C, R, need: 0, paired: 0, rows: [], windows: [] };
+    if (!nR) return Object.assign(base, { state: 'nohours' });
+    // the points of every row-day; the plain score of each row over every date with a label
+    const P = rows0.map(r => { const o = String(r.obs || ''), p = new Float64Array(nD); for (let w = 0; w < nD; w++) p[w] = ptsOf(o.charAt(w), sc); return p; });
+    const rows = rows0.map((r, q) => { let s = 0, k = 0; for (let w = 0; w < nD; w++) if (fin(P[q][w])) { s += P[q][w]; k++; }
+      return { key: r.key, from: r.from, to: r.to, score: k ? 100 * s / k : null, days: k, tier: null, split: false, all: null, periods: null }; });
+    const anyPts = rows.some(r => r.days > 0); base.rows = rows;
+    if (!nD || !anyPts) return Object.assign(base, { state: 'nodata' });
+    // paired dates and the advantages
+    const need = Math.max(C.minRowsPerDay, Math.ceil(C.dayCover * nR)), A = rows.map(() => new Float64Array(nD).fill(NaN)); let paired = 0;
+    for (let w = 0; w < nD; w++) { let k = 0, s = 0; for (let q = 0; q < nR; q++) if (fin(P[q][w])) { k++; s += P[q][w]; }
+      if (k < need || k < 2) continue; paired++;
+      for (let q = 0; q < nR; q++) if (fin(P[q][w])) A[q][w] = P[q][w] - (s - P[q][w]) / (k - 1); }
+    base.need = need; base.paired = paired;
+    const all = [], p1 = [], p2 = []; for (let w = 0; w < nD; w++) { all.push(w); (dates[w] <= cut ? p1 : p2).push(w); }
+    const flat = !(R > 0);
+    let any = false;
+    rows.forEach((r, q) => { const gA = blockStats(A[q], all, dates), g1 = blockStats(A[q], p1, dates), g2 = blockStats(A[q], p2, dates);
+      r.all = out100(gA); r.periods = [out100(g1), out100(g2)];
+      if (flat) return;
+      const ok = [g1, g2].every(g => g.n >= C.minDates && g.weeks >= C.minWeeks);
+      if (!ok) { r.tier = 'few'; return; }
+      const bar = Math.max(C.zAll * gA.SE, C.floorShare * R);
+      const upAll = gA.D >= bar, dnAll = gA.D <= -bar, upP = [g1, g2].every(g => g.D >= C.zPeriod * g.SE), dnP = [g1, g2].every(g => g.D <= -C.zPeriod * g.SE);
+      r.tier = upAll && upP ? 'watch' : dnAll && dnP ? 'idle' : 'ordinary';
+      r.split = r.tier === 'ordinary' && (upAll || dnAll);
+      if (r.tier === 'watch' || r.tier === 'idle') any = true; });
+    if (flat) return Object.assign(base, { state: 'flat' });
+    // neighbouring rows of one tier (the next row starts where this one ends) join into one window
+    const windows = []; for (const r of rows) { const last = windows[windows.length - 1];
+      if (last && last.tier === r.tier && ((last.to % 1440) + 1440) % 1440 === ((r.from % 1440) + 1440) % 1440) { last.to = r.to; last.keys.push(r.key); }
+      else windows.push({ tier: r.tier, from: r.from, to: r.to, keys: [r.key] }); }
+    base.windows = windows;
+    return Object.assign(base, { state: any ? 'ok' : 'none' }); }
+
+  // ---------- the sentence, made from the result only
+  const CAVEAT = 'A pattern of the past ten years at your settings. The settings were chosen with these years in view, so only new days can test it. It gives no direction and no entry.';
+  const SHARE_LINE = 'The share is a selection made looking back over all ten years.';
+  const span = w => hhmm(w.from) + ' to ' + hhmm(w.to);
+  const list = a => a.length <= 1 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1];
+  function text(result, opts) { const o = opts || {}, r = result || {}, W = r.windows || [], of = t => list(W.filter(w => w.tier === t).map(span));
+    let sentence;
+    if (r.state === 'nohours') sentence = 'No whole row lies inside your hours, so there are no tiers. Choose wider hours.';
+    else if (r.state === 'nodata') sentence = 'There are no stored days for these rows in this season, so there are no tiers.';
+    else if (r.state === 'flat') sentence = 'Every label scores the same with these points, so no row can stand out.';
+    else { const out = [], few = of('few'), ord = W.some(w => w.tier === 'ordinary');
+      if (r.state === 'none') out.push('No row stands out at these settings.');
+      else { if (of('watch')) out.push('Watch ' + of('watch') + '.'); if (of('idle')) out.push('Idle ' + of('idle') + '.'); }
+      if (few) out.push('Too few days to tell at ' + few + '.');
+      if (r.state === 'ok' && ord) out.push('The rest of your hours is ordinary.');
+      sentence = out.join(' '); }
+    const context = [o.season ? o.season + ' days' : '', o.setName || '', o.profileName ? 'profile: ' + o.profileName : ''].filter(Boolean).join(' · ');
+    return { sentence, caveat: CAVEAT + (o.fixedShare ? ' ' + SHARE_LINE : ''), context }; }
+
+  return { RULE, TIERS, compute, text, hhmm };
+}));
+</script>
 <script data-module="points_card.js" data-worker="skip">// points_card.js: the v4 "Points by time slot" card (round 5, fable-high; round 6, second label-set swap: dev/v4_loop/round6/PLAN.md §6, §7,
 // §10.5 and §11.5, which wins).
 // Question it answers, in the user's words: "Trend - 3 pts, Swing - 1 pts, Whipsaw - -1 pts ... make sure i can customized the likelihood scale
@@ -6481,6 +6573,16 @@ else root.EyeCalib = EyeCalib;
 // statistics layer and every comparison with a copy are gone (Rule A); cfg.stats / setOptions({ stats }) are accepted and ignored. The quiz and
 // "Show me one" draw the chosen chart themselves from the page's 1-minute bars (cfg.getBars), so the page's candle card is not needed.
 // PointsCard.cssText holds the card-scoped CSS (classes prefixed pt-). No DOM access at load.
+// Round 14 (dev/v4_loop/round14/PLAN_R14.md, builder C; notes in dev/v4_loop/round14/buildC/NOTES.md): (1) the first control is "Scoring
+// timeframe: 15 | 30 | 60 minutes", always all three, with "Scored on" beside it (SCORED_ON: the charts of that length, the first taken when the
+// timeframe is chosen); a first visit opens on 15 minutes (the stored set 1_15). (2) The hours are a setting (hours = { from, to } in minutes of the
+// Singapore day, on a 30-minute grid; default 12:00 to 01:00): everything that says or uses "your hours" follows it. (3) "When to watch, at your
+// settings": WatchTiers (src/v4/watch_tiers.js; the fifth argument, else the global, else ./watch_tiers.js in node; missing: the block says so)
+// on the labels the card shows, the bars of the card's chart in the tier's colour. (4) Profiles replace the saved sets: the card keeps one key
+// per market (PROFILES_KEY: { v: 1, work, active, dirty, list }) written as one value on every change, built-in profiles, a once-only migration
+// from the keys of before (read, never written again), and a plain line when the browser keeps nothing. (5) The settings messages of version 2
+// (section 7): view, hours, share, profiles, ack and result; requests that come before the stored results are kept until they are in. (6) The
+// first screen: profile row, the timeframe row, "When to watch"; the rest in folds, and three parts of the page around the card in folds too.
 (function (root) {
 'use strict';
 // Round 11 (dev/v4_loop/round11/PLAN_R11_NQ.md 2, 3 P2, ruling 9): the instrument in force, read once at load (window.Instrument, else
@@ -6649,13 +6751,39 @@ const CSS = [
 '.pt-body .how-read b{color:var(--ink);font-weight:600}',
 '.pt-chart.pt-exc{min-height:260px;height:260px;margin:0 0 6px}',
 '@media (max-width:600px){.pt-chartctl{gap:8px 14px;padding:8px 10px}}',
+// round 14 (PLAN_R14 5, 6): the profile row, the hours, "When to watch, at your settings", the folds of the card and the folds around it
+'.pt-prof{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin:0 0 6px;padding:8px 12px;border:1px solid var(--line);border-radius:3px;background:var(--surface);font-size:.84rem;color:var(--ink-2)}',
+'.pt-prof label{display:inline-flex;gap:6px;align-items:center;font-weight:500}',
+'.pt-prof select,.pt-prof input,.pt-hours select{font:inherit;font-size:.86rem;padding:3px 6px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:3px;max-width:100%}',
+'.pt-prof input{flex:0 1 14em;min-width:0}',
+'.pt-prof button{font-size:.82rem;padding:4px 10px}',
+'.pt-profmark{font-size:.72rem;font-weight:600;color:var(--whip);border:1px solid var(--whip);border-radius:3px;padding:0 6px}',
+'.pt-profmsg,.pt-persist{flex:1 1 100%;margin:0;font-size:.82rem;color:var(--ink);min-height:0}',
+'.pt-persist{color:var(--ink-2)}',
+'.pt-hours{display:flex;flex-direction:column;gap:3px;font-size:.78rem;color:var(--ink-2)}',
+'.pt-hours>span{font-weight:500}.pt-hours div{display:inline-flex;gap:6px;align-items:center}',
+'.pt-watch{margin:8px 0 10px;padding:10px 12px;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:3px;background:var(--surface)}',
+'.pt-watch h3{margin:0 0 4px;font-size:1rem}',
+'.pt-wsent{margin:0 0 4px;font-size:.95rem;color:var(--ink);font-weight:600;max-width:96ch}',
+'.pt-wctx,.pt-wcav{margin:0 0 4px;font-size:.82rem;color:var(--ink-2);max-width:96ch}',
+'.pt-wrow{margin:4px 0 0;font-family:var(--font-data);font-size:.78rem;color:var(--ink-2);max-width:96ch;overflow-wrap:anywhere}',
+'.pt-legend .pt-k-watch{background:var(--trend)}.pt-legend .pt-k-ord{background:var(--accent);opacity:.55}.pt-legend .pt-k-idle{background:var(--whip)}.pt-legend .pt-k-few{background:var(--line)}',
+'.pt-cfold{margin:8px 0 0;border-top:1px solid var(--line-soft);padding-top:6px}',
+'.pt-cfold>summary{cursor:pointer;font-weight:600;color:var(--ink);font-size:.95rem;padding:2px 0}',
+'.pt-pagefold{margin:8px 0}',
+'.pt-pagefold>summary{cursor:pointer;font-weight:600;color:var(--ink-2);font-size:.92rem;padding:4px 0}',
+'@media (max-width:600px){.pt-prof{padding:6px 8px}.pt-prof input{flex-basis:100%}}',
 '@media (max-width:600px){.pt-table th,.pt-table td{padding:5px 6px}.pt-tip{white-space:normal;max-width:260px}.pt-controls,.pt-lik{gap:10px 14px;padding:8px 10px}.pt-stack{width:56px}.pt-banner{padding:8px 10px}}',
 '@media (max-width:480px){.pt-legend{font-size:.74rem}.pt-w input{width:4em}.pt-end{display:none}.pt-stack{width:44px;margin-right:5px}}'
 ].join('\n');
 
-function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted for interface symmetry with the other cards; nothing in it is needed
+function PointsCard(Core, PointsMath, TSWLabels, EyeCalib, WatchTiers) { // Core is accepted for interface symmetry with the other cards; nothing in it is needed
   const PM = PointsMath; if (!PM || typeof PM.slotTable !== 'function' || typeof PM.tally !== 'function') throw new Error('PointsCard needs PointsMath');
   const TX = TSWLabels || (root && root.TSWLabels) || null;
+  // round 14 (PLAN_R14 4, 9): the when-to-watch rule, found as the look card finds its modules: the argument, else the browser global, else
+  // ./watch_tiers.js in node; null when none loads (the block then says so in its place)
+  const WT = (() => { const ok = x => x && typeof x.compute === 'function' && typeof x.text === 'function' && x.RULE ? x : null;
+    try { return ok(WatchTiers) || ok(root && root.WatchTiers) || (typeof module === 'object' && module.exports && typeof require === 'function' ? ok(require('./watch_tiers.js')) : null); } catch (e) { return null; } })();
   // the section-11 module (likelihood, histogram); an older module without them is treated as missing
   const TSW = TX && ['labels', 'shares', 'example', 'defaults', 'histogram', 'likelihood', 'decode'].every(k => typeof TX[k] === 'function') && Array.isArray(TX.REASONS) ? TX : null;
   // round 8 (PLAN_EYE 5): "Teach it your eye" needs the fourth argument (only the argument: a global of that name is not picked up, so a page or test
@@ -6680,8 +6808,17 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
   const CHART_WORD = { 1: '1-minute bars', 5: '5-minute candles', 15: '15-minute candles' }, NUM_WORD = { 1: 'one', 5: 'five', 15: 'fifteen' };
   const ROW_WORD = { 15: 'quarter hour', 30: 'half hour', 60: 'hour' };
   const setKey = (ch, ln) => ch + '_' + ln;
+  // round 14 (PLAN_R14 2): the scoring timeframe in force and the charts it is scored on, the first taken when the timeframe is chosen; a set's name
+  // wherever the card names one ("15-minute rows, scored on 1-minute bars")
+  const SCORED_ON = { 15: [1], 30: [5, 1], 60: [5, 15] }, VIEW_DEF = { len: 15, chart: 1, season: 'auto' };
+  const setName = (ch, ln) => ln + '-minute rows, scored on ' + (+ch === 1 ? '1-minute bars' : ch + '-minute candles');
   const MIN_DAYS = (PM.VERDICT_DEFAULTS && PM.VERDICT_DEFAULTS.minDays) || 40;
-  const WIN = { from: 720, to: 60 }, WIN_TEXT = '12:00–01:00';   // the user's Singapore hours (awake 12:00–01:00 SGT)
+  const WIN = { from: 720, to: 60 }, WIN_TEXT = '12:00–01:00';   // the user's Singapore hours (awake 12:00–01:00 SGT); round 14: the default of the setting
+  // round 14 (PLAN_R14 3): the hours as a setting, on a 30-minute grid of the Singapore day (to <= from passes midnight; to = from is the whole day,
+  // as PointsMath.sgtWindowSlots reads it); a value that is not a number of minutes takes the default
+  const gridMin = v => { const n = typeof v === 'string' && /^\d\d:\d\d$/.test(v) ? 60*(+v.slice(0, 2)) + +v.slice(3) : +v; return fin(n) ? ((Math.round(n/30)*30) % 1440 + 1440) % 1440 : NaN; };
+  const cleanHours = h => { const a = gridMin(h && h.from), b = gridMin(h && h.to); return fin(a) && fin(b) ? { from: a, to: b } : { from: WIN.from, to: WIN.to }; };
+  const hoursText = h => PM.hhmm(h.from) + '–' + PM.hhmm(h.to);
   const CLOSE = 0.35;   // "the others sit close": their span of points is at most this share of the typical (median) slot
   const SEASONS = ['US winter', 'US summer'], SEP = '\u0001';
   const GROUPS = [['month', 'Month of the year (Jan–Dec)'], ['ym', 'Month by month, through the years'], ['weekday', 'Day of the week'], ['year', 'Year'], ['season', 'US season'], ['period', 'Period']];
@@ -6716,6 +6853,31 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
   const SAVED_KEY = SP + 'points.saved', SAVED_V = 1, SAVED_MAX = 12, SAVED_NAME_MAX = 40;
   const SAVED_BUILTIN = NQ ? null : { name: 'Initial preset', th: { cut: 15, broken: 'whipsaw', w: { fake: 0, quiet: 25, overlap: 50, small: 25 }, dead: 0.4, trendNet: 0.6, ma1: 1, ma5: 0, ma5Line: 5 } };
   const BUILTIN_LIST = SAVED_BUILTIN ? [SAVED_BUILTIN] : [], isBuiltinKey = k => !!SAVED_BUILTIN && k === savedKeyOf(SAVED_BUILTIN.name);
+  // Round 14 (PLAN_R14 5): profiles, owned by the card, one list per market. A snapshot is everything a reload gives back: { view: { len, chart,
+  // season: 'auto' | 'US winter' | 'US summer' }, hours, share: 'scale' | '60' | '70', scale: { T, S, W }, sets: { '<chart>_<len>': thresholds
+  // with refDays } } (a set not named is at its stored defaults). PROFILES_KEY holds { v: 1, work, active, dirty, list: [{ id, name, updatedAt,
+  // snap }] } as one value; work is what is on screen, written on every change. At most PROF_MAX profiles of the viewer's own (the migration may
+  // bring more: it never drops one; then nothing new is saved until some are deleted), names up to SAVED_NAME_MAX characters, unique without regard
+  // to case. The built-in profiles are never stored, never deleted, and their names are refused for the viewer's own: "Study defaults" (15-minute
+  // rows, every set at its stored defaults, 3 / 1 / -1, 12:00 to 01:00) and, gold only, "Initial preset" (SAVED_BUILTIN's thresholds on 1_15 and
+  // 1_30, the rows it was fitted on; 15-minute rows).
+  const PROFILES_KEY = SP + 'profiles', PROF_V = 1, PROF_MAX = 20, SET_KEYS = ['1_15', '1_30', '5_30', '5_60', '15_60'];
+  // (the built-ins' ids are those the shell's hub knows: 'study' and 'initial'; the viewer's own are 'p1', 'p2', ...)
+  const BUILTIN_PROFILES = [{ id: 'study', name: 'Study defaults', builtin: true, snap: { view: Object.assign({}, VIEW_DEF), hours: { from: WIN.from, to: WIN.to }, share: 'scale', scale: { T: 3, S: 1, W: -1 }, sets: {} } }]
+    .concat(SAVED_BUILTIN ? [{ id: 'initial', name: SAVED_BUILTIN.name, builtin: true, snap: { view: Object.assign({}, VIEW_DEF), hours: { from: WIN.from, to: WIN.to }, share: 'scale', scale: { T: 3, S: 1, W: -1 },
+      sets: { '1_15': Object.assign({}, SAVED_BUILTIN.th, { w: Object.assign({}, SAVED_BUILTIN.th.w), len: 15 }), '1_30': Object.assign({}, SAVED_BUILTIN.th, { w: Object.assign({}, SAVED_BUILTIN.th.w), len: 30 }) } } }] : []);
+  const builtinOf = id => BUILTIN_PROFILES.find(b => b.id === id) || null;
+  // a snapshot as read (the store, a message, a file): each part checked on its own, a part that cannot be read takes its default; a 1-minute set
+  // is cleaned at once (clamped as typed values are), a candle set is kept as given and cleaned against its own stored defaults when it arrives
+  const shareOf = v => v === null || v === 'scale' ? 'scale' : +v === 0.6 || String(v) === '60' ? '60' : +v === 0.7 || String(v) === '70' ? '70' : null;
+  function cleanView(v) { const o = v && typeof v === 'object' ? v : {}, len = ALL_LENS.includes(+o.len) ? +o.len : VIEW_DEF.len;
+    return { len, chart: SCORED_ON[len].includes(+o.chart) ? +o.chart : SCORED_ON[len][0], season: o.season === 'auto' || SEASONS.includes(o.season) ? o.season : 'auto' }; }
+  function cleanSnap(s) { const o = s && typeof s === 'object' ? s : {}, sc = o.scale && typeof o.scale === 'object' ? o.scale : {}, w = cleanTSWWeights({ T: sc.T, R: sc.S, W: sc.W }, true), sets = {};
+    if (o.sets && typeof o.sets === 'object' && !Array.isArray(o.sets)) for (const k of SET_KEYS) { const p = o.sets[k]; if (!p || typeof p !== 'object' || Array.isArray(p)) continue;
+      const q = Object.assign({}, p); delete q.share; sets[k] = k.startsWith('1_') ? cleanThresholds(q, +k.split('_')[1], true) : JSON.parse(JSON.stringify(q)); }
+    return { view: cleanView(o.view), hours: cleanHours(o.hours), share: shareOf(o.share) || 'scale', scale: { T: w.T, S: w.R, W: w.W }, sets }; }
+  // a short name of a set, added to a name that is taken already (migration, import)
+  const setShort = k => { const [ch, ln] = k === '1' ? ['1', ''] : k.split('_'); return (ln ? ln + ' min, ' : '') + (ch === '1' ? '1-min bars' : ch + '-min candles'); };
   // the two-way settings: broken sits in the likelihood block (open by default, PLAN 10.5, 11.5), ma5Line under "More settings"
   const TH_SW = [
     { k: 'broken', vals: ['whipsaw', 'chop'], words: ['whipsaw', 'judged like the others'], name: 'A one-way slot that breaks its average is' },
@@ -6870,8 +7032,9 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
   // The facts behind one slot length's verdict. T = PM.slotTable on the season's days, ts = the tally it was scored from. All scores are PointsMath's.
   // top / bot: the (up to) three slots with most / fewest points among the user's hours with at least MIN_DAYS slot-days; rest: the others of the
   // hours but bot ("elsewhere" in the driver clause); mid: the hours but top and bot ("the others" in the verdict).
-  function facts(PL, T, ts, season, w) {
-    const win = PM.sgtWindowSlots(PL, season, WIN.from, WIN.to), pos = new Map(win.map((i, p) => [i, p])), byPos = (a, b) => pos.get(a) - pos.get(b), obs = i => T.rows[i].pooled.obs;
+  // (round 14: hours = the card's hours setting { from, to }; left out = 12:00 to 01:00 as before)
+  function facts(PL, T, ts, season, w, hours) { const H = hours && fin(hours.from) && fin(hours.to) ? hours : WIN;
+    const win = PM.sgtWindowSlots(PL, season, H.from, H.to), pos = new Map(win.map((i, p) => [i, p])), byPos = (a, b) => pos.get(a) - pos.get(b), obs = i => T.rows[i].pooled.obs;
     const ok = win.filter(i => { const s = T.rows[i].pooled; return fin(s.obs) && s.n >= MIN_DAYS; });
     const pool = idx => { let J = new Float64Array(16); for (const k of ts.keys) J = PM.addJ(J, ts.total(k, idx)); return PM.score(J, w); };
     const k = Math.min(3, Math.floor(ok.length/2)), desc = ok.slice().sort((a, b) => obs(b) - obs(a) || byPos(a, b));
@@ -6881,7 +7044,7 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
     const ext = idx => idx.length ? [Math.min.apply(null, idx.map(obs)), Math.max.apply(null, idx.map(obs))] : [NaN, NaN];
     const item = i => { const s = PL.slots[i]; return [PM.hhmm(PM.sgtMin(s.min, season)), PM.hhmm(PM.sgtMin(s.min + PL.len, season)), pos.get(i)]; };
     const all = ext(ok);
-    return { len: PL.len, season, weights: w, win, ok, k, top, bot, rest, mid, med, medN, all, topR: ext(top), botR: ext(bot), restR: ext(rest), midR: ext(mid), most: spanText(top.map(item)), fewest: spanText(bot.map(item)),
+    return { len: PL.len, season, weights: w, hours: { from: H.from, to: H.to }, win, ok, k, top, bot, rest, mid, med, medN, all, topR: ext(top), botR: ext(bot), restR: ext(rest), midR: ext(mid), most: spanText(top.map(item)), fewest: spanText(bot.map(item)),
       topS: k ? pool(top) : null, botS: k ? pool(bot) : null, restS: rest.length ? pool(rest) : null, winS: pool(win), better: win.filter(i => T.rows[i].verdict === 'better').length,
       flat: !ok.length || Math.round(100*all[0]) === Math.round(100*all[1]) }; }
   // What costs the low slots most. Their gap to the rest of the hours is the sum over the labels of (weight − points of an average slot-day of
@@ -6901,7 +7064,7 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
   // others; (4) what drives the low ones. D = driverText(F, N, rs).
   // round 10: on a candle chart (F.chart 5 or 15) the head names the rows and the chart ("30-minute rows on the 5-minute chart, US winter days: ")
   function verdictText(F, N, D) { const head = (F.chart > 1 ? F.len + '-minute rows on the ' + F.chart + '-minute chart, ' : F.len + '-minute slots, ') + F.season + ' days: ';
-    if (!F.k) { const lead = 'too few whole slot-days in your ' + WIN_TEXT + ' Singapore hours to rank them.'; return { head, lead, tail: '', text: head + lead }; }
+    if (!F.k) { const lead = 'too few whole slot-days in your ' + hoursText(F.hours || WIN) + ' Singapore hours to rank them.'; return { head, lead, tail: '', text: head + lead }; }
     if (F.flat) { const lead = 'every slot in your hours scores the same (' + rangeText(F.all[0], F.all[1]) + ' per 100 days) with these weights, so there is no ranking.'; return { head, lead, tail: '', text: head + lead }; }
     const lead = 'most points in your hours at ' + F.most + ' SGT (' + rangeText(F.topR[0], F.topR[1]) + ' per 100 days), fewest at ' + F.fewest + ' SGT (' + rangeText(F.botR[0], F.botR[1]) + ').';
     const gap = ' They are about ' + mns(Math.round(100*(F.topS.obs - F.botS.obs))) + ' points per 100 days apart';
@@ -6972,24 +7135,71 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
     // round 10 (P3): the chart rows above the verdict, a row of buttons each (Rule C): Chart, Row length, Usual size from the last, Whipsaw share;
     // under them the line of each row, and the line of a candle set not fitted yet
     // round 10 (P3): the chart rows, each line under the row it explains, all in one box before the verdict
+    const dAttr = (e, k, v) => { e.setAttribute(k, v == null ? '' : String(v)); return e; };
+    // round 14 (PLAN_R14 5, 6): (1) the profile row: Profile select, "unsaved changes", Save, a name and Save as, Delete (asked twice), the line of
+    // what the last press did, and the one line said when the browser keeps nothing
+    el.prof = dAttr(el.body.appendChild(mk('div', 'pt-prof')), 'data-prof'); el.prof.setAttribute('role', 'group'); el.prof.setAttribute('aria-label', 'Profile');
+    { const lab = el.prof.appendChild(mk('label', null)); lab.appendChild(mk('span', null, 'Profile')); el.profSel = dAttr(lab.appendChild(mk('select')), 'data-prof-select'); }
+    el.profDirty = dAttr(el.prof.appendChild(mk('span', 'pt-profmark', 'unsaved changes')), 'data-prof-dirty'); el.profDirty.hidden = true;
+    el.profSave = dAttr(btn(el.prof, null, 'Save'), 'data-prof-save');
+    el.profName = dAttr(el.prof.appendChild(mk('input')), 'data-prof-name'); el.profName.type = 'text'; el.profName.setAttribute('maxlength', String(SAVED_NAME_MAX));
+    el.profName.setAttribute('aria-label', 'Name for a new profile'); el.profName.setAttribute('placeholder', 'New profile name'); el.profName.setAttribute('autocomplete', 'off'); el.profName.id = 'pt-prof-name-' + id;
+    el.profSaveAs = dAttr(btn(el.prof, null, 'Save as'), 'data-prof-saveas');
+    el.profDelete = dAttr(btn(el.prof, null, 'Delete'), 'data-prof-delete');
+    el.profMsg = dAttr(el.prof.appendChild(mk('p', 'pt-profmsg', '')), 'data-prof-msg'); el.profMsg.setAttribute('aria-live', 'polite');
+    el.persist = dAttr(el.prof.appendChild(mk('p', 'pt-persist', 'Browser storage is not available: settings are kept for this visit only')), 'data-persist'); el.persist.hidden = true;
+    // (2) the timeframe row (PLAN_R14 2, 3): Scoring timeframe (all three always; one no stored set has is disabled with the reason), Scored on
+    // (buttons, or plain text with one choice), the season, your hours; the line of the chart in force and the reason of a disabled timeframe
     el.chartCtl = el.body.appendChild(mk('div', 'pt-chartctl'));
-    { const sg = seg(el.chartCtl, 'Chart'); el.chartBtn = {}; for (const ch of CHARTS) el.chartBtn[ch] = segBtn(sg, CHART_WORD[ch]); }
-    { const sg = seg(el.chartCtl, 'Row length'); el.lenBtn = {}; for (const ln of ALL_LENS) el.lenBtn[ln] = segBtn(sg, ln + ' minutes'); }
+    { const sg = seg(el.chartCtl, 'Scoring timeframe'); dAttr(sg.d, 'data-timeframe'); el.lenBtn = {}; for (const ln of ALL_LENS) el.lenBtn[ln] = segBtn(sg, ln + ' minutes'); }
+    { const sg = seg(el.chartCtl, 'Scored on'); dAttr(sg.s, 'data-scored-on'); el.scoredOn = sg.s; el.chartBtn = {}; for (const ch of [5, 1, 15]) el.chartBtn[ch] = segBtn(sg, CHART_WORD[ch]);
+      el.scoredOnText = dAttr(sg.d.appendChild(mk('span', 'pt-num', '')), 'data-scored-on-text'); }
+    const segSea = seg(el.chartCtl, 'Days and clock', true); el.seaBtn = {}; for (const s of SEASONS) el.seaBtn[s] = segBtn(segSea, s); el.seaNote = segSea.sm;
+    { const box = dAttr(el.chartCtl.appendChild(mk('div', 'pt-hours')), 'data-hours'); box.appendChild(mk('span', null, 'Your hours (Singapore)')); const d = box.appendChild(mk('div'));
+      const hsel = (t) => { const lab = d.appendChild(mk('label', null)); lab.appendChild(mk('span', null, t + ' ')); const s = lab.appendChild(mk('select'));
+        for (let m = 0; m < 1440; m += 30) { const o = s.appendChild(mk('option', null, PM.hhmm(m))); o.value = String(m); } s.setAttribute('aria-label', 'Your hours ' + t.toLowerCase()); return s; };
+      el.hFrom = dAttr(hsel('From'), 'data-hours-from'); el.hTo = dAttr(hsel('to'), 'data-hours-to'); }
     el.chartNote = el.chartCtl.appendChild(mk('p', 'pt-chartnote', '')); el.chartNote.setAttribute('data-chart-note', '');
-    { const sg = seg(el.chartCtl, 'Usual size from the last'); el.refBtn = {}; for (const rd of REF_DAYS) el.refBtn[rd] = segBtn(sg, rd + ' days'); }
-    el.refNote = el.chartCtl.appendChild(mk('p', 'pt-chartnote', 'A slot is ‘small’ or ‘dead’ against the usual slot of that many earlier trading days.')); el.refNote.setAttribute('data-ref-note', '');
-    { const sg = seg(el.chartCtl, 'Whipsaw share'); el.shareBtn = { scale: segBtn(sg, 'By your scale'), '60': segBtn(sg, 'Fixed: 60 in 100'), '70': segBtn(sg, 'Fixed: 70 in 100') }; }
-    el.shareNote = el.chartCtl.appendChild(mk('p', 'pt-chartnote', '')); el.shareNote.setAttribute('data-share-note', ''); el.shareNote.hidden = true;
-    el.fitNote = el.chartCtl.appendChild(mk('p', 'pt-chartnote', '')); el.fitNote.setAttribute('data-fit-note', ''); el.fitNote.hidden = true;
-    el.banner = el.body.appendChild(mk('div', 'pt-banner')); el.banner.setAttribute('role', 'status');
+    el.lenNote = dAttr(el.chartCtl.appendChild(mk('p', 'pt-chartnote', '')), 'data-len-note'); el.lenNote.hidden = true;
     // Rule B (P0): a "How to read this" block, always shown, under a chart's title (filled by render from the numbers the chart draws)
     const howRead = (parent, before, id) => { const b = mk('div', 'how-read'); b.setAttribute('data-how-read', id); if (before) parent.insertBefore(b, before); else parent.appendChild(b); return b; };
-    // the likelihood scale, open by default directly under the verdict (PLAN 11.5): what it is, the histogram with the cut, the cut, the four
-    // weights with presets in a fold, the broken-trend switch with the share it moves, "show me one", reset
-    el.lik = el.body.appendChild(mk('div', 'pt-lik')); el.lik.appendChild(mk('h3', null, 'Swing or whipsaw: the likelihood scale'));
+    // (3) "When to watch, at your settings" (PLAN_R14 4): the sentence, its season, set and profile, the fixed line, the bar chart in the tiers'
+    // colours with the selected row's line and figures; the caption of the days scored
+    el.watch = dAttr(el.body.appendChild(mk('div', 'pt-watch')), 'data-watch'); el.watch.appendChild(mk('h3', null, 'When to watch, at your settings'));
+    el.wSent = dAttr(el.watch.appendChild(mk('p', 'pt-wsent', '')), 'data-watch-sentence'); el.wSent.setAttribute('aria-live', 'polite');
+    el.wCtx = dAttr(el.watch.appendChild(mk('p', 'pt-wctx', '')), 'data-watch-context');
+    el.wCav = dAttr(el.watch.appendChild(mk('p', 'pt-wcav', '')), 'data-watch-caveat');
+    el.intro = el.watch.appendChild(mk('p', 'pt-caption', ''));
+    el.hr1 = howRead(el.watch, null, 'c1');
+    el.legend = el.watch.appendChild(mk('div', 'pt-legend'));
+    el.wrap = el.watch.appendChild(mk('div', 'pt-chart')); el.c1 = el.wrap.appendChild(mk('canvas'));
+    el.tip = el.wrap.appendChild(mk('div', 'pt-tip')); el.tip.hidden = true;
+    el.readout = el.watch.appendChild(mk('p', 'pt-readout', '')); el.readout.id = 'pt-readout-' + id; el.readout.setAttribute('aria-live', 'polite');
+    el.c1.setAttribute('tabindex', '0'); el.c1.setAttribute('role', 'img'); el.c1.setAttribute('aria-describedby', el.readout.id);
+    el.wRow = dAttr(el.watch.appendChild(mk('p', 'pt-wrow', '')), 'data-watch-row'); el.wRow.setAttribute('aria-live', 'polite');
+    // the folds of the card, closed at first, then as the viewer left them (FOLDS_KEY); their parts are made below in the order of before
+    const cfold = (k, title) => { const d = dAttr(el.body.appendChild(mk('details', 'pt-cfold')), 'data-fold', k); d.appendChild(mk('summary', null, title)); return d; };
+    el.fLabel = cfold('label', 'Label settings'); el.fTable = cfold('table', 'Table'); el.fOver = cfold('over', 'Over time'); el.fHow = cfold('how', 'How this is decided');
+    // "Label settings": the lookback and the whipsaw share (round 10's rows), the weights, the likelihood block, what each label means
+    el.labCtl = el.fLabel.appendChild(mk('div', 'pt-chartctl'));
+    { const sg = seg(el.labCtl, 'Lookback: usual size from the last'); el.refBtn = {}; for (const rd of REF_DAYS) el.refBtn[rd] = segBtn(sg, rd + ' days'); }
+    el.refNote = el.labCtl.appendChild(mk('p', 'pt-chartnote', 'A slot is ‘small’ or ‘dead’ against the usual slot of that many earlier trading days.')); el.refNote.setAttribute('data-ref-note', '');
+    { const sg = seg(el.labCtl, 'Whipsaw share'); el.shareBtn = { scale: segBtn(sg, 'By your scale'), '60': segBtn(sg, 'Fixed: 60 in 100'), '70': segBtn(sg, 'Fixed: 70 in 100') }; }
+    el.shareNote = el.labCtl.appendChild(mk('p', 'pt-chartnote', '')); el.shareNote.setAttribute('data-share-note', ''); el.shareNote.hidden = true;
+    el.fitNote = el.labCtl.appendChild(mk('p', 'pt-chartnote', '')); el.fitNote.setAttribute('data-fit-note', ''); el.fitNote.hidden = true;
+    // the points per label (moved from under the verdict; the season moved up to the timeframe row)
+    el.controls = el.fLabel.appendChild(mk('div', 'pt-controls'));
+    el.weights = el.controls.appendChild(mk('fieldset', 'pt-weights')); el.weights.appendChild(mk('legend', null, 'Points per slot-day'));
+    el.win = {}; el.wlab = {}; el.wbox = {}; for (const k of LABEL_KEYS) { const lab = el.weights.appendChild(mk('label', 'pt-w pt-w-' + k)); el.wbox[k] = lab; el.wlab[k] = lab.appendChild(mk('b', null, ''));
+      const inp = lab.appendChild(mk('input')); inp.type = 'number'; inp.setAttribute('step', '0.5'); inp.setAttribute('min', '-50'); inp.setAttribute('max', '50'); inp.setAttribute('inputmode', 'decimal'); inp.id = 'pt-w-' + k + '-' + id; el.win[k] = inp; }
+    el.reset = btn(el.weights, 'pt-reset', 'Reset to 3 / 1 / −1');
+    // "Table": the verdict of before (most and fewest points, how to read the score) above the table
+    el.banner = el.fTable.appendChild(mk('div', 'pt-banner')); el.banner.setAttribute('role', 'status');
+    // the likelihood scale (PLAN 11.5): what it is, the histogram with the cut, the cut, the four weights with presets in a fold, the broken-trend
+    // switch with the share it moves, "show me one", reset
+    el.lik = el.fLabel.appendChild(mk('div', 'pt-lik')); el.lik.appendChild(mk('h3', null, 'Swing or whipsaw: the likelihood scale'));
     // round 8 (PLAN_EYE 5.1): "Teach it your eye", above the scale's controls: Start, then one real slot at a time with the answer buttons, the count,
     // the fit's result, the settings it would change, the slots where the user and the settings in force differ, export and "Start over"
-    const dAttr = (e, k, v) => { e.setAttribute(k, v == null ? '' : String(v)); return e; };
     el.eye = dAttr(el.lik.appendChild(mk('div', 'pt-eye')), 'data-eye'); el.eye.hidden = true; el.eye.appendChild(mk('h4', null, 'Teach it your eye'));
     el.eyeIntro = dAttr(el.eye.appendChild(mk('p', null, 'Look at one marked candle on a 15-minute chart from your ten years at a time and say what the market was in then. From 10 answers the page works out the settings that agree with you most often; you can put them into the settings below whenever you trust them.')), 'data-eye-intro');
     el.eyeNote = dAttr(el.eye.appendChild(mk('p', null, 'The rule itself still judges each 15 minutes by what the 1-minute bars did inside it, which this chart does not show. The agreement count below tells you how well it can follow your eye.')), 'data-eye-note');   // PLAN_EYE 11 C3, always shown
@@ -7043,40 +7253,17 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
     for (const s of TH_SW) if (s.more) swSeg(el.thbox, s);
     el.thShares = el.thbox.appendChild(mk('p', 'pt-thshares', '')); el.thShares.setAttribute('aria-live', 'polite');
     el.thReset = btn(el.thbox, 'pt-reset', 'Reset these to the defaults');
-    // PLAN_EYE 13 E2: "Saved settings", after "More settings", shown with the likelihood block: the name and Save, the list (the built-in set first),
-    // the empty line and what the last press did
-    el.saved = dAttr(el.lik.appendChild(mk('div', 'pt-saved')), 'data-saved'); el.saved.appendChild(mk('h4', null, 'Saved settings'));
-    el.savedIntro = dAttr(el.saved.appendChild(mk('p', null, 'Keep the settings above under a name and bring them back with one press. Kept in this browser.')), 'data-saved-intro');
-    el.savedRow = el.saved.appendChild(mk('div', 'pt-savedrow'));
-    el.savedName = dAttr(el.savedRow.appendChild(mk('input')), 'data-saved-name'); el.savedName.type = 'text'; el.savedName.setAttribute('maxlength', String(SAVED_NAME_MAX));
-    el.savedName.setAttribute('aria-label', 'Name for these settings'); el.savedName.setAttribute('placeholder', 'Name, e.g. My eye'); el.savedName.setAttribute('autocomplete', 'off'); el.savedName.id = 'pt-saved-name-' + id;
-    el.savedSave = dAttr(btn(el.savedRow, null, 'Save these settings'), 'data-saved-save');
-    el.savedList = dAttr(el.saved.appendChild(mk('ul', null)), 'data-saved-list');
-    el.savedEmpty = dAttr(el.saved.appendChild(mk('p', null, 'Nothing of your own saved yet.')), 'data-saved-empty');
-    el.savedMsg = dAttr(el.saved.appendChild(mk('p', 'pt-savedmsg', '')), 'data-saved-msg'); el.savedMsg.setAttribute('aria-live', 'polite');
-    el.intro = el.body.appendChild(mk('p', 'pt-caption', ''));
-    el.controls = el.body.appendChild(mk('div', 'pt-controls'));
-    el.weights = el.controls.appendChild(mk('fieldset', 'pt-weights')); el.weights.appendChild(mk('legend', null, 'Points per slot-day'));
-    el.win = {}; el.wlab = {}; el.wbox = {}; for (const k of LABEL_KEYS) { const lab = el.weights.appendChild(mk('label', 'pt-w pt-w-' + k)); el.wbox[k] = lab; el.wlab[k] = lab.appendChild(mk('b', null, ''));
-      const inp = lab.appendChild(mk('input')); inp.type = 'number'; inp.setAttribute('step', '0.5'); inp.setAttribute('min', '-50'); inp.setAttribute('max', '50'); inp.setAttribute('inputmode', 'decimal'); inp.id = 'pt-w-' + k + '-' + id; el.win[k] = inp; }
-    el.reset = btn(el.weights, 'pt-reset', 'Reset to 3 / 1 / −1');
-    const segSea = seg(el.controls, 'Days and clock', true); el.seaBtn = {}; for (const s of SEASONS) el.seaBtn[s] = segBtn(segSea, s); el.seaNote = segSea.sm;
-    el.setNote = el.body.appendChild(mk('p', 'pt-setnote', ''));
-    el.defs = el.body.appendChild(mk('div', 'pt-defs'));
-    el.exOut = el.body.appendChild(mk('p', 'pt-exout', '')); el.exOut.setAttribute('aria-live', 'polite');
-    { const x = exChart(el.body); el.exWrap = x.w; el.exCv = x.cv; }
-    el.hr1 = howRead(el.body, null, 'c1');
-    el.legend = el.body.appendChild(mk('div', 'pt-legend'));
-    el.wrap = el.body.appendChild(mk('div', 'pt-chart')); el.c1 = el.wrap.appendChild(mk('canvas'));
-    el.tip = el.wrap.appendChild(mk('div', 'pt-tip')); el.tip.hidden = true;
-    el.readout = el.body.appendChild(mk('p', 'pt-readout', '')); el.readout.id = 'pt-readout-' + id; el.readout.setAttribute('aria-live', 'polite');
-    el.c1.setAttribute('tabindex', '0'); el.c1.setAttribute('role', 'img'); el.c1.setAttribute('aria-describedby', el.readout.id);
-    el.tblCtl = el.body.appendChild(mk('div', 'pt-tblctl'));
+    // (round 14: "Saved settings" of PLAN_EYE 13 is replaced by the profile row at the top of the card, PLAN_R14 5)
+    el.setNote = el.fLabel.appendChild(mk('p', 'pt-setnote', ''));
+    el.defs = el.fLabel.appendChild(mk('div', 'pt-defs'));
+    el.exOut = el.fLabel.appendChild(mk('p', 'pt-exout', '')); el.exOut.setAttribute('aria-live', 'polite');
+    { const x = exChart(el.fLabel); el.exWrap = x.w; el.exCv = x.cv; }
+    el.tblCtl = el.fTable.appendChild(mk('div', 'pt-tblctl'));
     const segSort = seg(el.tblCtl, 'Table order'); el.sortBtn = { clock: segBtn(segSort, 'Singapore clock'), rank: segBtn(segSort, 'Rank') };
     el.more = btn(el.tblCtl, 'pt-more', '');
-    el.tblLegend = el.body.appendChild(mk('div', 'pt-legend'));
-    el.tbl = el.body.appendChild(mk('div', 'pt-tbl')); el.table = el.tbl.appendChild(mk('table', 'pt-table'));
-    el.over = el.body.appendChild(mk('div', 'pt-over')); el.over.appendChild(mk('h3', null, 'Points over time'));
+    el.tblLegend = el.fTable.appendChild(mk('div', 'pt-legend'));
+    el.tbl = el.fTable.appendChild(mk('div', 'pt-tbl')); el.table = el.tbl.appendChild(mk('table', 'pt-table'));
+    el.over = el.fOver.appendChild(mk('div', 'pt-over')); el.over.appendChild(mk('h3', null, 'Points over time'));
     el.overCtl = el.over.appendChild(mk('div', 'pt-over-controls'));
     const sel = (title) => { const lab = el.overCtl.appendChild(mk('label')); lab.appendChild(mk('span', null, title)); return lab.appendChild(mk('select')); };
     el.by = sel('Group by'); for (const [k, name] of GROUPS) { const o = el.by.appendChild(mk('option', null, name)); o.value = k; }
@@ -7094,8 +7281,11 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
     el.readout3 = el.over.appendChild(mk('p', 'pt-readout', '')); el.readout3.id = 'pt-readout3-' + id; el.readout3.setAttribute('aria-live', 'polite');
     el.c3.setAttribute('tabindex', '0'); el.c3.setAttribute('role', 'img'); el.c3.setAttribute('aria-describedby', el.readout3.id);
     el.note = el.over.appendChild(mk('p', 'pt-note', ''));
-    el.foot = el.body.appendChild(mk('div', 'pt-foot'));
-    el.method = el.body.appendChild(mk('details', 'pt-method')); el.method.appendChild(mk('summary', null, 'How the points are scored')); el.methodBody = el.method.appendChild(mk('div'));
+    // "How this is decided": the when-to-watch rule in plain words with its constants and the link to the method note, then the limits and the
+    // scoring of before
+    el.rule = dAttr(el.fHow.appendChild(mk('div', 'pt-foot')), 'data-watch-rule');
+    el.foot = el.fHow.appendChild(mk('div', 'pt-foot'));
+    el.method = el.fHow.appendChild(mk('details', 'pt-method')); el.method.appendChild(mk('summary', null, 'How the points are scored')); el.methodBody = el.method.appendChild(mk('div'));
     el.body.hidden = true;
 
     // ---- state
@@ -7104,15 +7294,50 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
     let TS = null, tswNote = '', live = null, destroyed = false; const TSA = { 1: null, 5: null, 15: null };
     // the points per label (page-test fix 1): trend / swing / whipsaw under TSW_W_KEY, one set for every chart (round 10: the scoring of a label is
     // the viewer's, not a setting of a chart; NOTES.md); curW() = those in force
-    const wBy = { tsw: load(TSW_W_KEY, cleanTSWWeights, PM.DEFAULT_WEIGHTS) };
-    // the thresholds per chart and row length (round 10, P3 "settings belong to a set"): the 1-minute sets read and write TH_KEY exactly as before;
-    // a candle set's come from TF_TH_KEY (tfRaw: only the sets the viewer changed), cleaned against the set's own defaults when the set arrives
-    const thBy = { 1: load(TH_KEY, cleanByLen, {}), 5: {}, 15: {} };
-    const tfRaw = (() => { try { const t = loadRaw(TF_TH_KEY), o = t ? JSON.parse(t) : null; return o && typeof o === 'object' && !Array.isArray(o) ? o : {}; } catch (e) { return {}; } })();
-    // PLAN_EYE 13: the viewer's saved sets (not the built-in one) in the order first saved, per storage key (round 10: SAVED_KEY for the 1-minute
-    // sets, as before; SAVED_KEY + '.5_30' and so on for a candle set), read when first needed; the armed press (null, { kind: 'replace', key, name }
-    // or { kind: 'delete', key }); what the last press in the block did
-    const savedLists = new Map(); let savedArm = null, savedMsg = '';
+    // round 14: the scale, the thresholds and the rest of the snapshot come from the profile store (below); these are their places in memory
+    const wBy = { tsw: cleanTSWWeights(PM.DEFAULT_WEIGHTS) };
+    // the thresholds per chart and row length (round 10, P3 "settings belong to a set"); a candle set's (tfRaw: as stored in the snapshot) are
+    // cleaned against the set's own defaults when the set arrives
+    const thBy = { 1: cleanByLen({}), 5: {}, 15: {} };
+    let tfRaw = {};
+    // ---- round 14 (PLAN_R14 5): the profile store of this market. prof = { v, work, active, dirty, list } as stored under PROFILES_KEY; persist:
+    // 'store' while the browser keeps what the card writes, 'visit' when its storage is missing, throws on reading or writing, or is full (the card
+    // then works from memory, says so in one line and never says "Saved"). Read once here: a store of this version is taken (each profile checked;
+    // one without a usable name or id, or with a name taken already, is dropped); none at all -> the migration from the keys of before (read,
+    // never written again or deleted); a store that cannot be read -> the same as none.
+    let persist = storage ? 'store' : 'visit';
+    const profText = (() => { if (!storage) return null; try { return storage.getItem(PROFILES_KEY); } catch (e) { persist = 'visit'; return null; } })();
+    const ownName = n => typeof n === 'string' && n.replace(/\s+/g, ' ').trim().length <= SAVED_NAME_MAX ? savedName(n) : '';
+    const nameTaken = (list, name, but) => { const k = name.toLowerCase(); return BUILTIN_PROFILES.some(b => b.name.toLowerCase() === k) || list.some(x => x !== but && x.name.toLowerCase() === k); };
+    const nextId = list => { let n = 0; for (const x of list) { const m = /^p(\d+)$/.exec(x.id); if (m) n = Math.max(n, +m[1]); } return 'p' + (n + 1); };
+    // a name kept free: taken -> the set's short name added ("Morning (30 min, 5-min candles)"), then a number; cut to SAVED_NAME_MAX characters
+    const freeName = (list, name, k) => { const fit = (a, b) => (a.slice(0, SAVED_NAME_MAX - b.length).trim() + b); let n = name, q = 2;
+      if (nameTaken(list, n) && k) n = fit(name, ' (' + setShort(k) + ')'); while (nameTaken(list, n)) n = fit(name, ' ' + (q++)); return n; };
+    function cleanStore(o) { if (!o || typeof o !== 'object' || o.v !== PROF_V || !Array.isArray(o.list)) return null; const list = [], ids = new Set();
+      for (const x of o.list) { if (!x || typeof x !== 'object' || typeof x.id !== 'string' || !/^p\d+$/.test(x.id) || ids.has(x.id)) continue; const name = ownName(x.name); if (!name || nameTaken(list, name)) continue;
+        ids.add(x.id); list.push({ id: x.id, name, updatedAt: fin(+x.updatedAt) ? +x.updatedAt : 0, snap: cleanSnap(x.snap) }); }
+      const active = typeof o.active === 'string' && (builtinOf(o.active) || ids.has(o.active)) ? o.active : null;
+      return { v: PROF_V, work: cleanSnap(o.work), active, dirty: active !== null && o.dirty === true, list }; }
+    // the migration (PLAN_R14 5): work from the weights, the 1-minute thresholds and the candle sets' thresholds of before (share by the scale, hours
+    // 12:00 to 01:00, view 15 minutes); every saved set of before a profile of its name (the 1-minute list first, then 5_30, 5_60, 15_60): its
+    // thresholds on its own set, or on 1_15 and 1_30 for a 1-minute saved set, the other sets at their defaults, the view on that set, the scale of
+    // the work (a saved set of before had no scale of its own: the one in use stays in use), hours and share as in the work
+    function migrate() { const w = load(TSW_W_KEY, cleanTSWWeights, PM.DEFAULT_WEIGHTS), t1 = load(TH_KEY, cleanByLen, {}), sets = { '1_15': copyTh(t1['15']), '1_30': copyTh(t1['30']) };
+      const tf = (() => { try { const t = loadRaw(TF_TH_KEY), o = t ? JSON.parse(t) : null; return o && typeof o === 'object' && !Array.isArray(o) ? o : {}; } catch (e) { return {}; } })();
+      for (const k of SET_KEYS.slice(2)) if (tf[k] && typeof tf[k] === 'object' && !Array.isArray(tf[k])) sets[k] = JSON.parse(JSON.stringify(tf[k]));
+      const work = cleanSnap({ view: VIEW_DEF, hours: WIN, share: 'scale', scale: { T: w.T, S: w.R, W: w.W }, sets }), list = [];
+      for (const s of ['1', '5_30', '5_60', '15_60']) for (const x of load(s === '1' ? SAVED_KEY : SAVED_KEY + '.' + s, cleanSaved, null))
+        list.push({ id: nextId(list), name: freeName(list, x.name, s), updatedAt: 0, snap: savedSnap(s, x.th, work.scale) });
+      return { v: PROF_V, work, active: null, dirty: false, list }; }
+    // a saved set of before as a snapshot: s = '1' (the 1-minute list: onto 1_15 and 1_30, view 15 minutes) or a candle set key (onto that set, view
+    // on it); the other sets at their defaults; hours 12:00 to 01:00, share by the scale, the scale given
+    function savedSnap(s, th, scale) { const ps = {}, ln = s === '1' ? 15 : +s.split('_')[1], ch = s === '1' ? 1 : +s.split('_')[0];
+      if (s === '1') { ps['1_15'] = Object.assign(copyTh(th), { len: 15 }); ps['1_30'] = Object.assign(copyTh(th), { len: 30 }); } else ps[s] = Object.assign(copyTh(th), { len: ln });
+      return cleanSnap({ view: { len: ln, chart: ch, season: 'auto' }, hours: WIN, share: 'scale', scale, sets: ps }); }
+    let prof = (() => { let o = null; try { o = profText ? JSON.parse(profText) : null; } catch (e) { o = null; } return cleanStore(o) || migrate(); })();
+    // (a store that could not be read is never written over: what is in it may be the viewer's)
+    const readFailed = persist === 'visit' && !!storage;
+    const storeWrite = () => { if (!storage || readFailed) { persist = 'visit'; return false; } try { storage.setItem(PROFILES_KEY, JSON.stringify(prof)); return true; } catch (e) { persist = 'visit'; return false; } };
     // ---- round 12 (dev/v4_loop/round12/PLAN_R12.md, "Message contract"): the settings bridge to the one page gold_nasdaq.html. BW: the card's
     // window when the page sits inside a frame (cfg.window for the tests, else the global window; window.parent !== window), else null: then the
     // bridge is dormant (nothing below posts, listens or reads storage; the card behaves as before round 12). In a frame it sends
@@ -7130,9 +7355,11 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
     let foldLast = false; { const f = loadRaw(FOLD_KEY); el.fold.open = foldLast = f === null || f === 'open'; if (f === null) saveRaw(FOLD_KEY, 'seen'); }
     // round 10: the chart the viewer wants (default 5-minute candles) and the chart in force (chart: the wanted one when its sets are there, else the
     // first chart that has sets); the row length chosen on each chart (len: the one of the chart in force); the whipsaw share ('scale', '60', '70')
-    let chartWant = CHARTS.includes(+cfg.chart) ? +cfg.chart : 5, chart = 1, share = 'scale';
-    const lenBy = { 1: cfg.slotLen && LENS.includes(+cfg.slotLen) ? +cfg.slotLen : 30, 5: LEN_DEF[5], 15: LEN_DEF[15] };
-    let len = lenBy[1], season = SEASONS.includes(cfg.season) ? cfg.season : PM.season(today);
+    // round 14 (PLAN_R14 2, 3): the view wanted is the scoring timeframe (lenWant) and the chart it is scored on (chartWant); chart and len are the
+    // ones in force (useChart: the wanted pair when its set is there, else the timeframe's first chart that has it, else the first timeframe that
+    // has any set). seaPick: 'auto' (the season of today) or the season chosen; hours: the hours setting. All of them come from prof.work below.
+    let chartWant = 1, lenWant = 15, chart = 1, share = 'scale', seaPick = 'auto', hours = { from: WIN.from, to: WIN.to };
+    let len = 15, season = PM.season(today);
     let by = 'month', series = 'win', sort = 'clock', showOther = false, usdPerBp = fin(+cfg.usdPerBp) && +cfg.usdPerBp > 0 ? +cfg.usdPerBp : null;
     let cur1 = null, cur2 = null, cur3 = null, geo1 = null, geo2 = null, geo3 = null;   // chart cursors (positions) and geometries
     const tallies = new Map(), memo = new Map(), seaSets = new Map(), exIdx = {}; let tswPL = {};
@@ -7166,7 +7393,7 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
     const thOf = ln => thBy[chart][String(ln)];
     const fixedOn = () => share !== 'scale', shareNum = () => share === '70' ? 0.7 : 0.6;
     // the fixed share's pool (P3): a row-day is in it when its row lies wholly inside 12:00-01:00 Singapore on its own date's US season
-    const inPoolOf = S => (i, d) => ((PM.sgtMin(S.slots[i].min, PM.season(d)) - WIN.from) % 1440 + 1440) % 1440 + S.len <= (WIN.to - WIN.from + 1440) % 1440;
+    const inPoolOf = S => (i, d) => ((PM.sgtMin(S.slots[i].min, PM.season(d)) - hours.from) % 1440 + 1440) % 1440 + S.len <= (((hours.to - hours.from) % 1440 + 1440) % 1440 || 1440);
     // the labels in force of a row length: TSWLabels.labels at the thresholds, or TSWLabels.fixedShare in fixed mode
     const PLof = ln => { if (!curSet()) return null; const k = String(ln), S = TS[k]; if (!tswPL[k] && S) tswPL[k] = fixedOn() ? TSW.fixedShare(S, thOf(ln), { share: shareNum(), inPool: inPoolOf(S) }) : TSW.labels(S, thOf(ln)); return tswPL[k] || null; };
     const names = () => namesOf('tsw');
@@ -7193,7 +7420,7 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
       tallies.set(key, t); return t; }
     const cached = (key, fn) => { let v = memo.get(key); if (v === undefined) { v = fn(); memo.set(key, v); } return v; };
     const tableOf = ln => cached('T|' + curSet() + '|' + ln + '|' + season, () => PM.slotTable(PLof(ln), curW(), { tally: tallyOf(ln, 'sea:' + season) }));
-    const factsOf = ln => cached('F|' + curSet() + '|' + ln + '|' + season, () => Object.assign(facts(PLof(ln), tableOf(ln), tallyOf(ln, 'sea:' + season), season, curW()), { chart }));
+    const factsOf = ln => cached('F|' + curSet() + '|' + ln + '|' + season, () => Object.assign(facts(PLof(ln), tableOf(ln), tallyOf(ln, 'sea:' + season), season, curW(), hours), { chart }));
     // the tsw shares on the season's days: all slots, one slot, the low slots of the verdict, the other broken setting (for the switch's line)
     const tswAll = ln => cached('SA|' + ln + '|' + season, () => TSW.shares(TS[String(ln)], thOf(ln), null, seaOk(ln)));
     const tswSlots = ln => cached('SS|' + ln + '|' + season, () => { const S = TS[String(ln)], ok = seaOk(ln), th = thOf(ln); return S.slots.map((s, i) => TSW.shares(S, th, [i], ok)); });
@@ -7219,12 +7446,52 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
     // round 10: another chart or whipsaw share: every label, tally and derived number goes (the caches are keyed by row length only)
     const dropAll = () => { tswPL = {}; tallies.clear(); invalidate(); for (const k of Object.keys(exIdx)) delete exIdx[k]; };
     const resetCursors = () => { cur1 = cur2 = cur3 = null; };
-    const relSgt = (PL, i) => ((PM.sgtMin(PL.slots[i].min, season) - WIN.from) % 1440 + 1440) % 1440;
+    const relSgt = (PL, i) => ((PM.sgtMin(PL.slots[i].min, season) - hours.from) % 1440 + 1440) % 1440;
     // every slot in Singapore clock order from 12:00: the user's hours first, then the rest
     function allOrder(ln) { const PL = PLof(ln), win = factsOf(ln).win, inW = new Set(win), rest = PL.slots.map((s, i) => i).filter(i => !inW.has(i)).sort((a, b) => relSgt(PL, a) - relSgt(PL, b)); return win.concat(rest); }
     const orderOf = ln => showOther ? allOrder(ln) : factsOf(ln).win.slice();   // the slots on show (table and charts)
     const sgSpan = (PL, s) => [PM.hhmm(PM.sgtMin(s.min, season)), PM.hhmm(PM.sgtMin(s.min + PL.len, season))];
     const seasonDates = PL => PL.dates.filter(d => PM.season(d) === season).length;
+    // ---- round 14 (PLAN_R14 4): "When to watch, at your settings". The pool: the rows of the set in force wholly inside the hours (factsOf's win,
+    // Singapore clock order), the season's stored dates, the labels the card shows (PLof: thresholds, lookback, broken switch, fixed share), the
+    // scale in force; WatchTiers decides. Cached with the other derived numbers (a change of any of these drops it).
+    const watchOf = ln => cached('WT|' + curSet() + '|' + ln + '|' + season, () => { if (!WT) return null; const PL = PLof(ln), F = factsOf(ln), w = curW(), ds = [], idx = [];
+      PL.dates.forEach((d, q) => { if (PM.season(d) === season) { ds.push(d); idx.push(q); } });
+      const rows = F.win.map(i => { const s = PL.slots[i], o = PL.obs[i], a = PM.sgtMin(s.min, season); let t = ''; for (const q of idx) t += o.charAt(q); return { key: i, from: a, to: (a + PL.len) % 1440, obs: t }; });
+      return WT.compute({ dates: ds, split: PL.split, scale: { T: w.T, S: w.R, W: w.W }, rows }); });
+    const watchTierMap = ln => { const R = watchOf(ln), m = new Map(); if (R) for (const r of R.rows) if (r.tier) m.set(r.key, r.tier); return m; };
+    // the colour and strength of a bar by tier ('none': a row of the hours without a tier; 'away': outside the hours)
+    const TIER_COL = { watch: ['--trend', 1], ordinary: ['--accent', 0.55], idle: ['--whip', 1], few: ['--line', 1], none: ['--accent', 0.6], away: ['--coin', 0.4] };
+    const TIER_WORD = { watch: 'Watch', ordinary: 'Ordinary', idle: 'Idle', few: 'Too few days to tell' };
+    const profName = () => { const a = prof.active, p = a ? builtinOf(a) || prof.list.find(x => x.id === a) : null; return p ? p.name + (prof.dirty ? ', unsaved changes' : '') : 'none chosen'; };
+    function renderWatch(ln) { if (!WT) { el.wSent.textContent = 'The when-to-watch rule did not load (src/v4/watch_tiers.js is missing from this page), so there are no tiers here. The bars below show the points of each row only.';
+        el.wCtx.textContent = season + ' days · ' + setName(chart, ln); el.wCav.textContent = ''; return; }
+      const R = watchOf(ln), t = WT.text(R, { fixedShare: fixedOn(), season, setName: setName(chart, ln), profileName: profName() });
+      el.wSent.textContent = t.sentence; el.wCtx.textContent = t.context + ' · your hours ' + hoursText(hours) + ' Singapore'; el.wCav.textContent = t.caveat;
+      el.watch.setAttribute('data-watch-state', R.state); }
+    // the line the page's Answers panel prints for the card (getResult().first): this block's sentence, then the days and rows it is for, so the
+    // top of the page and the card cannot give two answers (JUDGEMENT J1); without the rule module, the verdict's first sentence as before
+    const answerLine = ln => WT ? WT.text(watchOf(ln), {}).sentence + ' (' + season + ' days; ' + setName(chart, ln) + '.)' : verdictOf(ln).head + verdictOf(ln).lead;
+    // the selected row's line: its tier and the figures behind it (per 100 days; the noise of a mean read week by week)
+    const sgn1 = v => fin(v) ? (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(1) : 'n/a';
+    function watchRowText(ln, i) { const PL = PLof(ln), sg = sgSpan(PL, PL.slots[i]), R = watchOf(ln), r = R && R.rows.find(x => x.key === i), head = sg[0] + ' to ' + sg[1] + ' Singapore';
+      if (!r) return head + ': outside your hours, so it has no tier.';
+      if (!r.tier) return head + ': ' + (r.score != null ? Math.round(r.score) + ' points per 100 days over ' + fmtN(r.days) + ' days' : 'no days with a label') + '; no tiers at these settings.';
+      const pl = (PL.split && PL.split.labels) || ['first period', 'second period'], g = x => sgn1(x.D) + ' (noise ± ' + (x.SE != null ? x.SE.toFixed(1) : 'n/a') + '; ' + fmtN(x.n) + ' days, ' + fmtN(x.weeks) + ' weeks)';
+      return head + ': ' + TIER_WORD[r.tier] + (r.split ? ' (all years pass, one period does not)' : '') + '. ' + Math.round(r.score) + ' points per 100 days over ' + fmtN(r.days) + ' days. Against the other rows of the same day, per 100 days: all years '
+        + g(r.all) + '; ' + pl[0] + ' ' + g(r.periods[0]) + '; ' + (pl[1] || pl[0]) + ' ' + g(r.periods[1]) + '.'; }
+    // "How this is decided" (PLAN_R14 4, 6): the rule in plain words with its constants, and the method note
+    function renderRule() { const C = WT ? WT.RULE : null;
+      el.rule.innerHTML = !C ? '<p>The when-to-watch rule did not load, so it cannot be shown here.</p>' : '<p><b>When to watch, the rule.</b> ' + esc('The rows are those lying wholly inside your hours, on the stored days of the season on show, with the labels and points you see. '
+        + 'A day counts when at least ' + C.minRowsPerDay + ' rows, and at least ' + Math.round(100*C.dayCover) + ' in 100 of the rows, have a label on it. On such a day a row is compared with the mean of the other rows of the same day. '
+        + 'The mean of those differences is read over all years and over each of the two periods; its noise is worked out week by week, so days of one week count as one block. '
+        + 'A row needs at least ' + C.minDates + ' days and ' + C.minWeeks + ' weeks in each period, else it is “too few days to tell”. '
+        + 'Watch: over all years it is above the others by at least ' + C.zAll + ' times its noise and by at least ' + Math.round(100*C.floorShare) + ' in 100 of the gap between the highest and lowest label points, and above them by at least ' + C.zPeriod + ' times its noise in each period. '
+        + 'Idle: the same, below. Every other row is ordinary. When all three labels score the same, no row can stand out. These numbers were fixed before any result was seen.')
+        + '</p><p>' + esc('The reasons for this rule and its limits are in the method note') + (noteHref() ? ': <a href="' + esc(noteHref()) + '">Research method</a>.' : esc(' (the link under the page title, in the built page).')) + '</p>'; }
+    // the method note's own opening link under the page title (build_standalone.py puts it there; the card holds no copy of its address, so the
+    // built page keeps exactly one link to it in its text); a page without the note gives no link
+    const noteHref = () => { try { const a = doc.querySelector('p.rm-open a[href^="#"]'); return a ? a.getAttribute('href') : null; } catch (e) { return null; } };
 
     // ---- public interface
     // the stored sets of each chart, checked: a chart whose sets cannot be read (or without the TSWLabels module) has none; tswNote says why the
@@ -7234,13 +7501,21 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
     function checkTSW() { tswNote = ''; if (!TSA[1]) tswNote = 'missing'; else if (!TSW) { TSA[1] = null; tswNote = 'module'; } else if (!readable(TSA[1])) { TSA[1] = null; tswNote = 'unreadable'; }
       for (const ch of [5, 15]) if (TSA[ch] && (!TSW || typeof TX.thFor !== 'function' || typeof TX.fixedShare !== 'function' || !readable(TSA[ch]))) { tfNote = !TSW || typeof TX.thFor !== 'function' ? 'module' : 'unreadable'; TSA[ch] = null; }
       // a candle set's thresholds: the viewer's (TF_TH_KEY) over the set's own stored defaults
-      for (const ch of [5, 15]) { thBy[ch] = {}; if (TSA[ch]) for (const k of Object.keys(TSA[ch])) thBy[ch][k] = cleanThresholds(tfRaw[setKey(ch, k)], +k, false, TSA[ch][k].defaults); }
-      useChart(); }
-    // the chart in force: the one the viewer wants when it has sets, else the first chart (in button order) that has them; TS and len follow
-    function useChart() { const ch = TSA[chartWant] ? chartWant : CHARTS.find(c => TSA[c]) || chartWant; if (ch !== chart) { chart = ch; eyeReset(); } TS = TSA[chart] || null; len = lenBy[chart]; }
+      useTF(); useChart(); }
+    // a candle set's thresholds: the snapshot's (tfRaw) over the set's own stored defaults, read as stored values are (a value out of range takes the default; typed or sent values were clamped by setOptions before they were kept) (round 14: from
+    // a message or a file)
+    function useTF() { for (const ch of [5, 15]) { thBy[ch] = {}; if (TSA[ch]) for (const k of Object.keys(TSA[ch])) thBy[ch][k] = cleanThresholds(tfRaw[setKey(ch, k)], +k, false, TSA[ch][k].defaults); } }
+    // round 14: the chart and length in force (PLAN_R14 2): the wanted pair when its set is there, else the timeframe's first chart (SCORED_ON) that
+    // has it, else the first timeframe that has any set; TS follows
+    const hasSet = (c, l) => !!(TSA[c] && TSA[c][String(l)]);
+    function useChart() { let l = lenWant, ch = hasSet(chartWant, l) ? chartWant : SCORED_ON[l].find(c => hasSet(c, l));
+      if (ch == null) { const l2 = ALL_LENS.find(x => SCORED_ON[x].some(c => hasSet(c, x))); if (l2 != null) { l = l2; ch = SCORED_ON[l2].find(c => hasSet(c, l2)); } else ch = CHARTS.find(c => TSA[c]) || 1; }
+      if (ch !== chart) { chart = ch; eyeReset(); } TS = TSA[chart] || null; len = l; }
     const eyeReset = () => { eyeShow = null; eyeBackTo = null; eyeArmed = false; eyeApplied = ''; eyeMemo = eyeEnt = null; };
     const clearAll = () => { tallies.clear(); tswPL = {}; seaSets.clear(); invalidate(); resetCursors(); eyeData++; eyeShow = null; eyeMemo = eyeEnt = null; eyeQs.clear(); };
-    function setAll(res, keepIfEmpty) { const s = pickTSW(res), f = pickTF(res); if (keepIfEmpty && !s && !f) return false; TSA[1] = s; TSA[5] = f && f[5] || null; TSA[15] = f && f[15] || null; tfNote = f ? '' : 'missing'; checkTSW(); clearAll(); bridgeSend(); return true; }
+    // (round 14, J19: the requests of the shell that came before the results are carried out now, in order, each answered by its own message)
+    function setAll(res, keepIfEmpty) { const s = pickTSW(res), f = pickTF(res); if (keepIfEmpty && !s && !f) return false; TSA[1] = s; TSA[5] = f && f[5] || null; TSA[15] = f && f[15] || null; tfNote = f ? '' : 'missing'; checkTSW(); clearAll();
+      prof.dirty = dirtyNow(); resultsIn = true; const q = waiting.splice(0); for (const d of q) doRequest(d); bridgeSend(); return true; }
     function setResult(res) { setAll(res, false); live = null; render(); }
     function setReference(res) { setAll(res, true); render(); }
     // Replace only the trend / swing / whipsaw labels (R.tsw, the 1-minute chart), for example the dev global window.GC_TSW_10Y before the precompute is rerun.
@@ -7254,14 +7529,24 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
     function setOptions(op) { op = op || {}; let changed = false, redraw = false; const set0 = curSet(), thLens = [];
       if (op.usdPerBp !== undefined) { const v = fin(+op.usdPerBp) && +op.usdPerBp > 0 ? +op.usdPerBp : null; if (v !== usdPerBp) { usdPerBp = v; redraw = true; } }
       if (op.onExample !== undefined) onExample = typeof op.onExample === 'function' ? op.onExample : null;
-      if (op.chart !== undefined && CHARTS.includes(+op.chart) && TSA[+op.chart] && +op.chart !== chart) { chartWant = +op.chart; useChart(); dropAll(); resetCursors(); series = 'win'; changed = true; }
-      if (op.slotLen !== undefined && (LENS_OF[chart] || []).includes(+op.slotLen) && +op.slotLen !== len) { len = lenBy[chart] = +op.slotLen; resetCursors(); if (chart > 1) eyeReset(); changed = true; }
-      if (op.season !== undefined && SEASONS.includes(op.season) && op.season !== season) { season = op.season; resetCursors(); changed = true; }
-      if (op.share !== undefined) { const s = op.share === null || op.share === 'scale' ? 'scale' : +op.share === 0.6 || String(op.share) === '60' ? '60' : +op.share === 0.7 || String(op.share) === '70' ? '70' : null;
+      // round 14 (PLAN_R14 2): chart keeps the length when the chart has it, else takes the chart's first length; slotLen takes any of 15 / 30 / 60
+      // and moves to that length's first chart (SCORED_ON) when the chart in force does not have it
+      if (op.chart !== undefined && CHARTS.includes(+op.chart) && TSA[+op.chart] && +op.chart !== chart) { const c = +op.chart; chartWant = c; lenWant = hasSet(c, len) ? len : LENS_OF[c].find(l => hasSet(c, l)) || LENS_OF[c][0];
+        useChart(); dropAll(); resetCursors(); series = 'win'; changed = true; }
+      if (op.slotLen !== undefined && ALL_LENS.includes(+op.slotLen) && +op.slotLen !== len) { const l = +op.slotLen, c = hasSet(chart, l) ? chart : SCORED_ON[l].find(x => hasSet(x, l));
+        if (c != null) { const c0 = chart; lenWant = l; chartWant = c; useChart(); if (chart !== c0) { dropAll(); series = 'win'; } resetCursors(); if (chart > 1) eyeReset(); changed = true; } }
+      // the season: 'auto' (today's) or one of the two; choosing the season of today is 'auto' again
+      if (op.season !== undefined && (op.season === 'auto' || SEASONS.includes(op.season))) { const pick = op.season === 'auto' || op.season === PM.season(today) ? 'auto' : op.season, s = pick === 'auto' ? PM.season(today) : pick;
+        if (pick !== seaPick || s !== season) { seaPick = pick; if (s !== season) { season = s; resetCursors(); } changed = true; } }
+      // round 14 (PLAN_R14 3): the hours, { from, to } in minutes of the Singapore day (or 'hh:mm'), on the 30-minute grid; a part that is not a time
+      // keeps the value in force
+      if (op.hours !== undefined && op.hours && typeof op.hours === 'object') { const a = gridMin(op.hours.from), b = gridMin(op.hours.to), h = { from: fin(a) ? a : hours.from, to: fin(b) ? b : hours.to };
+        if (h.from !== hours.from || h.to !== hours.to) { hours = h; dropAll(); eyeQs.clear(); resetCursors(); changed = true; } }
+      if (op.share !== undefined) { const s = shareOf(op.share);
         if (s && s !== share) { share = s; dropAll(); resetCursors(); changed = true; } }
-      // the points per label, saved under TSW_W_KEY (trend / swing / whipsaw as {T, R, W})
+      // the points per label (trend / swing / whipsaw as {T, R, W}; round 14: kept in the profile store's work)
       if (op.weights !== undefined) { const cur = wBy.tsw, w = cleanTSWWeights(Object.assign({}, cur, op.weights), true);
-        if (!sameWeights(w, cur)) { wBy.tsw = w; save(TSW_W_KEY, { T: w.T, R: w.R, W: w.W }); invalidate(); changed = true; } }
+        if (!sameWeights(w, cur)) { wBy.tsw = w; invalidate(); changed = true; } }
       let th = op.thresholds !== undefined && op.thresholds && typeof op.thresholds === 'object' ? op.thresholds : null;
       if (op.refDays !== undefined && REF_DAYS.includes(+op.refDays)) th = Object.assign({}, th && !Object.keys(th).some(k => /^\d/.test(k)) ? th : {}, { refDays: +op.refDays });
       if (th) { const ls = LENS_OF[chart], bySet = Object.keys(th).filter(k => /^(1|5|15)_(15|30|60)$/.test(k) && th[k] && typeof th[k] === 'object'), byLen = ls.filter(l => th[String(l)] && typeof th[String(l)] === 'object');
@@ -7270,19 +7555,22 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
         for (const [ch, l, p] of per) { const cur = thBy[ch] && thBy[ch][String(l)]; if (!cur) continue; const base = ch > 1 && TSA[ch] && TSA[ch][String(l)] ? TSA[ch][String(l)].defaults : null;
           const next = cleanThresholds(mergeTh(cur, p), l, true, base); if (sameTh(cur, next) && sameRd(cur, next)) continue;
           thBy[ch][String(l)] = next; if (ch > 1) tfRaw[setKey(ch, l)] = copyTh(next); saveCh.add(ch); if (ch === chart) { dropTSW(l); thLens.push(l); } }
-        if (saveCh.has(1)) save(TH_KEY, thBy[1]); if (saveCh.has(5) || saveCh.has(15)) save(TF_TH_KEY, tfRaw); if (saveCh.size) { invalidate(); changed = true; } }
+        if (saveCh.size) { invalidate(); changed = true; } }
       if (op.by !== undefined && GROUPS.some(g => g[0] === op.by) && op.by !== by) { by = op.by; cur2 = cur3 = null; changed = true; }
       if (op.series !== undefined && /^(all|win|slot:\d+)$/.test(String(op.series)) && op.series !== series) { series = String(op.series); cur3 = null; changed = true; }
       if (op.sort !== undefined && (op.sort === 'clock' || op.sort === 'rank') && op.sort !== sort) { sort = op.sort; changed = true; }
       if (op.showOther !== undefined && !!op.showOther !== showOther) { showOther = !!op.showOther; cur1 = cur2 = null; changed = true; }
       if (curSet() !== set0) { resetCursors(); changed = true; }
+      if (changed) workChanged();
       if (changed || redraw) { render(); if (thLens.length) followExamples(thLens); if (changed) { onChange(); bridgeSend(); } } }
     // getOptions (round 10): chart, set (the set key in force), refDays, share; thresholdsByLen stays the 1-minute sets' (as before), thresholdsBySet
     // holds every set's; stats is always false and labelSet always 'tsw'
     function getOptions() { const ln = curLen() || len, tB = {};
       for (const ch of [1, 5, 15]) for (const k of Object.keys(thBy[ch] || {})) tB[setKey(ch, k)] = copyTh(thBy[ch][k]);
       return { stats: false, labelSet: 'tsw', chart, set: setKey(chart, ln), slotLen: len, season, weights: Object.assign({}, curW()), thresholds: thOf(ln) ? copyTh(thOf(ln)) : null, refDays: thOf(ln) && thOf(ln).refDays || 20,
-        share: share === 'scale' ? null : shareNum(), thresholdsByLen: { '15': copyTh(thBy[1]['15']), '30': copyTh(thBy[1]['30']) }, thresholdsBySet: tB, by, series, measure: 'points', sort, showOther, usdPerBp }; }
+        share: share === 'scale' ? null : shareNum(), thresholdsByLen: { '15': copyTh(thBy[1]['15']), '30': copyTh(thBy[1]['30']) }, thresholdsBySet: tB, by, series, measure: 'points', sort, showOther, usdPerBp,
+        // round 14: the hours, the season as chosen ('auto' or a season), the profile in force and where the settings are kept
+        hours: { from: hours.from, to: hours.to }, seasonChoice: seaPick, profile: prof.active, dirty: prof.dirty, persist }; }
     // the default layer in words: no argument = the row length shown; a length = that length on the chart in force; 'both' = both, the shown first
     function plainVerdict(which) { const set = curSet(); if (!set) return ''; const ls = lensOf(TS, chart), cur = curLen();
       if (which === 'both') return [cur].concat(ls.filter(l => l !== cur)).map(l => verdictOf(l).text).join(' ');
@@ -7297,10 +7585,10 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
         return { labelSet: 'tsw', chart: ch, len: ln, weights: Object.assign({}, curW()), thresholds: copyTh(th), overall: { obs: T.summary.overall.obs, n: T.summary.overall.n }, rows }; }); }
     // getResult: version 3 as before, plus chart, set, refDays and share (null = by the scale); lens holds the row lengths of the chart in force
     function getResult() { const set = curSet(); if (!set) return null; const ls = lensOf(TS, chart), text = plainVerdict();
-      const out = { kind: 'points-card', version: 3, labelSet: set, chart, set: setKey(chart, curLen()), refDays: thOf(curLen()).refDays || 20, share: share === 'scale' ? null : shareNum(), thresholds: copyTh(thOf(curLen())), weights: Object.assign({}, curW()), slotLen: curLen(), season, lens: {}, text, first: verdictOf(curLen()).head + verdictOf(curLen()).lead, texts: {} };
+      const out = { kind: 'points-card', version: 3, labelSet: set, chart, set: setKey(chart, curLen()), refDays: thOf(curLen()).refDays || 20, share: share === 'scale' ? null : shareNum(), thresholds: copyTh(thOf(curLen())), weights: Object.assign({}, curW()), slotLen: curLen(), season, lens: {}, text, first: answerLine(curLen()), verdictFirst: verdictOf(curLen()).head + verdictOf(curLen()).lead, texts: {} };
       for (const ln of ls) { const PL = PLof(ln), T = tableOf(ln), S = T.summary, F = factsOf(ln), v = verdictOf(ln); out.texts[String(ln)] = v.text;
         const L = out.lens[String(ln)] = { nSlots: S.nSlots, best: S.best.map(i => T.rows[i].label), worst: S.worst.map(i => T.rows[i].label), overall: { obs: S.overall.obs, n: S.overall.n },
-          window: F.win.map(i => T.rows[i].label), most: F.most, fewest: F.fewest, hours: { obs: F.winS.obs, n: F.winS.n }, dates: PL.dates.length, seasonDates: seasonDates(PL), first: v.head + v.lead };
+          window: F.win.map(i => T.rows[i].label), most: F.most, fewest: F.fewest, hours: { obs: F.winS.obs, n: F.winS.n }, dates: PL.dates.length, seasonDates: seasonDates(PL), first: answerLine(ln), verdictFirst: v.head + v.lead };
         const sh = tswAll(ln), h = tswHist(ln); L.thresholds = copyTh(thOf(ln)); L.shares = { T: sh.T, S: sh.S, W: sh.W }; L.reasons = Object.assign({}, sh.reasons); L.meanL = sh.meanL; L.histogram = { bins: h.bins.slice(), n: h.n, below: h.below, atOrAbove: h.atOrAbove };
         if (fixedOn() && PL.fixed) L.fixed = { share: PL.fixed.share, n: PL.fixed.n, keep: PL.fixed.keep, kept: Object.assign({}, PL.fixed.kept) }; }
       return out; }
@@ -7419,7 +7707,8 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
     // the resets go back to the defaults of the set in force (a candle set's own stored defaults)
     const onLikReset = () => { const d0 = defOf(curLen()); setOptions({ thresholds: { cut: d0.cut, broken: d0.broken, w: Object.assign({}, d0.w) } }); };
     const onThReset = () => { const d0 = defOf(curLen()), o = {}; for (const k of MORE_KEYS) o[k] = d0[k]; setOptions({ thresholds: o }); };
-    const onLen = ln => () => setOptions({ slotLen: ln }), onSeason = s => () => setOptions({ season: s });
+    // round 14 (PLAN_R14 2): a timeframe pressed takes its first chart that has its set (Scored on can change it after)
+    const onLen = ln => () => { const c = SCORED_ON[ln].find(x => hasSet(x, ln)); setOptions(c != null ? { chart: c, slotLen: ln } : { slotLen: ln }); }, onSeason = s => () => setOptions({ season: s });
     const onChart = ch => () => setOptions({ chart: ch }), onRef = rd => () => setOptions({ refDays: rd }), onShare = s => () => setOptions({ share: s });
     const onSort = s => () => setOptions({ sort: s }), onMore = () => setOptions({ showOther: !showOther });
     function onBy() { setOptions({ by: el.by.value }); }
@@ -7432,24 +7721,30 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
     function render() { if (destroyed) return; const set = curSet(); pruneExamples();
       if (!set) { el.progress.textContent = ''; el.msg.textContent = 'No precomputed points: ' + (tswNote === 'module' ? 'the points need the TSWLabels module, which did not load.' : tswNote === 'unreadable' ? 'the trend / swing / whipsaw labels in this results file could not be read. They need the new results file (the results file has to be rebuilt).' : 'the points need the new 10-year results file (the results file has to be rebuilt).'); el.msg.hidden = false; el.body.hidden = true; return; }
       const ln = curLen(), PL = PLof(ln); el.msg.hidden = true; el.body.hidden = false;
-      el.progress.textContent = '10-year training data · ' + fmtN(PL.dates.length) + ' trade dates · trend / swing / whipsaw labels · ' + CHART_WORD[chart];
-      renderControls(ln); renderText(ln); renderLik(ln); renderDefs(ln); renderTable(ln); drawC1(ln); renderOver(ln); renderFoot(ln); renderMethod(ln); }
+      el.progress.textContent = '10-year training data · ' + fmtN(PL.dates.length) + ' trade dates · trend / swing / whipsaw labels · ' + setName(chart, ln);
+      renderProf(); renderControls(ln); renderText(ln); renderWatch(ln); renderLik(ln); renderDefs(ln); renderTable(ln); drawC1(ln); renderOver(ln); renderFoot(ln); renderMethod(ln); renderRule(); syncWraps(); }
     // the 1-minute settings differ from the defaults (something of the viewer's is saved there): the line of a candle set not fitted yet says so
     const oneMinuteOwn = () => ['15', '30'].some(k => thBy[1][k] && !(sameTh(thBy[1][k], DEF(+k)) && sameRd(thBy[1][k], DEF(+k))));
     const rowsWord = ln => ROW_WORD[ln] ? ROW_WORD[ln] + 's' : ln + '-minute rows';
     function renderControls(ln) { const N = names(), t = thOf(ln), S = TS[String(ln)];
       for (const k of LABEL_KEYS) { el.wbox[k].hidden = !KEYS.tsw.includes(k); el.wlab[k].textContent = N[k]; el.win[k].setAttribute('aria-label', N[k] + ': points per slot-day'); const want = fmtW(curW()[k]).replace('−', '-'); if (el.win[k].value !== want) el.win[k].value = want; }
       el.reset.disabled = isDefault(curW()); el.reset.setAttribute('title', N.T + ' 3, ' + N.R.toLowerCase() + ' 1, ' + N.W.toLowerCase() + ' −1');
-      // round 10 (P3): the chart rows; a chart without sets is not offered (without R.tswtf only the 1-minute chart)
-      for (const ch of CHARTS) { const b = el.chartBtn[ch]; b.hidden = !TSA[ch]; b.disabled = !TSA[ch]; b.setAttribute('aria-pressed', ch === chart ? 'true' : 'false'); }
-      for (const l of ALL_LENS) { const b = el.lenBtn[l], mine = LENS_OF[chart].includes(l), has = !!(TS && TS[String(l)]); b.hidden = !mine; b.setAttribute('aria-pressed', mine && l === ln ? 'true' : 'false'); b.disabled = !mine || !has;
-        b.setAttribute('title', has ? TS[String(l)].slots.length + ' rows a day' : 'no ' + l + '-minute rows of this chart in the results file'); }
+      // round 14 (PLAN_R14 2): the scoring timeframe, all three always shown (one that no stored set has is disabled, with the reason in its title
+      // and in the line under the row); "Scored on": the charts of the timeframe that have its set, as buttons, or plain text with one choice
+      const noLen = [];
+      for (const l of ALL_LENS) { const b = el.lenBtn[l], has = SCORED_ON[l].some(c => hasSet(c, l)); b.hidden = false; b.disabled = !has; b.setAttribute('aria-pressed', l === ln ? 'true' : 'false');
+        b.setAttribute('title', has ? setName(SCORED_ON[l].find(c => hasSet(c, l)), l) : 'no stored set has ' + l + '-minute rows in this results file'); if (!has) noLen.push(l); }
+      const on = SCORED_ON[ln].filter(c => hasSet(c, ln));
+      for (const ch of [5, 1, 15]) { const b = el.chartBtn[ch], show = on.length > 1 && on.includes(ch); b.hidden = !show; b.disabled = !show; b.setAttribute('aria-pressed', ch === chart ? 'true' : 'false'); }
+      el.scoredOnText.hidden = on.length > 1; el.scoredOnText.textContent = on.length > 1 ? '' : CHART_WORD[chart];
+      el.lenNote.hidden = !noLen.length; el.lenNote.textContent = noLen.length ? noLen.map(l => l + ' minutes').join(' and ') + ': no stored set of ' + (noLen.length > 1 ? 'these lengths' : 'this length') + ' in this results file' + (!TSA[5] && !TSA[15] ? ' (the 5- and 15-minute candle sets need the new results file).' : '.') : '';
+      for (const s of ['from', 'to']) { const sel = s === 'from' ? el.hFrom : el.hTo, v = String(hours[s]); if (sel.value !== v) sel.value = v; }
       const rdNow = t.refDays || 20, rdHas = rd => rd === 20 || !!(S && S.relAlt && typeof S.relAlt[String(rd)] === 'string');
       for (const rd of REF_DAYS) { const b = el.refBtn[rd]; b.setAttribute('aria-pressed', rd === rdNow ? 'true' : 'false'); b.disabled = !rdHas(rd); }
       for (const s of SHARES) el.shareBtn[s].setAttribute('aria-pressed', s === share ? 'true' : 'false');
       const nC = Math.round(ln/chart), tfMissing = !TSA[5] && !TSA[15];
       el.chartNote.textContent = (chart > 1 ? 'The 20MA, the bands and the 5MA are those of the chosen chart. A row is judged on its own candles (' + nC + ' ' + NUM_WORD[chart] + '-minute candles in ' + (ln === 60 ? 'an hour' : 'a ' + ROW_WORD[ln]) + ').'
-          : 'The 20MA and the bands are those of the 1-minute bars, the 5MA that of the 5-minute closes. A row is judged on its own bars (' + nC + ' one-minute bars in a ' + ROW_WORD[ln] + ').')
+          : 'On 1-minute bars the 20MA and the bands here are those of the 1-minute chart (20 minutes), not of a ' + ln + '-minute chart; the 5MA is that of the 5-minute closes. A row is judged on its own bars (' + nC + ' one-minute bars in a ' + ROW_WORD[ln] + ').')
         + (tfMissing ? (tfNote === 'unreadable' ? ' The 5- and 15-minute candle charts in this results file could not be read: they need the new results file.' : tfNote === 'module' ? ' The 5- and 15-minute candle charts need the newer TSWLabels module, which did not load.' : ' The 5- and 15-minute candle charts need the new results file.') : '')
         + (!TSA[1] ? ' The 1-minute chart needs the results file’s 1-minute labels.' : '');
       el.refNote.textContent = 'A slot is ‘small’ or ‘dead’ against the usual slot of that many earlier trading days.' + (REF_DAYS.every(rdHas) ? '' : ' The 10- and 60-day sizes need the new results file.');
@@ -7465,13 +7760,14 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
         // round 7 (RULINGS B2): how to read the scores, under the verdict lines, for the slot length shown (no verdict on an edge)
         + '<p class="pt-read"><b>How to read the score:</b> ' + esc(readText(readOf(ln))) + '</p>';
       el.intro.innerHTML = (live ? '<b>This card uses the 10-year training data' + (live.label ? ', not ' + esc(live.label) : '') + ':</b> ' + (live.dates ? plural(live.dates, 'trade date') + ' in the data on this tab ' + (live.dates === 1 ? 'is' : 'are') : 'the data on this tab is') + ' far too few for points. ' : '')
-        + esc('Scored on the ' + fmtN(seasonDates(PL)) + ' ' + season + ' trade dates of ' + fmtN(PL.dates.length) + ' (' + y0 + '–' + y1 + '), where Singapore = New York + ' + (season === 'US summer' ? 12 : 13) + ' h. “Your hours” are ' + WIN_TEXT + ' Singapore; points are per 100 days at that time of day.');
+        + esc('Scored on the ' + fmtN(seasonDates(PL)) + ' ' + season + ' trade dates of ' + fmtN(PL.dates.length) + ' (' + y0 + '–' + y1 + '), where Singapore = New York + ' + (season === 'US summer' ? 12 : 13) + ' h. “Your hours” are ' + hoursText(hours) + ' Singapore; points are per 100 days at that time of day.');
       // "nothing scores 0" only while it is true (no label weight at 0)
       el.setNote.innerHTML = '<b>Trend / swing / whipsaw:</b> ' + (chart > 1 ? 'every whole row-day gets one of three labels from its own ' + chart + '-minute candles (the 20MA, the Bollinger Bands (20, 2) and the 5MA of that chart)'
           : 'every whole slot-day gets one of three labels from its 1-minute chart (20MA and Bollinger Bands (20, 2)) and its 5-minute chart') + (KEYS.tsw.every(k => curW()[k] !== 0) ? '; nothing scores 0.' : '.');
       const N = names();
-      el.legend.innerHTML = '<span><i style="background:var(--trend)"></i>most points in your hours</span><span><i style="background:var(--whip)"></i>fewest</span><span><i style="background:var(--accent)"></i>your other hours</span>'
-        + (showOther ? '<span><i style="background:var(--coin)"></i>hours you are away</span>' : '') + '<span><i class="pt-k-win"></i>your ' + WIN_TEXT + ' Singapore hours</span>' + '<span><i class="pt-k-grey"></i>fewer than ' + MIN_DAYS + ' days: too few days</span>';
+      // round 14 (PLAN_R14 4): the bars take the tier's colour; the "most points / fewest" legend went
+      el.legend.innerHTML = '<span><i class="pt-k-watch"></i>Watch</span><span><i class="pt-k-ord"></i>Ordinary</span><span><i class="pt-k-idle"></i>Idle</span><span><i class="pt-k-few"></i>too few days to tell</span>'
+        + (showOther ? '<span><i style="background:var(--coin)"></i>hours you are away</span>' : '') + '<span><i class="pt-k-win"></i>your ' + hoursText(hours) + ' Singapore hours</span>' + '<span><i class="pt-k-grey"></i>fewer than ' + MIN_DAYS + ' days: too few days</span>';
       el.tblLegend.innerHTML = KEYS.tsw.map(k => '<span><i class="pt-s-' + k + '"></i>' + N.low[k] + '</span>').join('') + '<span>bar and numbers: slot-days in 100</span>'; }
     // the likelihood block (PLAN 11.5); round 10: the set constants of the chart in force, the fixed share's line, the histogram's Rule B block
     function renderLik(ln) { const set = curSet(); el.lik.hidden = set !== 'tsw'; if (set !== 'tsw') return;
@@ -7503,7 +7799,7 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
       el.hrH.innerHTML = '<b>How to read this.</b> ' + esc('Each bar counts the ' + rws + ' that reach the scale, by whipsaw likelihood in steps of 10 from 0 to 100. Bars left of the cut count as swing, at or right of it as whipsaw.')
         + ' <b>Example.</b> ' + esc(h.n > 0 ? 'On ' + season + ' days the tallest bar is ' + 10*kx + '–' + (10*kx + 10) + ', with ' + fmtN(h.bins[kx]) + ' ' + rws + '. Your cut of ' + t.cut + ' leaves ' + fmtN(h.below) + ' on the swing side and ' + fmtN(h.atOrAbove) + ' on the whipsaw side.' : 'No ' + rws + ' reach the scale on ' + season + ' days with these settings.')
         + ' <b>What to take from it.</b> ' + esc('If many ' + rws + ' sit near the cut, a small move of it changes many labels; if few do, it changes little.');
-      drawHist(ln, h, t); renderEye(); renderSaved(ln); }
+      drawHist(ln, h, t); renderEye(); }
     function drawHist(ln, h, t) { const c = theme(), Hpx = 120, padT = 18, padB = 24, padL = 34, padR = 10, maxC = Math.max(1, Math.max.apply(null, h.bins));
       el.cH.setAttribute('aria-label', 'Slot-days that reach the scale (not a trend, not dead' + (t.broken === 'whipsaw' ? ', not a broken trend' : '') + '), by whipsaw likelihood in tens from 0 to 100: ' + h.bins.join(', ') + '. Cut ' + t.cut + ': ' + fmtN(h.below) + ' below (swing), ' + fmtN(h.atOrAbove) + ' at or above (whipsaw).');
       const { ctx, W, H } = setupCanvas(el.histWrap, el.cH, Hpx); ctx.clearRect(0, 0, W, H); ctx.font = '11px ' + c('--font-ui');
@@ -7556,7 +7852,7 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
       const I = TX.indicators({ t, c }); return { t, o, h, l, c, k, k0: k, k1: k, ma: I.ma, sd: I.sd }; }
     // the questions (PLAN_EYE 5.2.2, 9 A1): EyeCalib.queue over the rows of the waking window on the season's days; it depends on no threshold
     function eyeQueue() { const S = eyeS(), key = eyeKey() + '|' + season + '|' + eyeData; if (eyeQs.has(key)) return eyeQs.get(key);
-      let q = []; try { q = EC.queue(S, { slotIdx: PM.sgtWindowSlots(S, season, WIN.from, WIN.to), dateOk: seaOk(eyeLen()) }) || []; } catch (e) { q = []; } eyeQs.set(key, q); return q; }
+      let q = []; try { q = EC.queue(S, { slotIdx: PM.sgtWindowSlots(S, season, hours.from, hours.to), dateOk: seaOk(eyeLen()) }) || []; } catch (e) { q = []; } eyeQs.set(key, q); return q; }
     // the slot-day on show: "Back one"'s while it has no entry, else the first queue entry with neither an answer nor a skip; one whose bars the page
     // cannot give (or whose own candles cannot be made from them) is passed over (not an answer, not a skip). Kept with its candles until something it
     // depends on changes (not the card's slot length on the 1-minute chart: B1). The page is asked for EYE_BARS around the slot (C2), on a candle chart
@@ -7719,7 +8015,7 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
         + '<td class="pt-d">' + fmtN(ov.n) + '</td><td class="pt-d">' + T.summary.per.map(x => p100(x.obs)).join(' / ') + '</td></tr>';
       let ord = orderOf(ln); if (sort === 'rank') { const p = new Map(ord.map((i, q) => [i, q])); ord = ord.slice().sort((a, b) => (T.rows[a].rank == null ? 1e9 : T.rows[a].rank) - (T.rows[b].rank == null ? 1e9 : T.rows[b].rank) || p.get(a) - p.get(b)); }
       ord.forEach((i, q) => { const r = T.rows[i], sg = sgSpan(PL, r), s = r.pooled, few = !(s.n >= MIN_DAYS), grey = few ? ' pt-grey' : '', o = s.shares.obs, PR = prOf(o, RS ? RS[i] : null), out = fx && !(s.n > 0);
-        if (sort === 'clock' && showOther && q === F.win.length) h += '<tr class="pt-div"><td colspan="8">The other hours (outside ' + WIN_TEXT + ' Singapore)</td></tr>';
+        if (sort === 'clock' && showOther && q === F.win.length) h += '<tr class="pt-div"><td colspan="8">The other hours (outside ' + hoursText(hours) + ' Singapore)</td></tr>';
         const cls = (inW.has(i) ? 'pt-win' : '') + (top.has(i) ? ' pt-most' : '') + (bot.has(i) ? ' pt-few' : '');
         h += '<tr' + (cls.trim() ? ' class="' + cls.trim() + '"' : '') + '>'
           + '<td class="pt-tl pt-d">' + sg[0] + '–' + sg[1] + (top.has(i) ? '<span class="pt-tag">most</span>' : bot.has(i) ? '<span class="pt-tag">fewest</span>' : '') + '</td><td class="pt-tl pt-d">' + r.label + '<span class="pt-end">–' + r.end + '</span></td>'
@@ -7739,12 +8035,12 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
       if (el.by.value !== by) el.by.value = by;
       // the list of what the chart below pools: the user's hours, all slots, then every slot on both clocks (rebuilt when the chart, length or season changes)
       const key = chart + '|' + ln + '|' + season; if (el.series.getAttribute('data-key') !== key) { el.series.innerHTML = ''; const addO = (v, t) => { const o = el.series.appendChild(mk('option', null, t)); o.value = v; };
-        addO('win', 'Your ' + WIN_TEXT + ' Singapore hours'); addO('all', 'All slots of the day'); for (const i of all) { const s = PL.slots[i]; addO('slot:' + i, sgSpan(PL, s)[0] + ' Singapore · ' + s.label + ' New York'); }
+        addO('win', 'Your ' + hoursText(hours) + ' Singapore hours'); addO('all', 'All slots of the day'); for (const i of all) { const s = PL.slots[i]; addO('slot:' + i, sgSpan(PL, s)[0] + ' Singapore · ' + s.label + ' New York'); }
         el.series.setAttribute('data-key', key); }
       if (!/^(all|win|slot:\d+)$/.test(series) || (series.startsWith('slot:') && +series.slice(5) >= PL.slots.length)) series = 'win';
       if (el.series.value !== series) el.series.value = series;
       const t = tallyOf(ln, by), word = GROUP_WORD[by] || by, nK = t.keys.length, isYm = by === 'ym', ord = orderOf(ln), head = 'Points per 100 slot-days';
-      const pool = series === 'win' ? 'your ' + WIN_TEXT + ' Singapore hours, each day on its own season’s clock' : series === 'all' ? 'all ' + PL.slots.length + ' slots of the day' : 'one slot';
+      const pool = series === 'win' ? 'your ' + hoursText(hours) + ' Singapore hours, each day on its own season’s clock' : series === 'all' ? 'all ' + PL.slots.length + ' slots of the day' : 'one slot';
       el.heatWrap.hidden = isYm; el.readout2.hidden = isYm; el.heatLegend.hidden = isYm; el.hr2.hidden = isYm;
       if (isYm) { el.overCap.textContent = head + ', month by month through the years, for ' + pool + '. One slot in one calendar month is about ' + Math.round(PL.dates.length/Math.max(1, nK)) + ' days, too few to read, so there is no slot-by-month grid here; the line pools the slots.'; geo2 = null; }
       else { const G = PM.grid(t, curW());
@@ -7763,7 +8059,7 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
     function renderMethod(ln) { const PL = PLof(ln), N = names(), tf = chart > 1;
       el.methodBody.innerHTML = '<p>Every whole ' + ln + '-minute New York ' + (tf ? 'row of the ' + chart + '-minute chart on every trade date (a row-day, called a slot-day below)' : 'slot on every trade date (a slot-day)') + ' carries one label: ' + KEYS.tsw.map(k => N.low[k]).join(', ') + '. Points per slot-day are your weight for its label. The numbers for a US season use that season’s trade dates only, because the same New York slot falls one hour apart on the Singapore clock in the two seasons.</p><ul>'
         + '<li><b>Points / 100 days</b>: mean points per slot-day, times 100. A slot where every day were a trend would score ' + r0(curW().T) + ' at your weights.</li>'
-        + '<li><b>Most and fewest</b>: the three slots with the most and the three with the fewest points among those that lie wholly inside ' + WIN_TEXT + ' Singapore; slots next to each other are written as one span.</li>'
+        + '<li><b>Most and fewest</b>: the three slots with the most and the three with the fewest points among those that lie wholly inside ' + hoursText(hours) + ' Singapore; slots next to each other are written as one span.</li>'
         + '<li><b>The middle slot</b>: the median slot of your hours by points. “The others sit close” means they span no more than ' + pct(CLOSE) + ' of its points.</li>'
         + '<li><b>“There, … in 100 are …”</b>: the label that pulls the fewest-points slots furthest below the rest of your hours, by how much more or less common it is there and how its points compare with an average slot-day.</li>'
         + '<li><b>Rank</b>: by points per slot-day among all slots of the day (ties share the lower rank).</li>'
@@ -7808,13 +8104,19 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
       const yz = Math.round(Y(0)) + 0.5; ctx.strokeStyle = c('--ink-2'); ctx.beginPath(); ctx.moveTo(x0, yz); ctx.lineTo(x1, yz); ctx.stroke();
       ctx.fillStyle = c('--ink-2'); ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
       ctx.fillText(fitText(ctx, ['points per 100 days in each ' + ln + '-minute slot, Singapore clock from 12:00 (' + season + ' days)', 'points per 100 days by slot, Singapore clock from 12:00', 'points / 100'], x1 - x0), x0, y0 - 6);
-      ord.forEach((i, p) => { const r = T.rows[i], s = r.pooled, x = x0 + p*cw + 1, w = Math.max(1, cw - 2); if (!fin(s.obs)) return; const few = !(s.n >= MIN_DAYS);
-        ctx.fillStyle = few ? c('--line') : c(top.has(i) ? '--trend' : bot.has(i) ? '--whip' : inW.has(i) ? '--accent' : '--coin'); ctx.globalAlpha = few ? 1 : (top.has(i) || bot.has(i)) ? 1 : inW.has(i) ? 0.6 : 0.4;
+      // round 14 (PLAN_R14 4): a bar of your hours takes its tier's colour (Watch, Ordinary, Idle, too few days); without tiers (flat, no data, the
+      // rule missing) the hours' colour; a bar outside your hours as before. The tiers drawn, in bar order, are written on the canvas (data-tiers).
+      const tierOf = watchTierMap(ln), drawn = [];
+      ord.forEach((i, p) => { const r = T.rows[i], s = r.pooled, x = x0 + p*cw + 1, w = Math.max(1, cw - 2), tr = inW.has(i) ? tierOf.get(i) || 'none' : 'away'; drawn.push(tr); if (!fin(s.obs)) return;
+        const few = !inW.has(i) && !(s.n >= MIN_DAYS), col = TIER_COL[tr] || TIER_COL.none;
+        ctx.fillStyle = few ? c('--line') : c(col[0]); ctx.globalAlpha = few ? 1 : col[1];
         const ya = Y(100*s.obs); ctx.fillRect(x, Math.min(ya, yz), w, Math.max(1, Math.abs(ya - yz))); ctx.globalAlpha = 1; });
+      el.c1.setAttribute('data-tiers', drawn.join(' '));
       if (nP > nWin) { const xd = Math.round(x0 + nWin*cw) + 0.5; ctx.strokeStyle = c('--ink-3'); ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(xd, y0); ctx.lineTo(xd, y1); ctx.stroke(); ctx.setLineDash([]); }
       xAxis(ctx, c, PL, ord, x0, cw, y1, y1, W);
       if (cur1 != null && cur1 < nP) { ctx.strokeStyle = c('--accent'); ctx.lineWidth = 1.5; ctx.strokeRect(x0 + cur1*cw + 0.5, y0 + 0.5, cw - 1, y1 - y0 - 1); ctx.lineWidth = 1; }
-      el.readout.textContent = cur1 != null && cur1 < nP ? plainText(slotText(ln, ord[cur1])) : HINT1; }   // a redraw (new weights) refreshes the read-out too
+      el.readout.textContent = cur1 != null && cur1 < nP ? plainText(slotText(ln, ord[cur1])) : HINT1;   // a redraw (new weights) refreshes the read-out too
+      el.wRow.textContent = cur1 != null && cur1 < nP ? watchRowText(ln, ord[cur1]) : 'Select a bar to see its tier and the figures behind it here.'; }
     const HINT1 = 'Point at or tap a bar to read a slot here, or focus the chart and use ← → (Home, End); Escape clears. Tap or press Enter to follow that slot over time below.';
     const HINT2 = 'Point at or tap a cell to read it here, or focus the grid and use ← → for slots and ↑ ↓ for groups (Home, End); Escape clears.';
     const HINT3 = 'Point at or tap the chart to read one group here, or focus it and use ← → (Home, End); Escape clears.';
@@ -7894,10 +8196,10 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
     // "Your hours" pools, on each day, the slots that lie in 12:00–01:00 Singapore on that day's own US season (winter and summer days use
     // different New York slots), from the tally split by season.
     function seriesRows(ln) { const PL = PLof(ln), t = tallyOf(ln, by);
-      if (series === 'win') { const t2 = tallyOf(ln, 'split:' + by), iw = PM.sgtWindowSlots(PL, 'US winter', WIN.from, WIN.to), is = PM.sgtWindowSlots(PL, 'US summer', WIN.from, WIN.to);
+      if (series === 'win') { const t2 = tallyOf(ln, 'split:' + by), iw = PM.sgtWindowSlots(PL, 'US winter', hours.from, hours.to), is = PM.sgtWindowSlots(PL, 'US summer', hours.from, hours.to);
         return t.keys.map(key => ({ key, label: t.labels[key], score: PM.score(PM.addJ(t2.total(key + SEP + 'W', iw), t2.total(key + SEP + 'S', is)), curW()) })); }
       return PM.overTime(t, curW(), series.startsWith('slot:') ? [+series.slice(5)] : null); }
-    function seriesName(ln) { const PL = PLof(ln); if (series === 'win') return 'your ' + WIN_TEXT + ' Singapore hours'; if (series === 'all') return 'all slots'; const s = PL.slots[+series.slice(5)]; return sgSpan(PL, s)[0] + ' Singapore (' + s.label + ' New York on ' + season + ' days)'; }
+    function seriesName(ln) { const PL = PLof(ln); if (series === 'win') return 'your ' + hoursText(hours) + ' Singapore hours'; if (series === 'all') return 'all slots'; const s = PL.slots[+series.slice(5)]; return sgSpan(PL, s)[0] + ' Singapore (' + s.label + ' New York on ' + season + ' days)'; }
     // Rule B (round 10): the chart below's block, its example the group drawn highest (the numbers the bars or the line are drawn from)
     function howRead3(ln, rowsS, line, what, word) { let b = null; for (const r of rowsS) if (r.score.n >= MIN_DAYS && fin(r.score.obs) && (!b || r.score.obs > b.score.obs)) b = r;
       el.hr3.innerHTML = '<b>How to read this.</b> ' + esc((line ? 'The line runs month by month through the years' : 'Each bar is one ' + word) + ', for ' + what + '. Its height is the points per 100 days in that ' + (line ? 'month' : word) + ', on all days. Grey ' + (line ? 'marks' : 'bars') + ' have too few days.')
@@ -7958,54 +8260,127 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
     function onEyeAnyClick(ev) { if (!eyeArmed) return; const t = ev.target, b = t && t.closest ? t.closest('button') : null; if (!b || b === el.eyeClear) return; eyeArmed = false; renderEye(); }
     function onEyeKey(ev) { const a = { 1: 'W', 2: 'S', 3: 'T' }[ev.key]; const t = ev.target; if (!a || !(t === el.eyePanel || (t && t.closest && t.closest('[data-eye-panel]') === el.eyePanel)) || ev.ctrlKey || ev.metaKey || ev.altKey) return; if (ev.preventDefault) ev.preventDefault(); eyeAnswer(a); }
 
-    // ---- saved settings (PLAN_EYE 13 E2, E3, E6). The list is rebuilt on every render of the likelihood block (renderLik), so "in use" follows each
-    // change of the settings in force for the slot length on show (a slider, a switch, a reset, a weight preset, the quiz's button, Use, the slot
-    // length) without a press here; a button of the list that had the focus gets it back after the rebuild.
-    // round 10 (P3): one list per storage key: SAVED_KEY for the 1-minute chart (both its slot lengths, as before), SAVED_KEY + '.' + set key for a
-    // candle set (its own list, empty at first: what is saved today belongs to the 1-minute sets)
-    const savedKeyNow = () => chart === 1 ? SAVED_KEY : SAVED_KEY + '.' + setKey(chart, curLen());
-    const SL = () => { const k = savedKeyNow(); if (!savedLists.has(k)) savedLists.set(k, load(k, cleanSaved, null)); return savedLists.get(k); };
-    function renderSaved(ln) { const t = thOf(ln); if (!t) return; const arm = savedArm, items = BUILTIN_LIST.map(b => Object.assign({ builtin: true }, b)).concat(SL());
-      const a = doc.activeElement, fk = a && a._savedKey != null && a.closest && a.closest('[data-saved-list]') === el.savedList ? [a._savedKey, a.hasAttribute('data-saved-use')] : null; let back = null;
-      el.savedList.textContent = '';
-      for (const x of items) { const key = savedKeyOf(x.name), cur = sameTh(x.th, t), li = dAttr(el.savedList.appendChild(mk('li')), 'data-saved-item');
-        if (x.builtin) li.setAttribute('data-saved-builtin', 'true'); if (cur) li.setAttribute('data-saved-current', 'true');
-        dAttr(li.appendChild(mk('span', 'pt-savedname', x.name)), 'data-saved-label');
-        if (cur) dAttr(li.appendChild(mk('span', 'pt-savedmark', 'in use')), 'data-saved-mark');
-        dAttr(li.appendChild(mk('span', 'pt-savedsum', savedSum(x.th, chart))), 'data-saved-sum');
-        const u = dAttr(btn(li, null, 'Use'), 'data-saved-use'); u._savedKey = key; u.setAttribute('aria-label', 'Use “' + x.name + '”'); if (fk && fk[0] === key && fk[1]) back = u;
-        if (!x.builtin) { const armed = !!arm && arm.kind === 'delete' && arm.key === key, d = dAttr(btn(li, null, armed ? 'Really delete?' : 'Delete'), 'data-saved-delete'); d._savedKey = key;
-          d.setAttribute('aria-label', armed ? 'Really delete “' + x.name + '”?' : 'Delete “' + x.name + '”'); if (fk && fk[0] === key && !fk[1]) back = d; } }
-      el.savedEmpty.hidden = SL().length > 0;
-      el.savedSave.textContent = arm && arm.kind === 'replace' ? 'Replace “' + arm.name + '”?' : 'Save these settings'; el.savedMsg.textContent = savedMsg;
-      if (fk) { const f = back || el.savedName; try { if (f.focus) f.focus(); } catch (e) { /* focus is a convenience */ } } }
-    const savedStore = () => { save(savedKeyNow(), { v: SAVED_V, list: SL().map(x => ({ name: x.name, th: savedTh(x.th) })) }); bridgeSend(); };
-    // ---- round 12: the settings bridge (BW above; dormant when null). Every list of saved sets, read as SL() reads the one in force.
-    const BR_SETS = ['1_15', '1_30', '5_30', '5_60', '15_60'], BR_SAVED = ['1', '5_30', '5_60', '15_60'], BR_ID = NQ ? 'NQ' : 'GC';
-    const brSavedKey = s => s === '1' ? SAVED_KEY : SAVED_KEY + '.' + s;
-    const brList = k => { if (!savedLists.has(k)) savedLists.set(k, load(k, cleanSaved, null)); return savedLists.get(k); };
-    function bridgeMsg() { const sets = {}, defaults = {}, w = curW(), saved = [];
+    // ---- round 14 (PLAN_R14 5): the profiles. snapNow: the snapshot of what is on screen; takeSnap: a snapshot into the card (a profile chosen, the
+    // store at start); workChanged: the work written after every change, with dirty (work differs from the profile in force). The operations are
+    // shared by the profile row and the shell's messages; each returns { ok, why } (why: the sentence the row shows when it is refused).
+    const snapNow = () => { const sets = {}, w = curW();
+      for (const l of ['15', '30']) sets['1_' + l] = copyTh(thBy[1][l]);
+      for (const ch of [5, 15]) for (const l of LENS_OF[ch]) { const k = setKey(ch, l); if (thBy[ch][String(l)]) sets[k] = copyTh(thBy[ch][String(l)]); else if (tfRaw[k]) sets[k] = JSON.parse(JSON.stringify(tfRaw[k])); }
+      return { view: { len: lenWant, chart: chartWant, season: seaPick }, hours: { from: hours.from, to: hours.to }, share, scale: { T: w.T, S: w.R, W: w.W }, sets }; };
+    // two snapshots are the same when every part is: a set not named is its stored defaults (a candle set is compared on its own defaults once
+    // the results are in, as given before)
+    const effSet = (k, p) => { const ch = +k.split('_')[0], l = +k.split('_')[1]; if (ch === 1) return JSON.stringify(cleanThresholds(p, l, true));
+      const S = TSA[ch] && TSA[ch][String(l)]; return S ? JSON.stringify(cleanThresholds(p, l, false, S.defaults)) : p ? JSON.stringify(p) : ''; };
+    const snapKey = s => JSON.stringify([s.view, s.hours, s.share, s.scale, SET_KEYS.map(k => effSet(k, s.sets[k]))]);
+    const sameSnap = (a, b) => snapKey(cleanSnap(a)) === snapKey(cleanSnap(b));
+    const profOf = id => id ? builtinOf(id) || prof.list.find(x => x.id === id) || null : null;
+    const dirtyNow = () => { const p = profOf(prof.active); return !!p && !sameSnap(snapNow(), p.snap); };
+    function workChanged() { prof.work = snapNow(); prof.dirty = dirtyNow(); storeWrite(); }
+    // a snapshot into the card, every part at once; the caches go and the view follows (useChart)
+    function takeSnap(sn) { const s = cleanSnap(sn); wBy.tsw = cleanTSWWeights({ T: s.scale.T, R: s.scale.S, W: s.scale.W }, true);
+      thBy[1] = cleanByLen({ '15': s.sets['1_15'], '30': s.sets['1_30'] }); tfRaw = {}; for (const k of SET_KEYS.slice(2)) if (s.sets[k]) tfRaw[k] = s.sets[k]; useTF();
+      share = s.share; hours = s.hours; seaPick = s.view.season; season = seaPick === 'auto' ? PM.season(today) : seaPick; lenWant = s.view.len; chartWant = s.view.chart; useChart();
+      clearAll(); resetCursors(); series = 'win'; }
+    const said = (ok, why) => ({ ok, why: why || '' });
+    const keptWord = name => persist === 'store' ? 'Saved “' + name + '”.' : '“' + name + '” is kept for this visit only.';
+    function profSelect(id) { const p = profOf(id); if (!p) return said(false, 'There is no profile with that name any more.');
+      takeSnap(p.snap); prof.active = p.id; workChanged(); profMsg = '“' + p.name + '” is in use.'; return said(true); }
+    function profSave(id) { const a = id != null && id !== '' ? String(id) : prof.active, p = a ? prof.list.find(x => x.id === a) : null;
+      if (!p) return said(false, a && builtinOf(a) ? '“' + builtinOf(a).name + '” is built in and cannot be changed. Use Save as to keep these settings under a name of your own.' : 'No profile of your own is chosen. Use Save as to keep these settings under a name.');
+      p.snap = snapNow(); p.updatedAt = Date.now(); prof.active = p.id; workChanged(); profMsg = keptWord(p.name); return said(true); }
+    function profSaveAs(raw) { if (typeof raw === 'string' && raw.replace(/\s+/g, ' ').trim().length > SAVED_NAME_MAX) return said(false, 'A name can have at most ' + SAVED_NAME_MAX + ' characters.');
+      const name = ownName(raw); if (!name) return said(false, 'Type a name for the new profile first.');
+      const b = BUILTIN_PROFILES.find(x => x.name.toLowerCase() === name.toLowerCase()); if (b) return said(false, '“' + b.name + '” is a built-in name. Choose another name.');
+      const d = prof.list.find(x => x.name.toLowerCase() === name.toLowerCase()); if (d) return said(false, 'There is already a profile called “' + d.name + '”. Choose another name, or choose it and press Save.');
+      if (prof.list.length >= PROF_MAX) return said(false, 'You can keep ' + PROF_MAX + ' profiles of your own. Delete one first.');
+      const p = { id: nextId(prof.list), name, updatedAt: Date.now(), snap: snapNow() }; prof.list.push(p); prof.active = p.id; workChanged(); profMsg = keptWord(name); return said(true); }
+    function profDelete(id) { const b = builtinOf(id); if (b) return said(false, '“' + b.name + '” is built in and cannot be deleted.');
+      const i = prof.list.findIndex(x => x.id === id); if (i < 0) return said(false, 'There is no profile with that name any more.');
+      const p = prof.list.splice(i, 1)[0]; if (prof.active === id) prof.active = null; workChanged(); profMsg = 'Deleted “' + p.name + '”.'; return said(true); }
+    // a profile added by the migration rule (a file's profiles, a version-1 message's saved sets): a name taken by another snapshot gets the set's
+    // short name or a number; one identical to the profile of that name is there already (null: no room, PROF_MAX of the viewer's own)
+    function profAdd(name0, snap, k) { const name = ownName(name0); if (!name) return 'skip'; const s = cleanSnap(snap), same = prof.list.find(x => x.name.toLowerCase() === name.toLowerCase());
+      if (same && sameSnap(same.snap, s)) return same; if (prof.list.length >= PROF_MAX) return null;
+      const p = { id: nextId(prof.list), name: freeName(prof.list, name, k), updatedAt: Date.now(), snap: s }; prof.list.push(p); return p; }
+    // import (PLAN_R14 7, a file of version 2): its profiles added, then the one it names as active chosen
+    function profImport(list, activeName, work) { let out = 0, pick = null; const want = ownName(activeName).toLowerCase();
+      for (const x of Array.isArray(list) ? list : []) { if (!x || typeof x !== 'object') continue; const p = profAdd(x.name, x.snap, null); if (p === null) out++; else if (p !== 'skip' && want && ownName(x.name).toLowerCase() === want) pick = p; }
+      if (pick) { takeSnap(pick.snap); prof.active = pick.id; }
+      if (isObj(work)) takeSnap(work);   // a file's work: what was on screen when it was saved (dirty tells it from the profile chosen)
+      workChanged(); profMsg = out ? out + ' profile' + (out === 1 ? ' was' : 's were') + ' not added: you can keep ' + PROF_MAX + ' of your own.' : pick ? '“' + pick.name + '” is in use.' : '';
+      return out ? said(false, profMsg) : said(true); }
+    // the saved sets of a version-1 message or file ({ set: '1' | '5_30' | ..., name, th }), each a profile as the migration makes one
+    function savedImport(saved) { for (const x of saved) { if (!x || typeof x !== 'object') continue; const s = String(x.set); if (s !== '1' && !SET_KEYS.slice(2).includes(s)) continue;
+        const t = cleanSaved({ v: SAVED_V, list: [{ name: x.name, th: x.th }] })[0]; if (t) profAdd(t.name, savedSnap(s, t.th, snapNow().scale), s); } }
+    // ---- the profile row
+    let profMsg = '', profArm = null;
+    function renderProf() { const a = prof.active, own = a ? prof.list.find(x => x.id === a) : null; el.profSel.textContent = '';
+      if (!profOf(a)) { const o = el.profSel.appendChild(mk('option', null, 'None chosen')); o.value = ''; }
+      for (const p of BUILTIN_PROFILES.concat(prof.list)) { const o = el.profSel.appendChild(mk('option', null, p.name + (p.builtin ? ' (built in)' : ''))); o.value = p.id; if (p.id === a) o.setAttribute('selected', ''); }
+      el.profSel.value = profOf(a) ? a : '';
+      el.profDirty.hidden = !prof.dirty; el.persist.hidden = persist === 'store'; el.profMsg.textContent = profMsg;
+      el.profDelete.textContent = profArm && own && profArm === own.id ? 'Really delete “' + own.name + '”?' : 'Delete'; }
+    const afterProf = () => { render(); renderProf(); onChange(); bridgeSend(); };
+    function onProfSel() { profArm = null; const r = profSelect(el.profSel.value); if (!r.ok) profMsg = r.why; afterProf(); }
+    // (the row is redrawn under the pressed button, so the card-wide listener is told the press was the row's: ev.ptProf)
+    function onProfClick(ev) { const t = ev.target, b = t && t.closest ? t.closest('button') : null; if (!b || b.disabled) return; ev.ptProf = true; let r;
+      if (b === el.profSave) { profArm = null; r = profSave(); }
+      else if (b === el.profSaveAs) { profArm = null; r = profSaveAs(el.profName.value); if (r.ok) el.profName.value = ''; }
+      else if (b === el.profDelete) { const a = prof.active, own = a ? prof.list.find(x => x.id === a) : null;
+        if (!own) { profArm = null; r = said(false, a && builtinOf(a) ? '“' + builtinOf(a).name + '” is built in and cannot be deleted.' : 'Choose a profile of your own first, then Delete.'); }
+        else if (profArm === a) { profArm = null; r = profDelete(a); }
+        else { profArm = a; profMsg = 'Press Delete again to delete “' + own.name + '”.'; renderProf(); return; } }
+      else return;
+      if (!r.ok) profMsg = r.why; afterProf(); }
+    // an armed Delete is taken back by any other press in the card and by typing a name
+    const profDisarm = () => { if (!profArm) return; profArm = null; profMsg = ''; renderProf(); };
+    function onProfAnyClick(ev) { if (!profArm || ev.ptProf) return; const t = ev.target, c = t && t.closest ? t.closest('button, input, select, summary, textarea') : null; if (c) profDisarm(); }
+    function onProfKey(ev) { if (ev.key !== 'Enter' || ev.ctrlKey || ev.metaKey || ev.altKey) return; if (ev.preventDefault) ev.preventDefault(); profArm = null;
+      const r = profSaveAs(el.profName.value); if (r.ok) el.profName.value = ''; else profMsg = r.why; afterProf(); }
+    const onHours = () => setOptions({ hours: { from: +el.hFrom.value, to: +el.hTo.value } });
+    // ---- round 12, version 2 in round 14 (PLAN_R14 7): the settings bridge (BW above; dormant when null). The message carries what it did in round
+    // 12 (saved is always [] now: the saved sets are profiles) and view, hours, share, profiles ([{ id, name, builtin }], the viewer's own with
+    // their snapshot), active, dirty, persist; an answer to a request also ack (its req) and result { ok, why }.
+    const BR_SETS = SET_KEYS, BR_ID = NQ ? 'NQ' : 'GC', MSG_V = 2;
+    function bridgeMsg() { const sets = {}, defaults = {}, w = curW(), sn = snapNow();
       for (const ch of [1, 5, 15]) for (const k of Object.keys(thBy[ch] || {})) { const key = setKey(ch, k); sets[key] = copyTh(thBy[ch][k]); if (fixedOn()) sets[key].share = shareNum();
         defaults[key] = ch > 1 && TSA[ch] && TSA[ch][k] ? cleanThresholds({}, +k, false, TSA[ch][k].defaults) : cleanThresholds({}, +k, false); }
-      for (const s of BR_SAVED) for (const x of brList(brSavedKey(s))) saved.push({ set: s, name: x.name, th: savedTh(x.th) });
-      return { ptc: 1, type: 'settings', instrument: BR_ID, v: 1, at: Date.now(), sets, defaults, scale: { T: w.T, S: w.R, W: w.W }, saved }; }
-    function bridgeSend(force) { if (!BW || destroyed) return; let m; try { m = bridgeMsg(); } catch (e) { return; }
+      return { ptc: 1, type: 'settings', instrument: BR_ID, v: MSG_V, at: Date.now(), sets, defaults, scale: { T: w.T, S: w.R, W: w.W }, saved: [], view: sn.view, hours: sn.hours, share: sn.share,
+        profiles: BUILTIN_PROFILES.map(b => ({ id: b.id, name: b.name, builtin: true })).concat(prof.list.map(p => ({ id: p.id, name: p.name, builtin: false, snap: JSON.parse(JSON.stringify(p.snap)) }))),
+        active: prof.active, dirty: prof.dirty, persist }; }
+    // (while a request is carried out, the changes it makes post nothing of their own: its one answer below carries them, PLAN_R14 7)
+    let inRequest = false;
+    function bridgeSend(force, ack, result) { if (!BW || destroyed || (inRequest && ack == null)) return; let m; try { m = bridgeMsg(); } catch (e) { return; }
+      if (ack != null) { m.ack = String(ack); m.result = result && typeof result === 'object' ? (result.ok ? { ok: true } : { ok: false, why: result.why || '' }) : { ok: true }; }
       const key = JSON.stringify(Object.assign({}, m, { at: 0 })); if (!force && key === bridgeLast) return; bridgeLast = key;
       try { BW.parent.postMessage(m, '*'); } catch (e) { /* the parent is gone: nothing to tell */ } }
-    // apply-settings: the saved lists of the message replace the card's (every list; a list the message does not hold becomes empty), then the
-    // thresholds of every set it holds (a set without refDays is at 20, the span it was built with), the scale and the whipsaw share (fixed when
-    // a set carries share, else by the scale) go through setOptions as one change; a set, scale key or list entry that is not readable is skipped
-    function bridgeApply(d) { const sets = d.sets && typeof d.sets === 'object' && !Array.isArray(d.sets) ? d.sets : null, op = {};
-      if (Array.isArray(d.saved)) { const by = {}; for (const s of BR_SAVED) by[s] = [];
-        for (const x of d.saved) if (x && typeof x === 'object' && Object.prototype.hasOwnProperty.call(by, x.set)) by[x.set].push({ name: x.name, th: x.th });
-        for (const s of BR_SAVED) { const k = brSavedKey(s), list = cleanSaved({ v: SAVED_V, list: by[s] }); savedLists.set(k, list); save(k, { v: SAVED_V, list: list.map(x => ({ name: x.name, th: savedTh(x.th) })) }); }
-        savedArm = null; savedMsg = ''; }
+    // apply-settings (PLAN_R14 7): into the work (the profile in force stays; dirty tells the difference). A version-1 message is taken as in round
+    // 12, its saved sets added as profiles by the migration rule. The thresholds of every set it holds (a set without refDays is at 20), the scale,
+    // the share (version 2: share; else fixed when a set carries share, by the scale when none does), the view and the hours go through setOptions
+    // as one change; a part that is not readable is skipped.
+    const isObj = o => !!o && typeof o === 'object' && !Array.isArray(o);
+    function bridgeApply(d) { const sets = isObj(d.sets) ? d.sets : null, op = {};
+      if (Array.isArray(d.saved) && d.saved.length) savedImport(d.saved);
       if (sets) { const th = {}; let sh = null;
-        for (const k of BR_SETS) { const p = sets[k]; if (!p || typeof p !== 'object' || Array.isArray(p)) continue; const q = Object.assign({}, p); if (q.refDays === undefined) q.refDays = 20;
+        for (const k of BR_SETS) { const p = sets[k]; if (!isObj(p)) continue; const q = Object.assign({}, p); if (q.refDays === undefined) q.refDays = 20;
           if (q.share != null && sh === null) sh = q.share; delete q.share; delete q.len; th[k] = q; }
         if (Object.keys(th).length) { op.thresholds = th; op.share = sh === null ? 'scale' : sh; } }
-      if (d.scale && typeof d.scale === 'object') { const w = {}; for (const [a, b] of [['T', 'T'], ['S', 'R'], ['W', 'W']]) if (d.scale[a] !== undefined) w[b] = d.scale[a]; if (Object.keys(w).length) op.weights = w; }
-      setOptions(op); render(); }
+      if (d.share !== undefined && shareOf(d.share)) op.share = d.share;
+      if (isObj(d.scale)) { const w = {}; for (const [a, b] of [['T', 'T'], ['S', 'R'], ['W', 'W']]) if (d.scale[a] !== undefined) w[b] = d.scale[a]; if (Object.keys(w).length) op.weights = w; }
+      if (isObj(d.view)) { if (CHARTS.includes(+d.view.chart)) op.chart = +d.view.chart; if (ALL_LENS.includes(+d.view.len)) op.slotLen = +d.view.len; if (d.view.season === 'auto' || SEASONS.includes(d.view.season)) op.season = d.view.season; }
+      if (isObj(d.hours)) op.hours = d.hours;
+      setOptions(op); workChanged(); render(); renderProf(); }
+    // the shell's requests (get-settings, apply-settings, profile), each answered by one settings message with its ack; the ones that come before
+    // the stored results are kept (waiting) and carried out when setResult brings them, in order (J19)
+    let resultsIn = false; const waiting = [];
+    function doRequest(d) { let r = said(true); inRequest = true;
+      try { if (d.type === 'apply-settings') bridgeApply(d);
+        else if (d.type === 'profile') { profArm = null;
+          r = d.op === 'select' ? profSelect(d.id) : d.op === 'save' ? profSave(d.id) : d.op === 'save-as' ? profSaveAs(d.name) : d.op === 'delete' ? profDelete(d.id) : d.op === 'import' ? profImport(d.profiles, d.active != null ? d.active : d.name, d.work) : said(false, 'The card does not know this request.');
+          if (!r.ok) profMsg = r.why; render(); renderProf(); onChange(); } }
+      catch (e) { r = said(false, 'The card could not carry this out (' + (e && e.message || e) + ').'); }
+      finally { inRequest = false; }
+      bridgeSend(true, d.req != null ? d.req : null, r); }
     // ---- round 13 (dev/v4_loop/round13/PLAN_R13.md): the views of the one page's two playground tabs. The shell shows this same frame under
     // "Label playground" and "Curve playground" and says which part of the page to show: { ptc: 1, type: 'view', view: 'study' | 'label' | 'lab' }.
     // A part is switched off with the attribute data-ptc-off (hidden by the card's CSS), never with `hidden`, which the page sets and clears itself.
@@ -8016,7 +8391,7 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
     // (the tab selectors are put together here: the page's tests list the page's tabs by reading the built page's text for that attribute)
     const viewTabSel = v => '.tabs button[data-view=' + JSON.stringify(v) + ']';
     const VIEW_PAGE = { tab: viewTabSel, on: '.tabs button[aria-selected="true"]', lab: ['cases', 'play', 'csv'], labOpen: 'play',
-      labOff: ['#watch-panel', viewTabSel('gc10y'), viewTabSel('gcrecent')].join(', ') };
+      labOff: ['#watch-panel', '[data-ptc-fold="watch"]', viewTabSel('gc10y'), viewTabSel('gcrecent')].join(', ') };
     let viewNow = 'study', viewTab = null, viewPut = null;
     const pageTab = () => { const b = doc.querySelector(VIEW_PAGE.on); return b ? b.getAttribute('data-view') : null; };
     const pageGo = v => { const b = v && pageTab() !== v ? doc.querySelector(VIEW_PAGE.tab(v)) : null; if (b) b.click(); };
@@ -8029,7 +8404,8 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
       if (v === 'label') { pageGo(cardTab());
         for (let n = rootEl; n !== doc.body && n.parentNode && n.parentNode.nodeType === 1; n = n.parentNode) for (const s of n.parentNode.children) if (s !== n) off(s);
         for (const s of rootEl.children) if (s !== el.msg && s !== el.body) off(s);
-        const keep = [el.chartCtl, el.banner, el.lik, el.setNote, el.defs, el.exOut, el.exWrap]; for (const s of el.body.children) if (!keep.includes(s)) off(s); }
+        // round 14: the profile row, the timeframe row and the fold "Label settings" (opened), which holds the rest of the labelling part
+        const keep = [el.prof, el.chartCtl, el.fLabel]; for (const s of el.body.children) if (!keep.includes(s)) off(s); el.fLabel.open = true; }
       else if (v === 'lab') { if (!VIEW_PAGE.lab.includes(pageTab())) pageGo(VIEW_PAGE.labOpen); for (const e of doc.querySelectorAll(VIEW_PAGE.labOff)) off(e); }
       else if (pageTab() === viewPut) pageGo(viewTab);
       viewPut = v === 'study' ? null : pageTab();
@@ -8037,44 +8413,50 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
       render();
       // the page draws its charts again on a resize (the parts that come back were sized while they were off), and the view starts at its top
       try { const E = BW.Event || (typeof Event === 'function' ? Event : null); if (E && typeof BW.dispatchEvent === 'function') BW.dispatchEvent(new E('resize')); if (typeof BW.scrollTo === 'function') BW.scrollTo(0, 0); } catch (e) { /* a convenience */ } }
+    // round 14 (PLAN_R14 7): 'view' and 'shown' (the tab was just shown: draw again at the width it has now) at once; a request of a version above
+    // 2 is answered { ok: false, why: 'version' } and changes nothing; a request before the results waits for them
     function onBridgeMsg(ev) { if (!BW || destroyed || !ev || ev.source !== BW.parent) return; const d = ev.data; if (!d || typeof d !== 'object' || d.ptc !== 1) return;
-      if (d.type === 'get-settings') bridgeSend(true);
-      else if (d.type === 'apply-settings' && d.instrument === BR_ID) { bridgeApply(d); bridgeSend(true); }
-      else if (d.type === 'view') { try { setView(d.view); } catch (e) { /* a page without these parts stays the whole study */ } } }
-    // Save (E3, E6): the settings in force for the slot length on show under the typed name, or "My settings {n}" with the smallest n not in use; an
-    // existing name is replaced on the second press only; the built-in name is refused; a new name past SAVED_MAX is refused
-    function savedSaveNow() { const ln = curLen(), cur = ln ? thOf(ln) : null, arm = savedArm; savedArm = null; if (!cur) return;
-      let name = savedName(el.savedName.value); if (!name) { const have = new Set(SL().map(x => savedKeyOf(x.name))); let n = 1; while (have.has('my settings ' + n)) n++; name = 'My settings ' + n; }
-      const key = name.toLowerCase(), th = savedTh(cur), i = SL().findIndex(x => savedKeyOf(x.name) === key);
-      if (isBuiltinKey(key)) { savedMsg = '“' + SAVED_BUILTIN.name + '” is built in. Choose another name.'; return; }
-      if (i >= 0) { if (arm && arm.kind === 'replace' && arm.key === key) { SL()[i] = { name, th }; savedStore(); savedMsg = 'Replaced “' + name + '”.'; el.savedName.value = ''; }
-        else { savedArm = { kind: 'replace', key, name }; savedMsg = '“' + name + '” exists already. Press again to replace it.'; } return; }
-      if (SL().length >= SAVED_MAX) { savedMsg = 'You can keep ' + SAVED_MAX + ' sets. Delete one first.'; return; }
-      SL().push({ name, th }); savedStore(); savedMsg = 'Saved as “' + name + '”.'; el.savedName.value = ''; }
-    // Use (E3): the set into the settings of every slot length the card has, each with its own len and the set's ma5Line, through setOptions like
-    // the quiz's button (the sliders, the scale, the sentences and the score follow; a set already in force changes nothing)
-    // (round 10: on a candle chart into the set in force only; the usual size in force is kept)
-    function savedUse(key) { const x = isBuiltinKey(key) ? SAVED_BUILTIN : SL().find(y => savedKeyOf(y.name) === key), ls = chart === 1 ? lensOf(TS, 1) : [curLen()]; if (!x || !ls.length) return;
-      const t = {}; for (const l of ls) t[String(l)] = Object.assign(copyTh(x.th), { len: l });
-      savedMsg = '“' + x.name + '” put into the settings, for ' + (chart > 1 ? rowName(ls[0]) : (ls.length > 1 ? ls.slice(0, -1).join('-, ') + '- and ' + ls[ls.length - 1] : ls[0]) + '-minute slots') + '.'; setOptions({ thresholds: t }); }
-    // Delete (E3): the first press arms that set's button, the second removes the set
-    function savedDelete(key) { const i = SL().findIndex(y => savedKeyOf(y.name) === key); if (i < 0) { savedArm = null; return; }
-      if (savedArm && savedArm.kind === 'delete' && savedArm.key === key) { savedArm = null; const x = SL().splice(i, 1)[0]; savedStore(); savedMsg = 'Deleted “' + x.name + '”.'; }
-      else { savedArm = { kind: 'delete', key }; savedMsg = ''; } }
-    // (the list is rebuilt under the pressed button, so the card-wide listener below is told the press was this block's: ev.ptSaved)
-    function onSavedClick(ev) { const t = ev.target, b = t && t.closest ? t.closest('button') : null; if (!b || b.disabled) return; ev.ptSaved = true;
-      if (b === el.savedSave) savedSaveNow(); else if (b.hasAttribute('data-saved-use')) { savedArm = null; savedUse(b._savedKey); } else if (b.hasAttribute('data-saved-delete')) savedDelete(b._savedKey); else return;
-      renderSaved(curLen()); }
-    // an armed Replace or Delete is taken back by any other press in the card (a button, a slider, a switch, a field, a fold) and by typing in the name
-    const savedDisarm = () => { if (!savedArm) return; savedArm = null; savedMsg = ''; renderSaved(curLen()); };
-    function onSavedAnyClick(ev) { if (!savedArm || ev.ptSaved) return; const t = ev.target, c = t && t.closest ? t.closest('button, input, select, summary, textarea') : null; if (!c || c.closest('[data-saved]') === el.saved) return; savedDisarm(); }
-    function onSavedKey(ev) { if (ev.key !== 'Enter' || ev.ctrlKey || ev.metaKey || ev.altKey) return; if (ev.preventDefault) ev.preventDefault(); savedSaveNow(); renderSaved(curLen()); }
+      if (d.type === 'view') { try { setView(d.view); } catch (e) { /* a page without these parts stays the whole study */ } return; }
+      if (d.type === 'shown') { try { render(); } catch (e) { /* drawn again on the next change */ } return; }
+      if (!['get-settings', 'apply-settings', 'profile'].includes(d.type) || (d.type !== 'get-settings' && d.instrument !== BR_ID)) return;
+      if (fin(+d.v) && +d.v > MSG_V) { bridgeSend(true, d.req != null ? d.req : null, said(false, 'version')); return; }
+      if (d.type === 'get-settings') { bridgeSend(true); return; }   // said at once, no ack (it is not a change)
+      if (!resultsIn) { waiting.push(d); return; }
+      doRequest(d); }
+    // ---- round 14 (PLAN_R14 6): the folds of the card (closed at first, then as the viewer left them: FOLDS_KEY) and three parts of the page around
+    // the card, each put whole into a fold of its own at run time (the page's source is hashed and stays as it is; the page keeps setting `hidden`
+    // and writing into these parts, which it still finds by id). A page fold is hidden while every part in it is; destroy puts the parts back.
+    const FOLDS_KEY = SP + 'points.folds';
+    const foldState = (() => { try { const t = loadRaw(FOLDS_KEY), o = t ? JSON.parse(t) : null; return o && typeof o === 'object' && !Array.isArray(o) ? o : {}; } catch (e) { return {}; } })();
+    const CARD_FOLDS = { label: el.fLabel, table: el.fTable, over: el.fOver, how: el.fHow };
+    const PAGE_FOLDS = [{ k: 'watch', ids: ['watch-panel'], title: 'How much the market usually moves (a fixed rule for 12:00 to 01:00; it does not follow your settings)' },
+      { k: 'research', ids: ['tf-card'], title: 'Research comparisons' },
+      { k: 'alerts', ids: ['look-card', 'moves-card', 'levels-card'], title: 'Alerts and levels (fixed rules; they do not follow your settings)' }];
+    const pageFolds = [];
+    // the sentence under the page's title names half hours on the 5-minute chart; since round 14 the rows are a setting and the first view is
+    // 15-minute rows. The page source is not edited (PLAN_R14 1), so the card rewrites that one sentence while it is on the page (destroy puts it back).
+    const SUB_FROM = 'Each half hour of each trade date is labelled a trend, a swing or a whipsaw from your 5-minute chart (the 15-minute and the 1-minute chart are a button away)',
+      SUB_TO = 'Each row of your scoring timeframe (15, 30 or 60 minutes) on each trade date is labelled a trend, a swing or a whipsaw';
+    let subEl = doc.getElementById ? doc.getElementById('sub-study') : null;
+    if (subEl && String(subEl.textContent).includes(SUB_FROM)) subEl.textContent = String(subEl.textContent).replace(SUB_FROM, SUB_TO); else subEl = null;
+    for (const f of PAGE_FOLDS) { const parts = f.ids.map(i => doc.getElementById ? doc.getElementById(i) : null).filter(Boolean), p0 = parts[0];
+      if (!p0 || !p0.parentNode || rootEl.contains && parts.some(p => p.contains && p.contains(rootEl)) || (p0.parentNode.hasAttribute && p0.parentNode.hasAttribute('data-ptc-fold'))) continue;
+      const d = dAttr(mk('details', 'pt-pagefold'), 'data-ptc-fold', f.k); d.appendChild(mk('summary', null, f.title)); p0.parentNode.insertBefore(d, p0); for (const p of parts) d.appendChild(p); pageFolds.push({ k: f.k, d, parts }); }
+    const allFolds = () => Object.keys(CARD_FOLDS).map(k => [k, CARD_FOLDS[k]]).concat(pageFolds.map(f => [f.k, f.d]));
+    for (const [k, d] of allFolds()) d.open = foldState[k] === true;
+    const onFoldToggle = () => { let ch = false; for (const [k, d] of allFolds()) if (!!foldState[k] !== !!d.open) { foldState[k] = !!d.open; ch = true; } if (ch) saveRaw(FOLDS_KEY, JSON.stringify(foldState)); };
+    function syncWraps() { for (const f of pageFolds) { const off = f.parts.every(p => p.hidden); if (f.d.hidden !== off) f.d.hidden = off; } }
+    let foldMO = null; try { const MO = (doc.defaultView && doc.defaultView.MutationObserver) || (typeof MutationObserver === 'function' ? MutationObserver : null);
+      if (MO && pageFolds.length) { foldMO = new MO(syncWraps); for (const f of pageFolds) for (const p of f.parts) foldMO.observe(p, { attributes: true, attributeFilter: ['hidden'] }); } } catch (e) { foldMO = null; }
+    syncWraps();
     // ---- listeners and teardown (pointer events cover mouse, pen and touch)
     const LISTEN = [[el.eye, 'click', onEyeClick], [el.body, 'click', onEyeAnyClick], [el.eyePanel, 'keydown', onEyeKey],[el.c1, 'pointermove', onMove1], [el.c1, 'pointerdown', onMove1], [el.c1, 'pointerleave', onLeave1], [el.c1, 'keydown', onKey1], [el.c1, 'blur', onLeave1],
       [el.c2, 'pointermove', onMove2], [el.c2, 'pointerdown', onMove2], [el.c2, 'pointerleave', onLeave2], [el.c2, 'keydown', onKey2], [el.c2, 'blur', onLeave2],
       [el.c3, 'pointermove', onMove3], [el.c3, 'pointerdown', onMove3], [el.c3, 'pointerleave', onLeave3], [el.c3, 'keydown', onKey3], [el.c3, 'blur', onLeave3],
       [el.reset, 'click', onReset], [el.thReset, 'click', onThReset], [el.likReset, 'click', onLikReset], [el.by, 'change', onBy], [el.series, 'change', onSeries], [el.more, 'click', onMore],
-      [el.fold, 'toggle', onFold], [el.defs, 'click', onDefsClick], [el.saved, 'click', onSavedClick], [el.body, 'click', onSavedAnyClick], [el.savedName, 'input', savedDisarm], [el.savedName, 'keydown', onSavedKey]];
+      [el.fold, 'toggle', onFold], [el.defs, 'click', onDefsClick], [el.prof, 'click', onProfClick], [el.body, 'click', onProfAnyClick], [el.profName, 'input', profDisarm], [el.profName, 'keydown', onProfKey], [el.profSel, 'change', onProfSel],
+      [el.hFrom, 'change', onHours], [el.hTo, 'change', onHours]];
+    for (const [, d] of allFolds()) LISTEN.push([d, 'toggle', onFoldToggle]);
     for (const k of LABEL_KEYS) { LISTEN.push([el.win[k], 'input', onWeightInput]); LISTEN.push([el.win[k], 'change', onWeightChange]); }
     for (const d of TH_DEFS) { LISTEN.push([el.th[d.k], 'input', onThInput]); LISTEN.push([el.th[d.k], 'change', onThInput]); }
     for (const k of SIGNS) { LISTEN.push([el.wIn[k], 'input', onLwInput]); LISTEN.push([el.wIn[k], 'change', onLwInput]); }
@@ -8082,12 +8464,25 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
     for (const p of PRESETS) LISTEN.push([el.preBtn[p.id], 'click', onPreset(p)]);
     for (const p of Object.keys(el.exBtn)) LISTEN.push([el.exBtn[p], 'click', onExBtn(p)]);
     for (const ln of ALL_LENS) LISTEN.push([el.lenBtn[ln], 'click', onLen(ln)]); for (const s of SEASONS) LISTEN.push([el.seaBtn[s], 'click', onSeason(s)]);
-    for (const ch of CHARTS) LISTEN.push([el.chartBtn[ch], 'click', onChart(ch)]); for (const rd of REF_DAYS) LISTEN.push([el.refBtn[rd], 'click', onRef(rd)]); for (const s of SHARES) LISTEN.push([el.shareBtn[s], 'click', onShare(s)]);
+    for (const ch of [5, 1, 15]) LISTEN.push([el.chartBtn[ch], 'click', onChart(ch)]); for (const rd of REF_DAYS) LISTEN.push([el.refBtn[rd], 'click', onRef(rd)]); for (const s of SHARES) LISTEN.push([el.shareBtn[s], 'click', onShare(s)]);
     for (const s of ['clock', 'rank']) LISTEN.push([el.sortBtn[s], 'click', onSort(s)]);
     for (const [t, ev, fn] of LISTEN) t.addEventListener(ev, fn);
     function destroy() { destroyed = true; if (el.c1.removeEventListener) for (const [t, ev, fn] of LISTEN) t.removeEventListener(ev, fn);
       for (const e of owned) { if (rootEl.removeChild) { try { rootEl.removeChild(e); } catch (err) { /* already gone */ } } } owned.length = 0; TS = null; geo1 = geo2 = geo3 = null; tallies.clear(); memo.clear(); seaSets.clear(); tswPL = {};
-      if (BW) try { BW.removeEventListener('message', onBridgeMsg); } catch (err) { /* the window is gone */ } }
+      if (BW) try { BW.removeEventListener('message', onBridgeMsg); } catch (err) { /* the window is gone */ }
+      if (foldMO) try { foldMO.disconnect(); } catch (err) { /* gone */ }
+      if (subEl) { try { subEl.textContent = String(subEl.textContent).replace(SUB_TO, SUB_FROM); } catch (err) { /* the page is gone */ } subEl = null; }
+      for (const f of pageFolds) { try { for (const p of f.parts) f.d.parentNode.insertBefore(p, f.d); f.d.parentNode.removeChild(f.d); } catch (err) { /* the page is gone */ } } pageFolds.length = 0; }
+    // ---- round 14: the work of the store into the card, then what the page or a test asked for at create (cfg.chart, then cfg.slotLen, then
+    // cfg.season win over the stored view); a first visit with nothing stored, or a migration that brought the defaults, is on "Study defaults";
+    // the store is written once now, so a store that cannot be written is found at once (one that could not be read is never written over)
+    takeSnap(prof.work);
+    if (cfg.chart !== undefined && CHARTS.includes(+cfg.chart)) { chartWant = +cfg.chart; if (!LENS_OF[chartWant].includes(lenWant)) lenWant = LENS_OF[chartWant][0]; }
+    if (cfg.slotLen !== undefined && ALL_LENS.includes(+cfg.slotLen)) lenWant = +cfg.slotLen;
+    if (SEASONS.includes(cfg.season)) { seaPick = cfg.season === PM.season(today) ? 'auto' : cfg.season; season = cfg.season; }
+    useChart();
+    if (profText == null && prof.active === null && sameSnap(prof.work, BUILTIN_PROFILES[0].snap)) prof.active = BUILTIN_PROFILES[0].id;
+    if (storage) storeWrite();
     // round 12: in a frame, listen to the parent and say the settings once the page has handed the card its results (a microtask later)
     if (BW) { BW.addEventListener('message', onBridgeMsg); Promise.resolve().then(() => bridgeSend()); }
     render();
@@ -8132,7 +8527,7 @@ function PointsCard(Core, PointsMath, TSWLabels, EyeCalib) { // Core is accepted
   // partsIn100 and tswPrint: the page's slot table prints its trend · swing · whipsaw shares with these (page-test fix 6), so both tables round alike
   // rankCorr, readText and mixedText: round 7's "How to read the score" and left-out line (RULINGS B2, B4), exposed for the tests
   // round 10: SETS, VERD, pick, sgn100, pm100 and fz left with the older labels and the statistics layer; CHARTS, LENS_OF, TF_TH_KEY, pickTF and setKey came
-  const lib = { LENS, CHARTS, LENS_OF, LEN_DEF, REF_DAYS, SHARES, GROUPS, WIN, WIN_TEXT, STORE_KEY, TSW_W_KEY, TH_KEY, TF_TH_KEY, FOLD_KEY, SAVED_KEY, SAVED_MAX, SAVED_BUILTIN, STORAGE_PREFIX: SP, instrument: NQ ? 'NQ' : 'GC', priceTxt, savedSum, partsIn100, tswPrint, rankCorr, readText, mixedText, TH_DEFS, W_DEFS, TH_SW, PRESETS, MIN_DAYS, CLOSE, hasTSWLabels: !!TSW, DEF, cleanWeights, cleanThresholds, isDefault, pickTSW, pickTF, setKey, lensOf, namesOf,
+  const lib = { PROFILES_KEY, SCORED_ON, setName, BUILTIN_PROFILES, LENS, CHARTS, LENS_OF, LEN_DEF, REF_DAYS, SHARES, GROUPS, WIN, WIN_TEXT, STORE_KEY, TSW_W_KEY, TH_KEY, TF_TH_KEY, FOLD_KEY, SAVED_KEY, SAVED_MAX, SAVED_BUILTIN, STORAGE_PREFIX: SP, instrument: NQ ? 'NQ' : 'GC', priceTxt, savedSum, partsIn100, tswPrint, rankCorr, readText, mixedText, TH_DEFS, W_DEFS, TH_SW, PRESETS, MIN_DAYS, CLOSE, hasTSWLabels: !!TSW, DEF, cleanWeights, cleanThresholds, isDefault, pickTSW, pickTF, setKey, lensOf, namesOf,
     spanText, rangeText, facts, driverText, verdictText, exampleText, words, p100, r0, n100, recentClock, recentClockHtml };
   return { create, lib };
 }
@@ -12400,123 +12795,84 @@ const Core = (() => {
 <p class="rm-back"><a href="#rm-close">← Back to the page</a></p>
 <div class="rm-main">
 
-<p class="rm-kicker">Research method · 17 November 2026</p>
-<h1 id="rm-title">How the trend · swing · whipsaw score is made, and how far to trust it</h1>
-<p class="rm-lede">Ten years of gold futures, labelled row by row in your own chart terms, now read on the 5-minute chart you trade from. This note explains the method, what the numbers are good for, and where they stop.</p>
-
-<h2 id="rm-tldr">The short version</h2>
-<div class="rm-tldr">
-  <div class="rm-tl">
-    <h3>What it is</h3>
-    <ul>
-      <li>Every half hour of every trading day gets one label by fixed rules: <b>Trend +3</b>, <b>Swing +1</b> or <b>Whipsaw −1</b>.</li>
-      <li>The rules use what you look at: the 5MA, the 20MA and the Bollinger Bands (20, 2) of the <b>5-minute chart</b>. The 15-minute and the 1-minute chart are a button away.</li>
-      <li>A row's <b>score</b> is its average points per 100 days. It ranks the hours of your day. It gives no direction and no entry.</li>
-    </ul>
-  </div>
-  <div class="rm-tl rm-worth">
-    <h3>What it is worth</h3>
-    <ul>
-      <li><b>The order of the hours is solid.</b> Each half hour has 840 to 1,575 days per season. The noise of one score is about 5 points per 100 days in the US winter and 3.5 in the US summer; the half hours of your day differ by up to 67.</li>
-      <li><b>The order survives the chart.</b> The 5-minute and the 1-minute chart rank the half hours of the day almost alike (rank correlation 0.84 in the US winter, 0.92 in the US summer).</li>
-      <li><b>It holds over time.</b> 2015–2021 against 2022–2026 on the 5-minute chart: 0.82 and 0.81 over the whole day, 0.78 and 0.66 inside your hours.</li>
-    </ul>
-  </div>
-  <div class="rm-tl rm-stop">
-    <h3>Where it stops</h3>
-    <ul>
-      <li><b>It is hindsight.</b> A label describes a finished half hour. After a trend or a swing half hour, the next one had a clean one-way move 22 times in 100; after a whipsaw, 20 times; after any half hour, 21.</li>
-      <li><b>The best hours are the busy hours.</b> Keep only the best 40 half hours in 100 and they sit where gold moves most: 20:00 to 22:30 Singapore time in the US summer, an hour later in the US winter.</li>
-      <li><b>Fixed rules lost money here.</b> Your two trades, run as mechanical rules with strict fills, lost on the 1-, 5- and 15-minute chart alike. That is a count under those rules, not a test of your judgement.</li>
-    </ul>
-  </div>
+<p class="rm-kicker">Research method · Gold</p>
+<h1 id="rm-title">How the score is made</h1>
+<p class="rm-lede">Ten years of gold futures, in rows of your scoring timeframe. Each row of each day is labelled from the 5MA, 20MA and Bollinger Bands: <b>Trend +3</b>, <b>Swing +1</b> or <b>Whipsaw −1</b>. A row's score is its average points per 100 days. The page opens on 15-minute rows scored on 1-minute bars.</p>
+<p>Use it to rank the hours of your day. The answer "when to watch" is made from the settings in force.</p>
+<div class="rm-keep">
+<p class="rm-keep-h">Keep in mind</p>
+<ul>
+  <li><b>Hindsight:</b> a label describes a finished row and says almost nothing about the next.</li>
+  <li><b>Mostly a volatility clock:</b> the top rows are when gold moves most.</li>
+  <li>The rules and settings were chosen with these ten years in view; only new days can test them.</li>
+  <li><b>No direction and no entry.</b></li>
+</ul>
 </div>
-<p class="rm-one"><b>In one line:</b> trust the <em>order</em> of the hours, not the <em>level</em> of the score; read it as "when is gold worth watching", and judge the rest on the chart.</p>
 
-<h2 id="rm-method">The method, step by step</h2>
-<ol class="rm-steps">
-  <li><b>The data.</b> 3.33 million 1-minute bars of gold futures (GC) from 30 November 2015 to 24 April 2026: 2,420 trade dates, one contract per trade date at its own unadjusted prices (52 contracts). Rows run on the New York clock from 18:00; Singapore is 13 hours ahead in the US winter and 12 in the US summer. A separate recent file is held back as verification data and plays no part in the score.</li>
-  <li><b>The candles.</b> The 1-minute bars are joined into 5-minute candles on the clock (12:00, 12:05, …), and into 15-minute candles the same way. A candle is the bars of its five minutes; a minute with no trade is simply missing from it.</li>
-  <li><b>The chart lines.</b> The 20MA, the bands at ±2 standard deviations and the 5MA, all on the closes of the chosen chart's candles, computed over the candles in order as a continuous chart draws them. So at the first candle of a half hour the lines already carry the 100 minutes before it. Every "which side" and "did it touch" decision is made on whole cents, so there are no rounding ties.</li>
-  <li><b>The rows.</b> On the 5-minute chart a row is a half hour: six candles. (A one-hour row of twelve candles is a choice. The 15-minute chart uses one-hour rows of four candles; the 1-minute chart keeps its 15- and 30-minute rows.) A row on a day counts when all its candles exist and hold at least 80% of their minutes. That leaves 110,839 row-days on the 5-minute chart.</li>
-  <li><b>Nine measurements per row-day</b>, read on the row's own candles: how one-way it was (close minus open, as a share of the high–low range); its size against a usual row of the 20 earlier trade dates (10 or 60 by a button); closes on the wrong side of the 20MA and of the 5MA; crossings of the 20MA that came back without reaching a band ("failed crossings") and those that reached one; how many bands were touched; how much consecutive candles overlap.</li>
-  <li><b>The rule.</b> First match wins; every row-day gets exactly one label. The table below gives the defaults.</li>
-  <li><b>The whipsaw likelihood.</b> For rows that are neither dead nor one-way: an index from 0 to 100, the weighted mean of four signs (failed crossings 50, no band reached 15, overlapping candles 20, small row 15). At or above your cut (50) the row is whipsaw, below it swing. It is an index built by hand, not a probability.</li>
-  <li><b>The score.</b> +3, +1 or −1 for each day, averaged per row and shown per 100 days.</li>
-  <li><b>Your settings.</b> The nine measurements are stored for each chart, so moving the cut, a weight or a threshold relabels the ten years at once. Settings belong to a chart: what you fitted on the 1-minute chart stays there, and "Teach it your eye" fits the 5-minute chart from examples drawn in 5-minute candles.</li>
-  <li><b>The fixed whipsaw share.</b> Instead of a cut, you can fix how much is whipsaw: 60 or 70 in 100. Every half hour of every day in your hours is ranked: clean trends first (the more one-way and the bigger, the higher), then everything else that is not dead (the bigger and the less choppy, the higher). The best 40 or 30 in 100 are kept; the rest count as whipsaw.</li>
-</ol>
-
+<div class="rm-folds">
+<details id="rm-label">
+<summary>How a row gets its label</summary>
+<p><b>The data.</b> 3.33 million 1-minute bars of gold futures (GC) from 30 November 2015 to 24 April 2026: 2,420 trade dates, one contract per trade date at its own unadjusted prices (52 contracts). Rows run on the New York clock from 18:00; Singapore is 13 hours ahead in the US winter and 12 in the US summer.</p>
+<p><b>The row and its chart.</b> Your scoring timeframe sets the row: 15, 30 or 60 minutes. A row is read on the candles of one chart: 15-minute rows on 1-minute bars; 30-minute rows on 5-minute candles or 1-minute bars; 60-minute rows on 5- or 15-minute candles. The 20MA, the bands at ±2 standard deviations and the 5MA are those of that chart, drawn over its candles in order as a continuous chart draws them: on 1-minute bars the 20MA spans 20 minutes, on 5-minute candles 100 minutes. Every "which side" and "did it touch" decision is made on whole cents.</p>
+<p><b>Which rows count.</b> A row on a day counts when it has every candle present and at least 80% of the minutes across the row. Row-days just after a contract change are left out, because their averages would mix two contracts.</p>
+<p><b>Nine measurements</b> are read on the row's own candles: how one-way it was (close minus open, as a share of the high–low range); its size against a usual row of the 20 earlier trade dates (10 or 60 by a button); closes on the wrong side of the 20MA and of the 5MA; crossings of the 20MA that came back without reaching a band ("failed crossings") and those that reached one; how many bands were touched; how much consecutive candles overlap.</p>
+<p><b>The rule.</b> First match wins; every row of every day gets exactly one label. Defaults:</p>
 <div class="rm-scroll">
 <table>
   <thead><tr><th>Order</th><th>Label</th><th>When</th><th>Default</th></tr></thead>
   <tbody>
     <tr><td>1</td><td><b>Whipsaw</b> (dead)</td><td>The row is too small against a usual row</td><td>under half</td></tr>
     <tr><td>2</td><td><b>Trend</b></td><td>It ends far from its open, and it held its averages</td><td>ends at least 60% of its range from its open; at most 1 close on the wrong side of the 20MA; no close on the wrong side of the 5MA</td></tr>
-    <tr><td>3</td><td><b>Whipsaw</b> (broken trend)</td><td>One-way, but it broke an average</td><td>your rule: "if it breaks 20MA … make it choppy". A switch sends these to rows 4 and 5 instead.</td></tr>
+    <tr><td>3</td><td><b>Whipsaw</b> (broken trend)</td><td>One-way, but it broke an average</td><td>your rule: "if it breaks 20MA … make it choppy". The broken-trend switch sends these to rows 4 and 5 instead.</td></tr>
     <tr><td>4</td><td><b>Whipsaw</b> (by likelihood)</td><td>Whipsaw likelihood at or above the cut</td><td>cut 50</td></tr>
     <tr><td>5</td><td><b>Swing</b></td><td>Everything else</td><td></td></tr>
   </tbody>
 </table>
 </div>
 <p class="rm-note">Wrong-side closes in the first third of a row (two candles of six) are forgiven while the move has not started; after that every one counts. A crossing is counted in the row where it ends.</p>
+<p><b>The whipsaw likelihood</b> is an index from 0 to 100 for rows that are neither dead nor one-way: the weighted mean of four signs (failed crossings 50, no band reached 15, overlapping candles 20, small row 15). At or above your cut the row is a whipsaw, below it a swing. It is built by hand; it is not a probability.</p>
+<p><b>The fixed whipsaw share</b> replaces the cut when you choose it: 60 or 70 in 100 are whipsaw. Every row of every day in your hours is ranked: clean trends first (the more one-way and the bigger, the higher), then everything else that is not dead (the bigger and the less choppy, the higher). The best 40 or 30 in 100 are kept; the rest count as whipsaw. It is a selection made looking back over all ten years: every day is ranked against all the others at once, later years included.</p>
+<p><b>The score.</b> +3, +1 or −1 for each day, averaged per row and shown per 100 days. Moving the cut, a weight or a threshold relabels the ten years at once; thresholds are kept per chart and scoring timeframe.</p>
+<h3>One row, worked through</h3>
+<p>A half-hour row on 5-minute candles (six candles), with a US data release in it. Is it under half a usual row? No, so it is not dead. Does it end at least 60% of its range from its open? Yes, so it is one-way. After the two forgiven candles, does a close fall on the wrong side of the 5MA? One does, so it broke an average: by your rule a whipsaw (broken trend). With no such close it would be a trend. With the broken-trend switch on, it goes to the likelihood instead: at or above the cut (50) a whipsaw, below it a swing.</p>
+</details>
 
-<h2 id="rm-results">What the ten years give at the defaults</h2>
-<figure>
-  <div class="rm-barrow"><span class="rm-lab">5 min</span><div class="rm-bar" role="img" aria-label="5-minute chart, 30-minute rows: trend 17.0, swing 44.5, whipsaw 38.4 in 100 row-days"><div class="rm-t" style="width:17.0%">17</div><div class="rm-s" style="width:44.5%">45</div><div class="rm-w" style="width:38.4%">38</div></div></div>
-  <div class="rm-barrow"><span class="rm-lab">15 min</span><div class="rm-bar" role="img" aria-label="15-minute chart, 60-minute rows: trend 19.9, swing 50.3, whipsaw 29.8 in 100 row-days"><div class="rm-t" style="width:19.9%">20</div><div class="rm-s" style="width:50.3%">50</div><div class="rm-w" style="width:29.8%">30</div></div></div>
-  <div class="rm-barrow"><span class="rm-lab">1 min</span><div class="rm-bar" role="img" aria-label="30-minute slots: trend 11.8, swing 40.7, whipsaw 47.5 in 100 slot-days"><div class="rm-t" style="width:11.8%">12</div><div class="rm-s" style="width:40.7%">41</div><div class="rm-w" style="width:47.5%">47</div></div></div>
-  <div class="rm-legend"><span><i style="background:var(--trend)"></i>Trend</span><span><i style="background:var(--swing)"></i>Swing</span><span><i style="background:var(--whip)"></i>Whipsaw</span></div>
-  <figcaption>Labels in 100 row-days, all rows and all days. 5 min: half-hour rows. 15 min: one-hour rows. 1 min: half-hour rows.</figcaption>
-</figure>
+<details id="rm-results">
+<summary>What the ten years give at the study's defaults</summary>
+<p>All figures here were measured at the study's defaults (the rule table above, the weights above, a usual row over 20 earlier trade dates). The order of the hours was measured on 5-minute candles in half-hour rows. The page opens on the first column's set.</p>
 <div class="rm-scroll">
 <table>
-  <thead><tr><th></th><th class="rm-n">5-minute chart, 30-minute rows</th><th class="rm-n">15-minute chart, 60-minute rows</th><th class="rm-n">1-minute chart, 30-minute rows</th><th class="rm-n">1-minute chart, 15-minute rows</th></tr></thead>
+  <thead><tr><th></th><th class="rm-n">15-minute rows, scored on 1-minute bars</th><th class="rm-n">30-minute rows, scored on 5-minute candles</th><th class="rm-n">30-minute rows, scored on 1-minute bars</th><th class="rm-n">60-minute rows, scored on 15-minute candles</th></tr></thead>
   <tbody>
-    <tr><td>Row-days counted</td><td class="rm-n">110,839</td><td class="rm-n">55,106</td><td class="rm-n">106,290</td><td class="rm-n">216,534</td></tr>
-    <tr><td>Trend · swing · whipsaw in 100</td><td class="rm-n">17.0 · 44.5 · 38.4</td><td class="rm-n">19.9 · 50.3 · 29.8</td><td class="rm-n">11.8 · 40.7 · 47.5</td><td class="rm-n">22.4 · 38.2 · 39.4</td></tr>
-    <tr><td>Points per 100 row-days, all rows</td><td class="rm-n">57.3</td><td class="rm-n">80.1</td><td class="rm-n">28.6</td><td class="rm-n">66.1</td></tr>
-    <tr><td>Whipsaw, by reason: dead · broken trend · by likelihood</td><td class="rm-n">9.1 · 11.3 · 18.0</td><td class="rm-n">8.9 · 8.2 · 12.8</td><td class="rm-n">8.3 · 16.9 · 22.2</td><td class="rm-n">9.0 · 7.3 · 23.1</td></tr>
-    <tr><td>Row-days left out after a contract change</td><td class="rm-n">329</td><td class="rm-n">488</td><td class="rm-n">96</td><td class="rm-n">213</td></tr>
+    <tr><td>Row-days counted</td><td class="rm-n">216,534</td><td class="rm-n">110,839</td><td class="rm-n">106,290</td><td class="rm-n">55,106</td></tr>
+    <tr><td>Trend · swing · whipsaw in 100</td><td class="rm-n">22.4 · 38.2 · 39.4</td><td class="rm-n">17.0 · 44.5 · 38.4</td><td class="rm-n">11.8 · 40.7 · 47.5</td><td class="rm-n">19.9 · 50.3 · 29.8</td></tr>
+    <tr><td>Points per 100 row-days, all rows</td><td class="rm-n">66.1</td><td class="rm-n">57.3</td><td class="rm-n">28.6</td><td class="rm-n">80.1</td></tr>
+    <tr><td>Whipsaw, by reason: dead · broken trend · by likelihood</td><td class="rm-n">9.0 · 7.3 · 23.1</td><td class="rm-n">9.1 · 11.3 · 18.0</td><td class="rm-n">8.3 · 16.9 · 22.2</td><td class="rm-n">8.9 · 8.2 · 12.8</td></tr>
+    <tr><td>Row-days left out after a contract change</td><td class="rm-n">213</td><td class="rm-n">329</td><td class="rm-n">96</td><td class="rm-n">488</td></tr>
   </tbody>
 </table>
 </div>
-<p class="rm-note">The levels are not comparable across the columns: a row of four or six candles has fewer candles that can break an average than a row of thirty bars. Compare the order of the hours, not the scores.</p>
-
-<h3>Your hours (12:00–01:00 Singapore) on the 5-minute chart, US winter days</h3>
-<p class="rm-note">840 to 845 winter days per half hour; a half hour is named by its start; ± is the noise of the score (one standard error). In the US summer the New York times fall one hour earlier on your clock.</p>
-<div class="rm-scroll">
-<table>
-  <thead><tr><th>Half hour</th><th class="rm-n">Score</th><th class="rm-n">Trend days in 100</th></tr></thead>
-  <tbody>
-    <tr><td>16:00 SGT (03:00 New York)</td><td class="rm-n">87 ± 5</td><td class="rm-n">22</td></tr>
-    <tr><td>21:30 SGT (08:30)</td><td class="rm-n">85 ± 5</td><td class="rm-n">21</td></tr>
-    <tr><td>22:00 SGT (09:00)</td><td class="rm-n">83 ± 5</td><td class="rm-n">18</td></tr>
-    <tr><td>23:00 SGT (10:00)</td><td class="rm-n">81 ± 5</td><td class="rm-n">20</td></tr>
-    <tr><td>22:30 SGT (09:30)</td><td class="rm-n">77 ± 5</td><td class="rm-n">19</td></tr>
-    <tr><td colspan="3" class="rm-note">… 16 half hours between …</td></tr>
-    <tr><td>18:30 SGT (05:30)</td><td class="rm-n">52 ± 5</td><td class="rm-n">14</td></tr>
-    <tr><td>19:30 SGT (06:30)</td><td class="rm-n">52 ± 5</td><td class="rm-n">16</td></tr>
-    <tr><td>12:00 SGT (23:00)</td><td class="rm-n">29 ± 5</td><td class="rm-n">14</td></tr>
-    <tr><td>13:00 SGT (00:00)</td><td class="rm-n">25 ± 5</td><td class="rm-n">15</td></tr>
-    <tr><td>12:30 SGT (23:30)</td><td class="rm-n">20 ± 5</td><td class="rm-n">15</td></tr>
-  </tbody>
-</table>
-</div>
-<p>On US summer days (1,573 to 1,575 per half hour) the top is 14:00, 20:30 and 13:30 SGT (83, 83 and 82) and the bottom 12:30, 12:00 and 13:00 SGT (18, 25 and 45). The page behind this note shows every half hour with your own settings.</p>
-
-<h2 id="rm-charts">Three charts compared</h2>
+<p class="rm-note">The levels are not comparable across the columns: the rows hold different numbers of candles, and the 20MA spans a different stretch of time on each chart. Zero is not a baseline: almost every row scores above zero because +3 and +1 outweigh −1. Compare the order of the hours, not the scores.</p>
+<h3>The order of the hours, at the defaults</h3>
 <ul>
-  <li><b>The same half hour, two charts.</b> Of 100 half hours, the 5-minute and the 1-minute chart gave the same label on 64. They never disagree between trend and swing (both use the same open, close, high and low of the half hour); they disagree on which one-way half hours broke an average, and on swing against whipsaw.</li>
+  <li><b>Similar in both halves of the ten years at the defaults.</b> 2015–2021 against 2022–2026 on 5-minute candles in half-hour rows, rank correlation inside 12:00 to 01:00 Singapore: 0.78 in the US winter and 0.66 in the US summer; over the whole day 0.82 and 0.81. A rank correlation of 1 means the same order, 0 unrelated orders. This is a stability check, not a test: the defaults were chosen with both halves in view.</li>
+  <li><b>Noise.</b> Each half hour has 840 to 1,575 days per season. The noise of one score is about 5 points per 100 days in the US winter and 3.5 in the US summer. These figures do not allow for neighbouring days being alike: quiet and busy days come in runs, so the true noise is larger.</li>
+  <li><b>At your own settings</b> these figures do not apply. The card's answer "when to watch" carries its own noise and its own check on both halves, at the settings in force.</li>
+</ul>
+<h3>Only the best 40 or 30 in 100</h3>
+<p>With the whipsaw share fixed at 60 in 100 on the 5-minute chart, the kept half hours of your day are, in the US summer, mostly 20:00 to 22:30 SGT (kept on 58 to 69 days in 100; 08:00 to 10:30 New York) and least often 12:00 to 13:00 SGT (18 to 23 in 100). In the US winter the same New York hours come one hour later on your clock: 21:00 to 23:00 SGT are kept on 58 to 71 days in 100. At 70 in 100 the same hours lead with lower counts (43 to 57 at the top, about 16 at the bottom). The ranking rewards size, so it leans towards the hours when gold moves most. It is a selection made looking back over all ten years.</p>
+</details>
+
+<details id="rm-charts">
+<summary>Charts compared and the fixed-rule trades</summary>
+<ul>
+  <li><b>The same half hour, two charts.</b> Of 100 half hours, the 5-minute and the 1-minute chart gave the same label on 64. With the default broken-trend rule they never disagree between trend and swing (both use the same open, close, high and low of the half hour); with the broken-trend switch on, this was not measured. They disagree on which one-way half hours broke an average, and on swing against whipsaw.</li>
+  <li><b>The order survives the chart, at the defaults.</b> The 5-minute and the 1-minute chart rank the half hours alike: inside your hours 0.81 (US winter) and 0.92 (US summer); over the whole day 0.84 and 0.92.</li>
   <li><b>The lookback hardly matters.</b> Measuring "a usual row" over 10, 20 or 60 earlier days leaves the order of the hours the same (rank correlation 0.99 to 1.00).</li>
   <li><b>What came after a reading.</b> Measured the same way for every chart, in your hours: after a trend reading the next half hour had a clean one-way move of at least usual size 22 times in 100; after a swing reading 22; after a whipsaw reading 20; after any half hour 21. The next half hour was dead (under half the usual size) 3, 4 and 8 times in 100, against 5 after any half hour. The 1-, 5- and 15-minute charts give nearly the same figures. A reading describes the half hour that is over; it says little about the next one, except that a whipsaw is somewhat more often followed by a dead half hour.</li>
 </ul>
-
-<h2 id="rm-fixed">Only the best 40 or 30 in 100</h2>
-<p>With the whipsaw share fixed at 60 in 100 on the 5-minute chart, the kept half hours of your day are, in the US summer, mostly 20:00 to 22:30 SGT (kept on 58 to 69 days in 100; 08:00 to 10:30 New York) and least often 12:00 to 13:00 SGT (18 to 23 in 100). In the US winter the same New York hours come one hour later on your clock: 21:00 to 23:00 SGT are kept on 58 to 71 days in 100. At 70 in 100 the same hours lead with lower counts (43 to 57 at the top, about 16 at the bottom). The ranking rewards size, so it leans towards the hours when gold moves most.</p>
-
-<h2 id="rm-setups">Your two trades as fixed rules</h2>
-<p>To compare the charts "in trading", your two trade types were run as mechanical rules on each chart, with no judgement and no tuned number. <b>Band fade:</b> an order rests at the Bollinger band of the last finished candle; stop one standard deviation past it; target the 20MA. <b>Pullback:</b> after ten closes in a row on one side of the 20MA, an order rests at the 20MA; stop one standard deviation past it; target the band. Both risk 1 to make 2. An order is filled only when price trades a tick through it; a stop and a target in the same minute count as a loss; a stop costs one tick of slippage; one trade at a time; at most 24 candles; entries only in your hours and flat by 01:00 SGT.</p>
+<h3>Your two trades as fixed rules</h3>
+<p>Your two trade types were run as mechanical rules on each chart, with no judgement and no tuned number. <b>Band fade:</b> an order rests at the Bollinger band of the last finished candle; stop one standard deviation past it; target the 20MA. <b>Pullback:</b> after ten closes in a row on one side of the 20MA, an order rests at the 20MA; stop one standard deviation past it; target the band. Both risk 1 to make 2. An order is filled only when price trades a tick through it; a stop and a target in the same minute count as a loss; a stop costs one tick of slippage; one trade at a time; at most 24 candles; entries only in your hours and flat by 01:00 SGT.</p>
 <div class="rm-scroll">
 <table>
   <thead><tr><th>Chart and trade</th><th class="rm-n">Trades</th><th class="rm-n">Lost · won · timed out, in 100</th><th class="rm-n">Average per trade, before costs</th><th class="rm-n">After $0.30 of costs</th><th class="rm-n">Usual risk</th><th class="rm-n">Loss after costs, as a share of the risk</th></tr></thead>
@@ -12532,43 +12888,42 @@ const Core = (() => {
 </div>
 <p class="rm-note">Dollars per ounce; entries in your hours, ten years. "Usual risk" is the middle case of the distance from entry to stop.</p>
 <ul>
-  <li><b>What it shows.</b> With a stop one standard deviation away, about a quarter of the trades reached a target twice as far, on every chart; a third would be needed to break even before costs. An order fills only once price has gone a tick past it, so every filled trade starts a tick offside; a stop then costs a tick of slippage. The slower the chart, the wider the stop and the less those ticks and the costs weigh: the loss after costs is about two thirds of the risk on the 1-minute fade, a third on the 5-minute, under a quarter on the 15-minute.</li>
+  <li><b>What it shows.</b> They lost on every chart. With a stop one standard deviation away, about a quarter of the trades reached a target twice as far; a third would be needed to break even before costs. Every filled trade starts a tick offside and a stop costs a tick of slippage, so the slower the chart, the wider the stop and the less those ticks and the costs weigh: the loss after costs is about two thirds of the risk on the 1-minute fade, a third on the 5-minute, under a quarter on the 15-minute.</li>
   <li><b>What the reading before the entry added.</b> Little. On the 5-minute fade 24 to 26 trades in 100 won whether the half hour before was a trend, a swing or a whipsaw.</li>
-  <li><b>What it cannot show.</b> How you trade. You choose which touches to take; these rules take every one. The fills are assumptions, strict on purpose. Nothing here is advice.</li>
+  <li><b>What it cannot show.</b> How you trade. You choose which touches to take; these rules take every one. Nothing here is advice.</li>
 </ul>
+</details>
 
-<h2 id="rm-trust">How far to trust each kind of statement</h2>
-<div class="rm-scroll">
-<table>
-  <thead><tr><th>Statement</th><th>What supports it</th><th>Trust</th></tr></thead>
-  <tbody>
-    <tr><td>"This half hour scores clearly higher than that one"</td><td>840 to 1,575 days per half hour and season. The noise of one score is about 5 points per 100 days in the US winter and 3.5 in the US summer. Gaps of 15 points or more are well outside that.</td><td><span class="rm-trust rm-hi">High</span></td></tr>
-    <tr><td>"The order does not depend on the chart or the lookback"</td><td>5-minute against 1-minute chart, order of the half hours of the day: 0.84 (US winter) and 0.92 (US summer); inside your hours 0.81 and 0.92. Lookback of 10, 20 or 60 days: 0.99 to 1.00.</td><td><span class="rm-trust rm-hi">High</span></td></tr>
-    <tr><td>"The order holds over the years"</td><td>2015–2021 against 2022–2026 on the 5-minute chart: 0.82 and 0.81 over the whole day; 0.78 (US winter) and 0.66 (US summer) inside your hours.</td><td><span class="rm-trust rm-md">Good over the day · fair inside your hours</span></td></tr>
-    <tr><td>"The score tells me more than how much gold moves"</td><td>The top half hours are the busy ones (the London, US data and New York open times), and the fixed-share ranking picks the same hours. A few rank by structure rather than size, for example 13:30 SGT.</td><td><span class="rm-trust rm-md">Limited</span></td></tr>
-    <tr><td>"The score is 57.3, so …"</td><td>The level goes from 28.6 to 80.1 across the charts and row lengths in the table above. Zero is not a baseline, and scores of different charts are not comparable.</td><td><span class="rm-trust rm-lo">Low</span></td></tr>
-    <tr><td>"A trend reading means the next half hour will move"</td><td>22 clean moves in 100 after a trend reading, 21 after any half hour.</td><td><span class="rm-trust rm-lo">Low</span></td></tr>
-    <tr><td>"Trading this half hour makes money"</td><td>The only trades simulated are the two fixed rules above; they lost on every chart, and they are not how you trade.</td><td><span class="rm-trust rm-lo">None</span></td></tr>
-  </tbody>
-</table>
-</div>
-<p class="rm-note">A rank correlation of 1 means the same order, 0 means unrelated orders.</p>
-
-<h2 id="rm-limits">Limitations</h2>
+<details id="rm-limits">
+<summary>Limits</summary>
 <h3>What the labels are</h3>
 <ul>
-  <li><b>After the fact.</b> A label needs the whole half hour. At 21:30 you cannot know which label today's half hour will get; the score only says how often each kind has happened at that time.</li>
-  <li><b>Six candles are few.</b> One failed crossing already fills that sign of the likelihood, and the forgiven first third is two candles. A single news candle that makes most of the half hour's range can earn a "trend" in hindsight.</li>
+  <li><b>After the fact.</b> A label needs the whole row. At 21:30 you cannot know which label today's row will get; the score only says how often each kind has happened at that time.</li>
+  <li><b>Short rows are coarse.</b> On rows of four or six candles one failed crossing fills that sign of the likelihood; at the default weight (50) and cut (50) that alone makes the row a whipsaw. A single news candle that makes most of a row's range can earn a trend in hindsight.</li>
   <li><b>The 20MA of the 5-minute chart is slow.</b> It spans 100 minutes. A clean one-way half hour that starts on the far side of it counts as a broken trend, so by your rule a whipsaw: 2.7 row-days in 100. Judged by the scale instead (the switch), 82 in 100 of those would be swings.</li>
-  <li><b>Hard clock boundaries.</b> A move that straddles two half hours is split between them.</li>
-  <li><b>Hand-set thresholds.</b> The 60%, the "under half", the ramps and the weights were chosen by eye. Your own fitted settings come from examples on the 1-minute chart: carried over unchanged to the 5-minute chart they would label 74 half hours in 100 whipsaw, so the 5-minute chart starts from the defaults until you label examples on it.</li>
-  <li><b>Swing is what is left over.</b> It means "not dead, not one-way, not choppy enough". Nothing positive requires price to travel band to band.</li>
+  <li><b>Hard clock boundaries.</b> A move that straddles two rows is split between them.</li>
+  <li><b>Hand-set thresholds.</b> The 60%, the "under half", the ramps and the weights were chosen by eye. Your own fitted settings come from examples on the 1-minute chart: carried over unchanged to the 5-minute chart they would label 74 half hours in 100 whipsaw. Whether "whipsaw" here means what you mean is tested only by the examples you label in "Teach it your eye".</li>
+  <li><b>Swing is what is left over.</b> It means "not dead, not one-way, not choppy enough". Nothing requires price to travel band to band.</li>
 </ul>
 <h3>What the score is not</h3>
 <ul>
-  <li><b>Not profit and loss.</b> +3 / +1 / −1 are your points, not dollars.</li>
-  <li><b>Not a verdict.</b> By your choice the page shows scores and counts and leaves it to you to judge whether an hour can be traded at a profit. Almost every half hour scores above zero simply because +3 and +1 outweigh −1.</li>
-  <li><b>Not comparable across charts or row lengths.</b></li>
+  <li><b>Not profit and loss.</b> +3 / +1 / −1 are your points, not dollars. The page shows scores and counts and leaves it to you to judge whether an hour can be traded at a profit.</li>
+  <li><b>Mostly a volatility clock.</b> The top half hours are the busy ones (the London, US data and New York open times), and the fixed-share ranking, which rewards size, leans to the same hours. A few rank by structure rather than size, for example 13:30 SGT. How much the score tells beside how much gold moves has not been measured.</li>
+  <li><b>Not comparable across charts or scoring timeframes.</b></li>
+</ul>
+<h3>Statistics</h3>
+<ul>
+  <li><b>One sample.</b> The rules, the defaults and the charts were chosen while looking at the same ten years they are scored on. The two halves are a stability check, not a test; only new days can test them. The held-back recent file has 115 trade dates, 27 April to 13 November 2026, with no data from 27 May to 24 June 2026; it plays no part in the score.</li>
+  <li><b>Days are not independent.</b> Quiet and busy days come in runs, so the true noise is larger than the figures shown.</li>
+  <li><b>Many settings.</b> With three charts, a cut, four weights, five thresholds, three lookbacks and a fixed share, some setting will always make a favourite hour look best. Changing settings to fit a hunch is not evidence.</li>
+  <li><b>The fixed share looks back.</b> It is a selection made looking back over all ten years: each day is ranked with later years in the pool.</li>
+</ul>
+<h3>Data</h3>
+<ul>
+  <li><b>Size is measured against the whole day.</b> Early-afternoon Singapore rows are "dead" far more often, which may be exactly what you mean by untradable, or may hide a good quiet-hours range.</li>
+  <li><b>Release days are not separated in the score.</b> The top half hours sit on the US data-release and open times. The fixed-rule trades are split into news days and other days on the page.</li>
+  <li><b>One file, one contract per day.</b> Prices are unadjusted; row-days just after a contract change are left out. A crossing can still carry a move from before a contract change into a later row; how many rows that touches has not been counted.</li>
+  <li><b>Coverage.</b> A row counts when it has every candle present and at least 80% of the minutes across the row, so one candle can be thin. Thin rows are left out; whether that raises or lowers a row's score has not been shown.</li>
 </ul>
 <h3>The fixed-rule trades</h3>
 <ul>
@@ -12576,39 +12931,22 @@ const Core = (() => {
   <li><b>Tiny stops.</b> On the 1-minute chart the stop is about five ticks. 8,902 fade trades there had a stop of one tick and lost on the entry minute by construction.</li>
   <li><b>Many tables.</b> The study printed 6,840 table cells. Among so many, some half hour will look good for no reason; none was picked out.</li>
 </ul>
-<h3>Statistics</h3>
-<ul>
-  <li><b>One sample.</b> The rules were shaped while looking at the same ten years they are scored on. The two-period comparison is a stability check, not a clean out-of-sample test. The held-back recent file is five days: enough to see that the code runs on new data, not to confirm anything.</li>
-  <li><b>Days are not independent.</b> Quiet and busy days come in runs, so the true noise is somewhat larger than the figures shown.</li>
-  <li><b>Many settings.</b> With three charts, a cut, four weights, five thresholds, three lookbacks and a fixed share, some setting will always make a favourite hour look best. Changing settings to fit a hunch is not evidence.</li>
-</ul>
-<h3>Data</h3>
-<ul>
-  <li><b>Size is measured against the whole day.</b> Early-afternoon Singapore half hours are "dead" far more often, which may be exactly what you mean by untradable, or may hide a good quiet-hours range.</li>
-  <li><b>Release days are not separated in the score.</b> The top half hours sit on the US data-release and open times. The fixed-rule trades are split into news days and other days on the page.</li>
-  <li><b>One file, one contract per day.</b> Prices are unadjusted; row-days just after a contract change are left out because their averages would mix two contracts. Half hours with a missing candle, or with under 80% of their minutes, are dropped, which removes some of the thinnest trading.</li>
-</ul>
+</details>
 
-<h2 id="rm-checks">How the work was checked</h2>
+<details id="rm-checks">
+<summary>How it was checked</summary>
 <ul>
-  <li><b>Separate hands.</b> The lead session planned and judged; opus-high sessions built; agy-hydro-xhigh wrote the unit tests from the written rules, not from the code.</li>
-  <li><b>Outside critique.</b> carbon-high was given the design and asked to attack it. Adopted: a half hour is judged on its own candles (the first design added three candles either side); one-hour rows for the 15-minute chart; the ranking for the fixed share; strict fills, one trade at a time and a capped hold for the fixed-rule trades; counts of days on every figure. Declined, with the reason on file: relaxing your rule that a break of the 20MA ends a trend (the case is counted instead, above).</li>
-  <li><b>Independent recomputation.</b> <!--rm-recompute-->The tester wrote a second, plain implementation of the nine measurements from the written rules and ran it on 240 real trade dates (30 June 2020 to 9 July 2021): 11,040 row-days on the 5-minute chart and 5,520 on the 15-minute chart, every stored value equal. The stored 5- and 15-minute sets also equal the runner's own build of them, and the 1-minute sets equal the previous build apart from the added lookbacks. The fixed-rule trades have 76 hand-worked cases.<!--/rm-recompute--></li>
-  <li><b>Regression.</b> <!--rm-regression-->The full test script ran 42 test files with 4,428 checks passing, 0 failing and 188 not verified on this build.<!--/rm-regression--> The figures quoted in this note are checked against the results file each time the script runs.</li>
-  <li><b>Not verified.</b> How the page looks in a browser has not been inspected by the lead session; that check is yours (<code>docs/browser_checklist.md</code>).</li>
+  <li><b>17 November 2026, the method.</b> A second, plain implementation of the nine measurements, written from the written rules, was run on 240 real trade dates (30 June 2020 to 9 July 2021): 11,040 row-days on the 5-minute chart and 5,520 on the 15-minute chart, every stored value equal. The stored 1-minute sets equal the previous build apart from the added lookbacks. The fixed-rule trades have 76 hand-worked cases. The unit tests were written from the written rules, not from the code.</li>
+  <li><b>17 November 2026, outside critique.</b> The design was given to an outside reviewer to attack. Adopted: a row is judged on its own candles (the first design added three candles either side); one-hour rows for the 15-minute chart; the ranking for the fixed share; strict fills, one trade at a time and a capped hold for the fixed-rule trades; counts of days on every figure. Declined: relaxing your rule that a break of the 20MA ends a trend (the case is counted instead, under Limits).</li>
+  <li><b>Each test run.</b> The tables and the after-a-reading figures in this note are checked against the stored results.</li>
+  <li><b>21 November 2026, this version.</b> Three reviews of the method were read and this note was cut to one screen and folds. Corrected: the order of the hours is said as measured at the defaults, the figures inside your hours first; the noise figures are named as not allowing for neighbouring days being alike; "never trend against swing" holds for the default broken-trend rule only; the coverage rule is said exactly; the fixed share is named a selection made looking back; the held-back file is described from its own record.</li>
 </ul>
-<p class="rm-note">Records: the plans and rulings in <code>dev/v4_loop/round10/PLAN_R10.md</code> and <code>PLAN_R10_P2.md</code>; the critique in <code>dev/v4_loop/round10/router_carbon_design.2.out</code>; the numbers in this note in <code>dev/v4_loop/round10/tf_summary.out</code>, <code>setups_summary.out</code> and <code>method_numbers_r10.out</code>.</p>
-
-<h2 id="rm-next">What would make it stronger</h2>
-<ol>
-  <li><b>Calibrate by eye on the 5-minute chart.</b> Label 30 to 50 examples in "Teach it your eye" with the 5-minute chart chosen. This is the only test of whether "whipsaw" here means what you mean.</li>
-  <li><b>A longer held-back file.</b> Five days cannot confirm a clock. A few months of recent bars would show whether the order of the hours still holds.</li>
-  <li><b>Your own entries.</b> If you log the touches you actually take, the same fill rules can be run on those alone. That would test your judgement, which the fixed rules cannot.</li>
-</ol>
+</details>
+</div>
 
 <p class="rm-foot">Research notes for one trader's own use; not trading advice. <a href="#rm-close">← Back to the page</a></p>
 </div>
 </section><!-- /research-method -->
-<p class="build-stamp" id="build-stamp">Price Travel Curves v4 · Build 2026-11-18 · 6637db1b</p>
+<p class="build-stamp" id="build-stamp">Price Travel Curves v4 · Build 2026-11-21 · 9eafc3c4</p>
 </body>
 </html>

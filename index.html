@@ -57,6 +57,13 @@ button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);
 .mk .msg{flex-basis:100%;margin:0;font-size:.8rem;color:var(--ink-2);min-height:0}
 .mk .msg:empty{display:none}
 .mk .msg[data-kind="refused"]{color:var(--warn)}
+/* round 14: the profile controls of each market and the comparison's line */
+.prof{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px 8px;min-width:0}
+.prof label{display:inline-flex;align-items:center;gap:6px;font-size:.84rem;color:var(--ink-2)}
+select,input[type="text"]{font:inherit;font-size:.84rem;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:3px;padding:4px 8px;min-height:32px;max-width:100%}
+input[type="text"]{width:12em}
+select:disabled{color:var(--ink-3)}
+.cmp{grid-column:1/-1;margin:0;font-size:.8rem;color:var(--ink-2);max-width:110ch}
 .vbar{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;max-width:1180px;margin:0 auto;padding:8px 0 9px;border-top:1px solid var(--line-soft)}
 .vbar p{flex:1 1 420px;margin:0;max-width:92ch;font-size:.86rem;color:var(--ink-2)}
 .vmk{display:flex;align-items:center;gap:6px;font-size:.84rem;color:var(--ink-2)}
@@ -66,7 +73,7 @@ main{flex:1 1 auto;position:relative;min-height:420px}
 .note{margin:14px auto 0;max-width:72ch;padding:0 16px;font-size:.9rem;color:var(--ink-2)}
 .note[data-missing]{color:var(--warn);background:var(--warn-soft);border:1px solid var(--line);border-radius:3px;padding:10px 14px}
 .panel .note + iframe{margin-top:8px}
-@media (max-width:600px){.sbar{grid-template-columns:1fr}.tabs button{padding:9px 10px}.mk button{font-size:.8rem;padding:5px 9px}}
+@media (max-width:600px){.sbar{grid-template-columns:1fr}.tabs button{padding:9px 10px}.mk button{font-size:.8rem;padding:5px 9px}.prof input[type="text"]{width:100%}}
 </style>
 </head>
 <body>
@@ -93,6 +100,13 @@ main{flex:1 1 auto;position:relative;min-height:420px}
     <div class="mk" data-market="gc" role="group" aria-label="Gold settings">
       <span class="chip" data-chip="gc" data-source="study">Gold: the study's settings</span>
       <button type="button" data-open="gc">Set yours in the Gold tab</button>
+      <span class="prof" role="group" aria-label="Gold profiles">
+        <label>Profile <select data-psel="gc" aria-label="Gold profile" disabled><option value="">Open the Gold tab once</option></select></label>
+        <button type="button" data-psave="gc">Save</button>
+        <input type="text" data-pname="gc" maxlength="40" autocomplete="off" spellcheck="false" placeholder="New profile name" aria-label="Name of a new Gold profile">
+        <button type="button" data-psaveas="gc">Save as</button>
+        <button type="button" data-pdel="gc">Delete</button>
+      </span>
       <button type="button" data-save="gc">Save settings to a file</button>
       <button type="button" data-load="gc">Load settings from a file</button>
       <input type="file" accept=".json,application/json" data-file="gc" hidden aria-hidden="true" tabindex="-1">
@@ -102,12 +116,20 @@ main{flex:1 1 auto;position:relative;min-height:420px}
     <div class="mk" data-market="nq" role="group" aria-label="Nasdaq settings">
       <span class="chip" data-chip="nq" data-source="study">Nasdaq: the study's settings</span>
       <button type="button" data-open="nq">Set yours in the Nasdaq tab</button>
+      <span class="prof" role="group" aria-label="Nasdaq profiles">
+        <label>Profile <select data-psel="nq" aria-label="Nasdaq profile" disabled><option value="">Open the Nasdaq tab once</option></select></label>
+        <button type="button" data-psave="nq">Save</button>
+        <input type="text" data-pname="nq" maxlength="40" autocomplete="off" spellcheck="false" placeholder="New profile name" aria-label="Name of a new Nasdaq profile">
+        <button type="button" data-psaveas="nq">Save as</button>
+        <button type="button" data-pdel="nq">Delete</button>
+      </span>
       <button type="button" data-save="nq">Save settings to a file</button>
       <button type="button" data-load="nq">Load settings from a file</button>
       <input type="file" accept=".json,application/json" data-file="nq" hidden aria-hidden="true" tabindex="-1">
       <button type="button" data-study="nq" aria-pressed="false">Use the study's settings in the comparison</button>
       <p class="msg" data-msg="nq" role="status" aria-live="polite"></p>
     </div>
+    <p class="cmp" data-cmpline>The “Gold or Nasdaq” tab always reads 5-minute candles in half-hour rows, whatever scoring timeframe you choose. It uses: Gold, the study's settings; Nasdaq, the study's settings.</p>
   </section>
 </header>
 <main>
@@ -130,9 +152,9 @@ main{flex:1 1 auto;position:relative;min-height:420px}
 // comparison frame's `state`, the chip texts, the file to save and the answer to a file the user loads.
 // Per market ('gc' gold, 'nq' Nasdaq) it keeps the last `settings` message of that market's study frame (sets and defaults merged by set key; the
 // point scale and the saved sets replaced), when the settings last changed (changedAt: the first message after a different one; null when the hub
-// has only ever seen one), the switch "Use the study's settings in the comparison", and a loaded file not yet handed to its study frame (pending).
-// All of it is kept under its own storage key KEY ('ptc.hub.v1') so the comparison has the user's settings on the next visit before a study tab is
-// opened; storage that is missing or throws changes nothing but the memory across visits. The last tab shown is kept there too, and (round 13,
+// has only ever seen one), the switch "Use the study's settings in the comparison", and the requests not yet answered by the frame (a loaded file).
+// All of it is kept under its own storage key KEY so the comparison has the user's settings on the next visit before a study tab is opened;
+// storage that is missing or throws changes nothing but the memory across visits. The last tab shown is kept there too, and (round 13,
 // dev/v4_loop/round13/PLAN_R13.md) the market the "Label playground" tab is on (playMarket: 'gc' until the user picks Nasdaq).
 // The comparison uses each market's '5_30' set (5-minute candles, half-hour rows). state(): { ptc: 1, type: 'state', v: 1, gc: M, nq: M } with
 // M = { source: 'yours' | 'study', at, th, scale, name }: 'study' (th, scale, at null) when no settings are known, the switch is on, or the '5_30'
@@ -143,6 +165,19 @@ main{flex:1 1 auto;position:relative;min-height:420px}
 // label-settings-gold-YYYY-MM-DD.json / label-settings-nasdaq-…json (the local date). parseFile refuses, with one plain sentence each: an empty or
 // too large file, text that is not a JSON object, another app or kind, a newer version, the other market's file, settings that cannot be read
 // (sets, scale, saved of the wrong shape). Unknown keys are dropped; numbers are NOT clamped here: the card clamps them as it clamps typed ones.
+// Round 14 (dev/v4_loop/round14/PLAN_R14.md section 7; JUDGEMENT J18, J23, J24, J25): version 2.
+// - Requests carry an id. Every message the hub makes for a study frame (apply-settings, profile) has `req` and waits in the market's queue until
+//   the `settings` message whose `ack` is that `req`; any other `settings` message is merged as the frame's state and the request stays (J18). A
+//   page of round 12 or 13 echoes no id (its messages are v: 1): its first message after a request was sent answers every request sent (as in round
+//   12; it knows no profiles, so a profile request ends refused, why 'old'). A `settings` message with v above 2 is not merged. A request made while
+//   the frame is not up (or while it shows the Curve playground: opt.hold) waits and is handed over, in order, when the frame speaks.
+// - Per market the last profile list ([{ id, name, builtin, snap? }]), active profile, dirty and persist of a version-2 frame are kept ("as last
+//   seen" until the frame speaks in this visit); the chip names the profile (J23). profile(mk, op, arg) checks a choice against that list first and
+//   says in words what is refused; the card decides in the end and its answer is put in words by answer(mk, done).
+// - The file at v: 2: { app, kind, v: 2, instrument, savedAt, active: <name> | null, work: snapshot, profiles: [{ name, snap }] } (snapshot =
+//   { view, hours, share, scale, sets }), written when the frame speaks version 2 (a version-1 frame's settings are still written at v: 1). A v1
+//   file loads as before; a v2 file becomes a profile 'import' (its profiles) and an 'apply-settings' (its work); above 2 is refused.
+// - Storage key 'ptc.hub.v2'; when only 'ptc.hub.v1' exists it is read (its waiting file becomes a waiting request) and never written again.
 // UMD: node `module.exports = SettingsHub`; browser `window.SettingsHub`.
 (function (root, factory) {
   const api = factory();
@@ -150,7 +185,8 @@ main{flex:1 1 auto;position:relative;min-height:420px}
   else root.SettingsHub = api;
 }(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
-  const KEY = 'ptc.hub.v1', V = 1, FILE_V = 1, APP = 'price-travel-curves', KIND = 'label-settings', MAX_BYTES = 2e6;
+  const KEY = 'ptc.hub.v2', OLD_KEY = 'ptc.hub.v1', V = 2, MSG_V = 2, FILE_V = 2, APP = 'price-travel-curves', KIND = 'label-settings', MAX_BYTES = 2e6;
+  const NAME_MAX = 40, OWN_MAX = 20, OPS = ['select', 'save', 'save-as', 'delete'];
   const MARKETS = Object.freeze({ gc: Object.freeze({ id: 'GC', name: 'Gold', word: 'gold' }), nq: Object.freeze({ id: 'NQ', name: 'Nasdaq', word: 'nasdaq' }) });
   const MKS = ['gc', 'nq'], TABS = ['focus', 'gc', 'nq', 'label', 'lab'];
   const SET_KEYS = ['1_15', '1_30', '5_30', '5_60', '15_60'], SAVED_SETS = ['1', '5_30', '5_60', '15_60'], COMPARE_SET = '5_30';
@@ -173,6 +209,7 @@ main{flex:1 1 auto;position:relative;min-height:420px}
   const localDay = ms => { const d = new Date(ms); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); };
   const hm = ms => { const d = new Date(ms); return pad2(d.getHours()) + ':' + pad2(d.getMinutes()); };
   const dayMon = ms => { const d = new Date(ms); return d.getDate() + ' ' + MON[d.getMonth()]; };
+  const q = s => '“' + s + '”';
 
   // ---- the shapes (a set's thresholds, the scale, the saved sets): readable or not; never clamped here
   function thOk(t) { if (!isObj(t)) return false; for (const k of NUM_KEYS) if (t[k] !== undefined && !fin(t[k])) return false;
@@ -186,12 +223,28 @@ main{flex:1 1 auto;position:relative;min-height:420px}
   function cleanSets(s) { const o = {}; for (const k of SET_KEYS) if (isObj(s[k]) && thOk(s[k])) o[k] = cleanTh(s[k]); return o; }
   const cleanSaved = a => a.map(x => ({ set: x.set, name: x.name, th: cleanTh(x.th) }));
   const cleanScale = s => ({ T: s.T, S: s.S, W: s.W });
+  // round 14: the view ({ len, chart, season }), the hours ({ from, to } in minutes), the share ('scale' | '60' | '70'), a snapshot (PLAN_R14
+  // section 5: { view, hours, share, scale, sets }) and a profile of the list ({ id, name, builtin, snap? }): shape only, the card clamps
+  const hoursOk = h => isObj(h) && fin(h.from) && fin(h.to);
+  const shareOk = s => typeof s === 'string' || fin(s);
+  const idOk = v => (typeof v === 'string' && v !== '') || fin(v);
+  function cleanView(v) { const o = {}; for (const k of ['len', 'chart']) if (fin(v[k])) o[k] = v[k]; if (typeof v.season === 'string') o.season = v.season; return o; }
+  const snapOk = s => isObj(s) && isObj(s.sets) && SET_KEYS.every(k => s.sets[k] === undefined || thOk(s.sets[k])) && (s.scale === undefined || scaleOk(s.scale))
+    && (s.hours === undefined || hoursOk(s.hours)) && (s.view === undefined || isObj(s.view)) && (s.share === undefined || shareOk(s.share));
+  function cleanSnap(s) { const o = { sets: cleanSets(s.sets) }; if (s.scale !== undefined) o.scale = cleanScale(s.scale); if (s.hours !== undefined) o.hours = { from: s.hours.from, to: s.hours.to };
+    if (s.view !== undefined) o.view = cleanView(s.view); if (s.share !== undefined) o.share = s.share; return o; }
+  const cleanProfiles = a => a.filter(x => isObj(x) && idOk(x.id) && typeof x.name === 'string' && x.name.trim() !== '')
+    .map(x => Object.assign({ id: x.id, name: x.name, builtin: x.builtin === true }, snapOk(x.snap) ? { snap: cleanSnap(x.snap) } : {}));
 
   // ---- the file
   function fileName(mk, ms) { return 'label-settings-' + MARKETS[mk].word + '-' + localDay(ms) + '.json'; }
   function serialise(mk, s, ms) {
-    return JSON.stringify({ app: APP, kind: KIND, v: FILE_V, instrument: MARKETS[mk].id, savedAt: new Date(ms).toISOString(), sets: clone(s.sets), scale: clone(s.scale), saved: clone(s.saved) }, null, 2) + '\n'; }
-  // parseFile(text, mk) -> { ok: true, file: { instrument, savedAt, sets, scale, saved } } | { ok: false, code, why }
+    return JSON.stringify({ app: APP, kind: KIND, v: 1, instrument: MARKETS[mk].id, savedAt: new Date(ms).toISOString(), sets: clone(s.sets), scale: clone(s.scale), saved: clone(s.saved) }, null, 2) + '\n'; }
+  // the file at v: 2 (PLAN_R14 section 7): f = { active: <name> | null, work: snapshot, profiles: [{ name, snap }] }
+  function serialise2(mk, f, ms) {
+    return JSON.stringify({ app: APP, kind: KIND, v: 2, instrument: MARKETS[mk].id, savedAt: new Date(ms).toISOString(), active: typeof f.active === 'string' ? f.active : null,
+      work: clone(f.work), profiles: clone(f.profiles || []) }, null, 2) + '\n'; }
+  // parseFile(text, mk) -> { ok: true, file: { v, instrument, savedAt, sets, scale, saved, share?, view?, hours?, profiles, active } } | { ok: false, code, why }
   function parseFile(text, mk) { const no = code => ({ ok: false, code, why: code === 'other' ? WHY.other(mk === 'gc' ? 'nq' : 'gc') : WHY[code] });
     if (!MARKETS[mk]) throw new Error('SettingsHub.parseFile: market must be gc or nq');
     if (typeof text !== 'string' || text.trim() === '') return no('empty');
@@ -203,16 +256,31 @@ main{flex:1 1 auto;position:relative;min-height:420px}
     if (f.v > FILE_V) return no('future');
     const ids = MKS.map(k => MARKETS[k].id); if (!ids.includes(f.instrument)) return no('damaged');
     if (f.instrument !== MARKETS[mk].id) return no('other');
-    if (!isObj(f.sets) || SET_KEYS.some(k => f.sets[k] !== undefined && !thOk(f.sets[k]))) return no('damaged');
-    const sets = cleanSets(f.sets); if (!Object.keys(sets).length) return no('damaged');
-    if (!scaleOk(f.scale) || !savedOk(f.saved)) return no('damaged');
-    return { ok: true, file: { instrument: f.instrument, savedAt: typeof f.savedAt === 'string' ? f.savedAt : null, sets, scale: cleanScale(f.scale), saved: cleanSaved(f.saved) } }; }
+    const savedAt = typeof f.savedAt === 'string' ? f.savedAt : null;
+    if (f.v === 1) {
+      if (!isObj(f.sets) || SET_KEYS.some(k => f.sets[k] !== undefined && !thOk(f.sets[k]))) return no('damaged');
+      const sets = cleanSets(f.sets); if (!Object.keys(sets).length) return no('damaged');
+      if (!scaleOk(f.scale) || !savedOk(f.saved)) return no('damaged');
+      return { ok: true, file: { v: 1, instrument: f.instrument, savedAt, sets, scale: cleanScale(f.scale), saved: cleanSaved(f.saved), profiles: [], active: null } }; }
+    // v: 2: the work (a snapshot with at least one readable set and a scale) and the profiles of the user's own
+    if (!snapOk(f.work) || !scaleOk(f.work.scale)) return no('damaged');
+    const work = cleanSnap(f.work); if (!Object.keys(work.sets).length) return no('damaged');
+    if (f.profiles !== undefined && !(Array.isArray(f.profiles) && f.profiles.every(x => isObj(x) && typeof x.name === 'string' && x.name.trim() !== '' && snapOk(x.snap)))) return no('damaged');
+    const file = { v: 2, instrument: f.instrument, savedAt, sets: work.sets, scale: work.scale, saved: [], profiles: (f.profiles || []).map(x => ({ name: x.name.trim(), snap: cleanSnap(x.snap) })),
+      active: typeof f.active === 'string' && f.active.trim() !== '' ? f.active.trim() : null };
+    for (const k of ['share', 'view', 'hours']) if (work[k] !== undefined) file[k] = work[k];
+    return { ok: true, file }; }
 
-  // a settings message of a study frame, checked (instrument of the frame's market; sets readable; scale and saved of their shape)
+  // a settings message of a study frame, checked (instrument of the frame's market; sets readable; scale and saved of their shape); round 14: its
+  // version v (none: 1), and at v 2 the view, hours, share, the profile list and its marks, and ack / result when it answers a request
   function readSettings(mk, m) { if (!isObj(m) || m.ptc !== 1 || m.type !== 'settings' || m.instrument !== MARKETS[mk].id || !isObj(m.sets)) return null;
     const sets = cleanSets(m.sets); if (!Object.keys(sets).length) return null;
-    const defaults = isObj(m.defaults) ? cleanSets(m.defaults) : {};
-    return { sets, defaults, scale: scaleOk(m.scale) ? cleanScale(m.scale) : null, saved: savedOk(m.saved) ? cleanSaved(m.saved) : [], at: fin(m.at) ? m.at : null }; }
+    const defaults = isObj(m.defaults) ? cleanSets(m.defaults) : {}, v = fin(m.v) ? m.v : 1;
+    const r = { v, sets, defaults, scale: scaleOk(m.scale) ? cleanScale(m.scale) : null, saved: savedOk(m.saved) ? cleanSaved(m.saved) : [], at: fin(m.at) ? m.at : null,
+      ack: idOk(m.ack) ? String(m.ack) : null, result: isObj(m.result) ? { ok: m.result.ok === true, why: typeof m.result.why === 'string' ? m.result.why : '' } : null, prof: null };
+    if (v >= 2) { r.view = isObj(m.view) ? cleanView(m.view) : null; r.hours = hoursOk(m.hours) ? { from: m.hours.from, to: m.hours.to } : null; r.share = shareOk(m.share) ? m.share : null;
+      if (Array.isArray(m.profiles)) r.prof = { list: cleanProfiles(m.profiles), active: idOk(m.active) ? m.active : null, dirty: m.dirty === true, persist: m.persist === 'visit' ? 'visit' : 'store' }; }
+    return r; }
 
   // the '5_30' thresholds and the scale against the study's: the set's own defaults (len aside), no fixed share, 3 / 1 / -1
   function asStudy(s) { const th = s && s.sets[COMPARE_SET], d = s && s.defaults[COMPARE_SET]; if (!th || !d) return false;
@@ -228,69 +296,162 @@ main{flex:1 1 auto;position:relative;min-height:420px}
   function create(o) { o = o || {}; const now = typeof o.now === 'function' ? o.now : () => Date.now();
     let storage = o.storage !== undefined ? o.storage : null;
     if (o.storage === undefined) { try { storage = typeof localStorage !== 'undefined' ? localStorage : null; } catch (e) { storage = null; } }
-    const blank = () => ({ s: null, at: null, study: false, pending: null });
-    let S = { tab: null, play: 'gc', gc: blank(), nq: blank() };
-    // read once, with care: anything but { v: 1, ... } of the right shape reads as nothing (a market at a time)
-    try { const t = storage ? storage.getItem(KEY) : null, j = t ? JSON.parse(t) : null;
-      if (isObj(j) && j.v === V) { if (TABS.includes(j.tab)) S.tab = j.tab; if (MKS.includes(j.play)) S.play = j.play;
+    // per market: s (the frame's last settings), at, study (the switch), prof (the last profile list and marks of a version-2 frame), q (the
+    // requests not yet answered: { req, kind: 'apply' | 'profile', op, msg, sent, from, file, name, f }), live (the frame spoke in this visit)
+    const blank = () => ({ s: null, at: null, study: false, prof: null, q: [], live: false });
+    let S = { tab: null, play: 'gc', gc: blank(), nq: blank() }, seq = 0;
+    const newReq = mk => { let id; do id = mk + '-' + now().toString(36) + '-' + (++seq); while (S[mk].q.some(x => x.req === id)); return id; };
+    const readS = x => { if (!isObj(x) || !isObj(x.sets)) return null; const sets = cleanSets(x.sets); if (!Object.keys(sets).length) return null;
+      const s = { v: x.v === 2 ? 2 : 1, sets, defaults: isObj(x.defaults) ? cleanSets(x.defaults) : {}, scale: scaleOk(x.scale) ? cleanScale(x.scale) : null, saved: savedOk(x.saved) ? cleanSaved(x.saved) : [] };
+      if (isObj(x.view)) s.view = cleanView(x.view); if (hoursOk(x.hours)) s.hours = { from: x.hours.from, to: x.hours.to }; if (shareOk(x.share)) s.share = x.share; return s; };
+    // a request rebuilt from storage: its message must be one the hub makes, for this market, with its own id
+    const readQ = (mk, x) => { if (!isObj(x) || !idOk(x.req) || !isObj(x.msg) || x.msg.ptc !== 1 || x.msg.req !== x.req || x.msg.instrument !== MARKETS[mk].id) return null;
+      const kind = x.msg.type === 'apply-settings' ? 'apply' : x.msg.type === 'profile' ? 'profile' : null; if (!kind) return null;
+      const f = kind === 'apply' && x.file === true && isObj(x.f) && isObj(x.f.sets) && scaleOk(x.f.scale) ? x.f : null;
+      return { req: String(x.req), kind, op: kind === 'profile' ? x.msg.op : null, msg: x.msg, sent: false, from: typeof x.from === 'string' ? x.from : '', file: !!f, name: typeof x.name === 'string' ? x.name : '', f }; };
+    const fileMsg = (mk, req, f) => { const m = { ptc: 1, type: 'apply-settings', v: MSG_V, instrument: MARKETS[mk].id, req, sets: clone(f.sets), scale: clone(f.scale) };
+      if (f.v === 1) m.saved = clone(f.saved); else for (const k of ['share', 'view', 'hours']) if (f[k] !== undefined) m[k] = clone(f[k]); return m; };
+    // read once, with care: { v: 2, ... } under KEY, else { v: 1, ... } under OLD_KEY (round 12 and 13; its waiting file becomes a waiting request);
+    // anything else, or of the wrong shape, reads as nothing (a market at a time)
+    try { const t2 = storage ? storage.getItem(KEY) : null, t1 = t2 == null && storage ? storage.getItem(OLD_KEY) : null, j = t2 != null ? JSON.parse(t2) : t1 != null ? JSON.parse(t1) : null;
+      if (isObj(j) && j.v === (t2 != null ? 2 : 1)) { if (TABS.includes(j.tab)) S.tab = j.tab; if (MKS.includes(j.play)) S.play = j.play;
         for (const mk of MKS) { const x = j[mk]; if (!isObj(x)) continue; const m = blank();
-          if (isObj(x.s) && isObj(x.s.sets)) { const sets = cleanSets(x.s.sets); if (Object.keys(sets).length) m.s = { sets, defaults: isObj(x.s.defaults) ? cleanSets(x.s.defaults) : {}, scale: scaleOk(x.s.scale) ? cleanScale(x.s.scale) : null, saved: savedOk(x.s.saved) ? cleanSaved(x.s.saved) : [] }; }
-          m.at = m.s && fin(x.at) ? x.at : null; m.study = x.study === true;
-          if (isObj(x.pending) && isObj(x.pending.sets)) { const sets = cleanSets(x.pending.sets); if (Object.keys(sets).length && scaleOk(x.pending.scale) && savedOk(x.pending.saved)) m.pending = { sets, scale: cleanScale(x.pending.scale), saved: cleanSaved(x.pending.saved), sent: false, from: typeof x.pending.from === 'string' ? x.pending.from : '' }; }
+          m.s = readS(x.s); m.at = m.s && fin(x.at) ? x.at : null; m.study = x.study === true;
+          if (j.v === 2) { if (isObj(x.prof) && Array.isArray(x.prof.list)) m.prof = { list: cleanProfiles(x.prof.list), active: idOk(x.prof.active) ? x.prof.active : null, dirty: x.prof.dirty === true, persist: x.prof.persist === 'visit' ? 'visit' : 'store' };
+            if (Array.isArray(x.q)) for (const y of x.q) { const r = readQ(mk, y); if (r) m.q.push(r); } }
+          else if (isObj(x.pending) && isObj(x.pending.sets)) { const sets = cleanSets(x.pending.sets);
+            if (Object.keys(sets).length && scaleOk(x.pending.scale) && savedOk(x.pending.saved)) { S[mk] = m; const f = { v: 1, sets, scale: cleanScale(x.pending.scale), saved: cleanSaved(x.pending.saved) }, req = newReq(mk);
+              m.q.push({ req, kind: 'apply', op: null, msg: fileMsg(mk, req, f), sent: false, from: typeof x.pending.from === 'string' ? x.pending.from : '', file: true, name: '', f }); } }
           S[mk] = m; } } } catch (e) { /* blocked or malformed: start from nothing */ }
     const persist = () => { try { if (!storage) return; const out = { v: V, tab: S.tab, play: S.play };
-      for (const mk of MKS) { const m = S[mk]; out[mk] = { s: m.s, at: m.at, study: m.study, pending: m.pending ? { sets: m.pending.sets, scale: m.pending.scale, saved: m.pending.saved, from: m.pending.from } : null }; }
+      for (const mk of MKS) { const m = S[mk]; out[mk] = { s: m.s, at: m.at, study: m.study, prof: m.prof, q: m.q.map(x => ({ req: x.req, msg: x.msg, from: x.from, file: x.file, name: x.name, f: x.f })) }; }
       storage.setItem(KEY, JSON.stringify(out)); } catch (e) { /* storage blocked: this visit still works */ } };
     const check = mk => { if (!MARKETS[mk]) throw new Error('SettingsHub: market must be gc or nq, not ' + mk); return S[mk]; };
-    const applyMsg = (mk, p) => ({ ptc: 1, type: 'apply-settings', instrument: MARKETS[mk].id, v: 1, sets: clone(p.sets), scale: clone(p.scale), saved: clone(p.saved) });
-    // merge one message: sets and defaults by set key, scale and saved replaced; changedAt moves when what the comparison or the file holds changed
-    function merge(mk, r) { const m = S[mk], prev = m.s, next = { sets: Object.assign({}, prev ? prev.sets : {}, r.sets), defaults: Object.assign({}, prev ? prev.defaults : {}, r.defaults),
+    // the newest loaded file not yet answered (the comparison and the file use it at once)
+    const fileWait = m => { for (let i = m.q.length - 1; i >= 0; i--) if (m.q[i].file) return m.q[i]; return null; };
+    // merge one message: sets and defaults by set key, scale and saved replaced (round 14: and view, hours, share); changedAt moves when what the
+    // comparison or the file holds changed
+    function merge(mk, r) { const m = S[mk], prev = m.s, next = { v: r.v >= 2 ? 2 : 1, sets: Object.assign({}, prev ? prev.sets : {}, r.sets), defaults: Object.assign({}, prev ? prev.defaults : {}, r.defaults),
         scale: r.scale || (prev && prev.scale) || Object.assign({}, STUDY_SCALE), saved: r.saved };
-      const ch = !prev || canon([prev.sets, prev.scale, prev.saved]) !== canon([next.sets, next.scale, next.saved]);
+      for (const k of ['view', 'hours', 'share']) { const x = r[k] != null ? r[k] : prev && prev[k]; if (x != null) next[k] = x; }
+      const pick = s => [s.sets, s.scale, s.saved, s.view || null, s.hours || null, s.share == null ? null : s.share];
+      const ch = !prev || canon(pick(prev)) !== canon(pick(next));
       if (ch && prev) m.at = r.at != null ? r.at : now(); m.s = next; return ch; }
+    // the requests waiting to be handed to mk's frame, marked handed (the shell gives one back with unsend when its post fails)
+    function outbox(mk) { const m = check(mk), out = []; for (const x of m.q) if (!x.sent) { x.sent = true; out.push(clone(x.msg)); } return out; }
+    const doneOf = (x, ok, why) => ({ req: x.req, kind: x.kind, op: x.op, ok, why: why || '', from: x.from, file: x.file, name: x.name });
 
-    // onSettings(mk, msg): a `settings` message of mk's study frame. Returns { ok, changed, apply } where apply is the apply-settings message the
-    // shell must send to that frame now (a loaded file waiting for it), else null. A message while a file is waiting is not merged (the frame's
-    // old settings); the frame's answer to the apply is (and ends the wait).
-    function onSettings(mk, msg) { const m = check(mk), r = readSettings(mk, msg); if (!r) return { ok: false, changed: false, apply: null };
-      if (m.pending && !m.pending.sent) { m.pending.sent = true; return { ok: true, changed: false, apply: applyMsg(mk, m.pending) }; }
-      if (m.pending) m.pending = null;
-      const changed = merge(mk, r); persist(); return { ok: true, changed, apply: null }; }
-    // loadFile(mk, text, { alive }): the user's file for mk's button. Refused: { ok: false, why } and nothing changes. Accepted: the hub holds the
-    // file's settings now (the comparison uses them at once; changedAt = now) and hands them to the study frame: apply (the message to send now)
-    // when the frame is alive, else when the frame first speaks (onSettings), also on a later visit; sentence: what the user is told.
-    function loadFile(mk, text, opt) { const m = check(mk), r = parseFile(text, mk); if (!r.ok) return { ok: false, why: r.why, apply: null };
-      const f = r.file, alive = !!(opt && opt.alive), name = opt && typeof opt.name === 'string' ? opt.name : '';
-      m.s = { sets: Object.assign({}, m.s ? m.s.sets : {}, f.sets), defaults: m.s ? m.s.defaults : {}, scale: f.scale, saved: f.saved }; m.at = now();
-      m.pending = { sets: f.sets, scale: f.scale, saved: f.saved, sent: alive, from: name }; persist();
-      const nm = MARKETS[mk].name, fn = name ? '“' + name + '”' : 'the file';
-      const sentence = alive ? 'Loaded ' + fn + ': the ' + nm + ' tab and the comparison now use these settings.' : 'Loaded ' + fn + ': the comparison uses these settings now; the ' + nm + ' tab takes them when you open it.';
-      return { ok: true, why: '', apply: alive ? applyMsg(mk, m.pending) : null, sentence }; }
-    // the file of mk's settings (what the hub holds: the study frame's last message, or a loaded file), or null when nothing is known
-    function fileText(mk) { const m = check(mk); if (!m.s) return null; const s = m.pending ? m.pending : m.s; return serialise(mk, { sets: s.sets, scale: s.scale, saved: s.saved }, now()); }
-    function source(mk) { const m = S[mk]; return !m.s || m.study || (!m.pending && asStudy(m.s)) ? 'study' : 'yours'; }
-    // the chip: "Gold: the study's settings" (none known, or the same as the study's), "Gold: the study's settings (yours are kept in the Gold tab)"
-    // (the switch), "Gold: your settings from a file, loaded 12:41" (waiting for the tab), "Gold: your settings, changed 12:41" (today; another day
-    // "changed 17 Nov 12:41"), "Gold: your settings" (changed before the hub first heard of them)
-    function chip(mk) { const m = check(mk), nm = MARKETS[mk].name;
-      if (!m.s) return nm + ': the study\'s settings';
+    // onSettings(mk, msg, { hold }): a `settings` message of mk's study frame. Returns { ok, changed, done, send, apply }: done the requests it
+    // answered ({ req, kind, op, ok, why, from, file, name }), send the requests to hand to the frame now (none while opt.hold), apply the first
+    // apply-settings among them (round 12's name). A message of a version above 2 is not merged ({ ok: false, why: 'version' }).
+    function onSettings(mk, msg, opt) { const m = check(mk), none = { ok: false, changed: false, done: [], send: [], apply: null };
+      if (isObj(msg) && msg.ptc === 1 && msg.type === 'settings' && msg.instrument === MARKETS[mk].id && fin(msg.v) && msg.v > MSG_V) return Object.assign(none, { why: 'version' });
+      const r = readSettings(mk, msg); if (!r) return none;
+      const done = []; m.live = true;
+      if (r.ack != null) { const i = m.q.findIndex(x => x.req === r.ack); if (i >= 0) done.push(doneOf(m.q.splice(i, 1)[0], r.result ? r.result.ok : true, r.result ? r.result.why : '')); }
+      else if (r.v < 2) { const kept = []; for (const x of m.q) { if (!x.sent) { kept.push(x); continue; } done.push(doneOf(x, x.kind === 'apply', x.kind === 'apply' ? '' : 'old')); } m.q = kept; }
+      const changed = merge(mk, r); if (r.prof) m.prof = r.prof; else if (r.v < 2) m.prof = null;
+      const send = opt && opt.hold ? [] : outbox(mk); persist();
+      return { ok: true, changed, done, send, apply: send.find(x => x.type === 'apply-settings') || null }; }
+    // loadFile(mk, text, { alive, hold, name }): the user's file for mk's button. Refused: { ok: false, why } and nothing changes. Accepted: the hub
+    // holds the file's settings now (the comparison uses them at once; changedAt = now) and hands them to the study frame: send (the messages to
+    // post now: a v2 file's profiles as 'import', then its work as 'apply-settings') when the frame is up and not held, else when it next speaks,
+    // also on a later visit; sentence: what the user is told now (the frame's answer is put in words by answer()).
+    function loadFile(mk, text, opt) { const m = check(mk), r = parseFile(text, mk); if (!r.ok) return { ok: false, why: r.why, apply: null, send: [] };
+      opt = opt || {}; const f = r.file, name = typeof opt.name === 'string' ? opt.name : '', now0 = now();
+      m.q = m.q.filter(x => !(x.file && !x.sent) && !(x.op === 'import' && !x.sent));   // a file not yet handed over is replaced by this one
+      if (f.v >= 2 && f.profiles.length) { const req = newReq(mk);
+        m.q.push({ req, kind: 'profile', op: 'import', msg: { ptc: 1, type: 'profile', v: MSG_V, instrument: MARKETS[mk].id, req, op: 'import', profiles: clone(f.profiles), name: f.active }, sent: false, from: name, file: false, name: f.active || '', f: null }); }
+      const req = newReq(mk); m.q.push({ req, kind: 'apply', op: null, msg: fileMsg(mk, req, f), sent: false, from: name, file: true, name: '', f: { v: f.v, sets: f.sets, scale: f.scale, saved: f.saved, share: f.share, view: f.view, hours: f.hours, profiles: f.profiles, active: f.active } });
+      m.at = now0; const send = opt.alive && !opt.hold ? outbox(mk) : []; persist();
+      const nm = MARKETS[mk].name, fn = name ? q(name) : 'the file';
+      const sentence = send.length ? 'Loading ' + fn + ' into the ' + nm + ' tab…'
+        : opt.hold ? 'Loaded ' + fn + ': the comparison uses these settings now; the ' + nm + ' tab takes them when you open it (the Curve playground does not use your settings).'
+        : 'Loaded ' + fn + ': the comparison uses these settings now; the ' + nm + ' tab takes them when you open it.';
+      return { ok: true, why: '', send, apply: send.find(x => x.type === 'apply-settings') || null, sentence }; }
+    // profile(mk, op, arg, { alive, hold }): a profile choice of the bar (op 'select' | 'save' | 'save-as' | 'delete'; arg { id } or { name }),
+    // checked against the list last seen: refused in words ({ ok: false, why }) or queued ({ ok: true, req, send, sentence }); the card decides
+    function profile(mk, op, arg, opt) { const m = check(mk), nm = MARKETS[mk].name, p = m.prof, no = why => ({ ok: false, why, send: [], sentence: '' }); opt = opt || {}; arg = arg || {};
+      if (!OPS.includes(op)) throw new Error('SettingsHub.profile: op must be one of ' + OPS.join(', '));
+      if (!p) return no('Open the ' + nm + ' tab once, so its profiles are known here.');
+      const byId = id => p.list.find(x => x.id === id), msg = { ptc: 1, type: 'profile', v: MSG_V, instrument: MARKETS[mk].id, req: '', op }; let name = '';
+      if (op === 'select' || op === 'delete') { if (arg.id == null) return no('No profile is chosen.'); const x = byId(arg.id); if (!x) return no('That profile is not in the ' + nm + ' list any more.');
+        if (op === 'delete' && x.builtin) return no(q(x.name) + ' is built in and cannot be deleted.'); msg.id = x.id; name = x.name; }
+      else if (op === 'save') { const x = byId(p.active); if (!x) return no('No profile of your own is chosen. Use “Save as” to keep these settings under a name.');
+        if (x.builtin) return no(q(x.name) + ' is built in and cannot be changed. Use “Save as” to keep these settings under a new name.'); msg.id = x.id; name = x.name; }
+      else { name = typeof arg.name === 'string' ? arg.name.trim() : ''; if (!name) return no('Type a name for the new profile first.');
+        if (name.length > NAME_MAX) return no('A name can have at most ' + NAME_MAX + ' characters.');
+        const hit = p.list.find(x => x.name.toLowerCase() === name.toLowerCase());
+        if (hit) return no(hit.builtin ? q(hit.name) + ' is the name of a built-in profile. Choose another name.' : 'There is already a profile called ' + q(hit.name) + '. Choose another name, or choose it in the list and press Save.');
+        if (p.list.filter(x => !x.builtin).length >= OWN_MAX) return no('You have ' + OWN_MAX + ' profiles of your own, the most this page keeps. Delete one first.');
+        msg.name = name; }
+      const req = msg.req = newReq(mk); m.q.push({ req, kind: 'profile', op, msg, sent: false, from: '', file: false, name, f: null });
+      const send = opt.alive && !opt.hold ? outbox(mk) : []; persist();
+      const sentence = send.length ? '' : 'Your choice waits for the ' + nm + ' tab: ' + (opt.hold ? 'the Curve playground does not use your settings.' : 'it is made when you open it.');
+      return { ok: true, why: '', req, send, sentence }; }
+    // the frame's answer to a request, in words (PLAN_R14 section 7; "Saved" is never said while the card keeps settings for this visit only)
+    function answer(mk, d) { const m = check(mk), nm = MARKETS[mk].name, visit = !!(m.prof && m.prof.persist === 'visit'), fn = d.from ? q(d.from) : 'the file';
+      const w = d.why === 'version' ? 'it is a different version of this page.' : d.why === 'old' ? 'the ' + nm + ' study open here is an older page that has no profiles.'
+        : / /.test(d.why) ? d.why.trim().replace(/([^.!?])$/, '$1.') : d.why ? 'it answered ' + q(d.why) + '.' : 'it gave no reason.';
+      if (d.kind === 'apply') return d.ok ? 'Loaded ' + fn + ': the ' + nm + ' tab and the comparison now use these settings.' : 'The ' + nm + ' tab did not take ' + fn + ': ' + w + ' Nothing was changed.';
+      if (!d.ok) return (d.op === 'import' ? 'The profiles in ' + fn + ' were not added: ' : 'The ' + nm + ' tab did not do this: ') + w + ' Nothing was changed.';
+      const only = ' for this visit only: this browser does not let the page store settings.';
+      if (d.op === 'select') return 'The ' + nm + ' tab is on ' + q(d.name) + ' now.';
+      if (d.op === 'save') return visit ? 'Kept in ' + q(d.name) + only : 'Saved into ' + q(d.name) + '.';
+      if (d.op === 'save-as') return visit ? 'Kept as ' + q(d.name) + only : 'Saved as a new profile, ' + q(d.name) + '.';
+      if (d.op === 'delete') return 'Deleted ' + q(d.name) + '.';
+      return 'The profiles in ' + fn + ' were added to the ' + nm + ' list.'; }
+    // the file of mk's settings: a file still waiting, else at v 2 what a version-2 frame last said (work and the user's own profiles that came
+    // with their snapshot), else at v 1 as in round 12; null when nothing is known
+    function fileText(mk) { const m = check(mk), w = fileWait(m), t = now();
+      if (w) return w.f.v >= 2 ? serialise2(mk, { active: w.f.active, work: snapOf(w.f), profiles: w.f.profiles }, t) : serialise(mk, w.f, t);
+      if (!m.s) return null;
+      if (m.prof && m.s.v === 2) { const a = m.prof.list.find(x => x.id === m.prof.active);
+        return serialise2(mk, { active: a ? a.name : null, work: snapOf(m.s), profiles: m.prof.list.filter(x => !x.builtin && x.snap).map(x => ({ name: x.name, snap: x.snap })) }, t); }
+      return serialise(mk, { sets: m.s.sets, scale: m.s.scale, saved: m.s.saved }, t); }
+    const snapOf = s => { const o = { sets: s.sets, scale: s.scale || Object.assign({}, STUDY_SCALE) }; for (const k of ['view', 'hours', 'share']) if (s[k] != null) o[k] = s[k]; return o; };
+    function source(mk) { const m = S[mk], w = fileWait(m); return (!m.s && !w) || m.study || (!w && asStudy(m.s)) ? 'study' : 'yours'; }
+    // the chip. A version-2 frame (round 14, J23): "Gold: <profile name>" (none: "your settings (no profile)") with the marks "unsaved changes",
+    // "this visit only", "a file / a choice waits for the Gold tab" or else "as last seen" (the frame has not spoken in this visit), "the comparison
+    // uses the study's settings" (the switch). Otherwise as in round 12: "Gold: the study's settings" (none known, or the same as the study's),
+    // "Gold: the study's settings (yours are kept in the Gold tab)" (the switch), "Gold: your settings from a file, loaded 12:41" (waiting for the
+    // tab), "Gold: your settings, changed 12:41" (today; another day "changed 17 Nov 12:41"), "Gold: your settings" (changed before the hub first
+    // heard of them)
+    function chip(mk) { const m = check(mk), nm = MARKETS[mk].name, w = fileWait(m), un = m.q.filter(x => !x.sent);
+      if (m.prof) { const p = m.prof, a = p.list.find(x => x.id === p.active), fl = [];
+        if (a && p.dirty) fl.push('unsaved changes'); if (p.persist === 'visit') fl.push('this visit only');
+        if (un.length) fl.push((un.some(x => x.file || x.op === 'import') ? 'a file' : 'a choice') + ' waits for the ' + nm + ' tab'); else if (!m.live) fl.push('as last seen');
+        if (m.study) fl.push('the comparison uses the study\'s settings');
+        return nm + ': ' + (a ? a.name : 'your settings (no profile)') + (fl.length ? ', ' + fl.join(', ') : ''); }
+      if (!m.s && !w) return nm + ': the study\'s settings';
       if (m.study) return nm + ': the study\'s settings (yours are kept in the ' + nm + ' tab)';
       if (source(mk) === 'study') return nm + ': the study\'s settings';
       const when = m.at == null ? '' : (localDay(m.at) === localDay(now()) ? hm(m.at) : dayMon(m.at) + ' ' + hm(m.at));
-      if (m.pending && !m.pending.sent) return nm + ': your settings from a file' + (when ? ', loaded ' + when : '');
+      if (w && !w.sent) return nm + ': your settings from a file' + (when ? ', loaded ' + when : '');
       return nm + ': your settings' + (when ? ', changed ' + when : ''); }
-    function marketState(mk) { const m = S[mk], src = source(mk), s = m.pending || m.s;
+    function marketState(mk) { const m = S[mk], src = source(mk), w = fileWait(m), s = w ? { sets: Object.assign({}, m.s ? m.s.sets : {}, w.f.sets), scale: w.f.scale } : m.s;
       if (src === 'study' || !s || !s.sets[COMPARE_SET]) return { source: 'study', at: null, th: null, scale: null, name: chip(mk) };
       return { source: 'yours', at: m.at, th: clone(s.sets[COMPARE_SET]), scale: clone(s.scale || STUDY_SCALE), name: chip(mk) }; }
     function state() { return { ptc: 1, type: 'state', v: 1, gc: marketState('gc'), nq: marketState('nq') }; }
+    // the one line about the comparison (PLAN_R14 section 7, J26): what it reads whatever the scoring timeframe, and which settings it uses per market
+    function compareLine() { const part = mk => { const m = S[mk], nm = MARKETS[mk].name; if (marketState(mk).source === 'study') return nm + ', the study\'s settings' + (m.study ? ' (your choice in this bar)' : '');
+        const a = m.prof && !fileWait(m) ? m.prof.list.find(x => x.id === m.prof.active) : null;
+        return nm + ', your settings for those rows' + (a ? ' from ' + q(a.name) + (m.prof.dirty ? ' with unsaved changes' : '') : fileWait(m) ? ' from a loaded file' : ''); };
+      return 'The “Gold or Nasdaq” tab always reads 5-minute candles in half-hour rows, whatever scoring timeframe you choose. It uses: ' + part('gc') + '; ' + part('nq') + '.'; }
     function setUseStudy(mk, on) { const m = check(mk); if (m.study === !!on) return false; m.study = !!on; persist(); return true; }
     function setTab(tab) { if (!TABS.includes(tab) || S.tab === tab) return; S.tab = tab; persist(); }
     function setPlayMarket(mk) { if (!MKS.includes(mk) || S.play === mk) return; S.play = mk; persist(); }
-    return { onSettings, loadFile, fileText, fileName: mk => (check(mk), fileName(mk, now())), state, chip, source, known: mk => !!check(mk).s,
-      useStudy: mk => check(mk).study, setUseStudy, waiting: mk => !!(check(mk).pending && !check(mk).pending.sent),
+    // the frame of mk loaded again (by hand, or the browser's reload): what was handed to the old page and not answered goes again
+    function reloaded(mk) { const m = check(mk); for (const x of m.q) x.sent = false; m.live = false; }
+    function unsend(mk, req) { const x = check(mk).q.find(y => y.req === req); if (x) x.sent = false; }
+    // the profile list as last seen: { list, active, dirty, persist, live, pick } (pick: the profile of a select still waiting, else null)
+    const profiles = mk => { const m = check(mk), s = m.q.filter(x => x.op === 'select').pop(); return m.prof ? Object.assign(clone(m.prof), { live: m.live, pick: s ? s.msg.id : null }) : null; };
+    return { onSettings, loadFile, profile, answer, outbox, unsend, reloaded, fileText, fileName: mk => (check(mk), fileName(mk, now())), state, chip, compareLine, source, profiles,
+      known: mk => !!check(mk).s || !!fileWait(S[mk]), useStudy: mk => check(mk).study, setUseStudy,
+      waiting: mk => check(mk).q.length > 0, unsent: mk => check(mk).q.filter(x => !x.sent).length,
       tab: () => S.tab, setTab, playMarket: () => S.play, setPlayMarket, snapshot: () => clone(S) }; }
 
-  return { create, parseFile, serialise, fileName, comparisonScale, readSettings, KEY, MARKETS, SET_KEYS, SAVED_SETS, COMPARE_SET, STUDY_SCALE, WHY, TABS }; }));
+  return { create, parseFile, serialise, serialise2, fileName, comparisonScale, readSettings, KEY, OLD_KEY, MARKETS, SET_KEYS, SAVED_SETS, COMPARE_SET, STUDY_SCALE, WHY, TABS, NAME_MAX, OWN_MAX }; }));
 </script>
 <script data-shell>
 // The shell (PLAN_R12 "Files", "Message contract", "The settings hub"). Messages are read only from a frame this page made (ev.source) and only
@@ -299,6 +460,11 @@ main{flex:1 1 auto;position:relative;min-height:420px}
 // to the comparison frame whenever it changes. Round 13: a tab is not a frame any more. FRAMES are the three frames; frameOf(tab) is the frame a
 // tab shows ("Label playground": the market of its switch; "Curve playground": the gold study, or the Nasdaq study when only that one is open)
 // and VIEW the part of a study its tab asks for, sent to the study's frame as { ptc: 1, type: 'view', view } once its page has spoken.
+// Round 14 (dev/v4_loop/round14/PLAN_R14.md section 7): what the hub asks of a study frame (a loaded file, a profile choice of the bar) carries a
+// request id and waits in the hub until the frame's answer echoes it; the bar says the answer in words. A request is handed over when the frame is
+// up and not in the Curve playground (held: that tab does not use the user's settings, so a waiting file or choice is kept and the bar says so).
+// The bar per market: the chip naming the profile, Profile, Save, a name and Save as, Delete (asked twice), the file buttons, the switch; and one
+// line on what the comparison reads. A frame that loads again is told its view again and asked to speak; a frame shown again gets { type: 'shown' }.
 (function () {
   'use strict';
   const H = typeof SettingsHub !== 'undefined' ? SettingsHub : null, doc = document, $ = s => doc.querySelector(s);
@@ -312,22 +478,31 @@ main{flex:1 1 auto;position:relative;min-height:420px}
   if (!H) { const p = $('[data-loading="focus"]'); if (p) p.textContent = 'This page could not start: its settings part is missing. Build it again with tools/build_combined.js.'; return; }
   let store = null; try { store = window.localStorage || null; } catch (e) { store = null; }
   const hub = H.create({ storage: store });
-  const frames = {}, want = {}; let cur = null, lastState = '', labAt = null;
+  const frames = {}, want = {}, armed = { gc: null, nq: null }; let cur = null, lastState = '', labAt = null;
   const tabBtn = t => $('[role="tab"][data-tab="' + t + '"]'), panel = t => $('[data-panel="' + t + '"]');
   const winOf = t => { const f = frames[t]; try { return f && f.el.contentWindow || null; } catch (e) { return null; } };
   const post = (t, m) => { const w = winOf(t); if (!w) return false; try { w.postMessage(m, '*'); return true; } catch (e) { return false; } };
   function sendState(force) { if (!frames.focus) return; const st = hub.state(), key = JSON.stringify(st); if (!force && key === lastState) return; if (post('focus', st)) lastState = key; }
   const frameOf = t => t === 'label' ? hub.playMarket() : t === 'lab' ? (labAt = labAt || (frames.gc || !frames.nq ? 'gc' : 'nq')) : t;
+  const alive = mk => !!(frames[mk] && frames[mk].spoke), held = mk => want[mk] === 'lab';
+  // the hub's requests to mk's frame: a post that fails gives its request back to wait; flush hands over what waits when the frame may take it
+  function handOver(mk, msgs) { for (const m of msgs || []) if (!post(mk, m)) hub.unsend(mk, m.req); }
+  function flush(mk) { if (MKS.includes(mk) && alive(mk) && !held(mk)) handOver(mk, hub.outbox(mk)); }
   function sendView(t) { if (want[t] && frames[t] && frames[t].spoke) post(t, { ptc: 1, type: 'view', view: want[t] }); }
-  function spoke(t) { const f = frames[t]; if (!f || f.spoke) return; f.spoke = true; clearTimeout(f.timer); $('[data-loading="' + t + '"]').hidden = true; $('[data-missing="' + t + '"]').hidden = true; sendView(t); }
+  function spoke(t) { const f = frames[t]; if (!f || f.spoke) return; f.spoke = f.opened = true; clearTimeout(f.timer); $('[data-loading="' + t + '"]').hidden = true; $('[data-missing="' + t + '"]').hidden = true; sendView(t); }
   function missing(t) { const f = frames[t]; if (!f || f.spoke) return; $('[data-loading="' + t + '"]').hidden = true; const p = $('[data-missing="' + t + '"]');
     p.textContent = WHAT[t] + ' did not open here. Its file, ' + FILES[t] + ', must sit in the same folder as this page, with the data folder beside it.'; p.hidden = false; }
-  function makeFrame(t) { const el = doc.createElement('iframe'), f = frames[t] = { el, spoke: false, timer: null };
+  function makeFrame(t) { const el = doc.createElement('iframe'), f = frames[t] = { el, spoke: false, opened: false, loads: 0, timer: null };
     el.setAttribute('src', FILES[t]); el.setAttribute('title', TITLE[t]); el.setAttribute('data-frame', t);
-    el.addEventListener('load', () => { if (f.spoke) return; clearTimeout(f.timer); f.timer = setTimeout(() => missing(t), WAIT_MS); });
+    // a frame whose page had spoken and that loads again (by hand, or the browser's reload) holds a new page: it is told its view again and a study
+    // is asked to speak (its answer hands over again what the old page had not answered); it opened before, so it is never called missing (J24)
+    el.addEventListener('load', () => { f.loads++;
+      if (f.loads > 1 && f.opened) { f.spoke = false; clearTimeout(f.timer); if (want[t]) post(t, { ptc: 1, type: 'view', view: want[t] });
+        if (MKS.includes(t)) { hub.reloaded(t); post(t, { ptc: 1, type: 'get-settings' }); renderBar(); } return; }
+      if (f.spoke) return; clearTimeout(f.timer); f.timer = setTimeout(() => missing(t), WAIT_MS); });
     panel(t).appendChild(el); }
   // ---- tabs: a roving tabindex, arrow keys, Home and End (WAI-ARIA tabs, automatic activation); the last tab is remembered
-  function select(t, focus) { if (!TABS.includes(t)) t = 'focus'; cur = t; hub.setTab(t); const f = frameOf(t);
+  function select(t, focus) { if (!TABS.includes(t)) t = 'focus'; cur = t; hub.setTab(t); const f = frameOf(t), was = panel(f).hidden;
     for (const k of TABS) { const b = tabBtn(k), on = k === t; b.setAttribute('aria-selected', on ? 'true' : 'false'); b.setAttribute('tabindex', on ? '0' : '-1'); }
     for (const k of FRAMES) panel(k).hidden = k !== f;
     for (const k of PLAY) $('[data-vbar="' + k + '"]').hidden = k !== t;
@@ -336,6 +511,9 @@ main{flex:1 1 auto;position:relative;min-height:420px}
     panel(f).setAttribute('aria-labelledby', 'tab-' + t);
     if (!frames[f]) makeFrame(f);
     if (VIEW[t]) { want[f] = VIEW[t]; sendView(f); }
+    if (was && frames[f].spoke) post(f, { ptc: 1, type: 'shown' });   // J24: shown again; the page draws at its real width
+    if (MKS.includes(f)) { if (!held(f)) flush(f); else if (hub.unsent(f)) say(f, 'What waits for the ' + NAME[f] + ' tab stays waiting here: the Curve playground does not use your settings.'); }
+    renderBar();
     if (focus) { try { tabBtn(t).focus(); } catch (e) { /* focus is a convenience */ } } }
   $('[role="tablist"]').addEventListener('click', ev => { const b = ev.target && ev.target.closest ? ev.target.closest('[role="tab"]') : null; if (b) select(b.getAttribute('data-tab'), true); });
   $('[role="tablist"]').addEventListener('keydown', ev => { const i = TABS.indexOf(cur), n = TABS.length;
@@ -344,7 +522,25 @@ main{flex:1 1 auto;position:relative;min-height:420px}
   // ---- the settings bar
   function say(mk, text, kind) { const p = $('[data-msg="' + mk + '"]'); p.textContent = text; if (kind) p.setAttribute('data-kind', kind); else p.removeAttribute('data-kind'); }
   function renderBar() { for (const mk of MKS) { const c = $('[data-chip="' + mk + '"]'), text = hub.chip(mk); if (c.textContent !== text) c.textContent = text; c.setAttribute('data-source', hub.state()[mk].source);
-    $('[data-open="' + mk + '"]').hidden = hub.known(mk); $('[data-study="' + mk + '"]').setAttribute('aria-pressed', hub.useStudy(mk) ? 'true' : 'false'); } }
+      $('[data-open="' + mk + '"]').hidden = hub.known(mk); $('[data-study="' + mk + '"]').setAttribute('aria-pressed', hub.useStudy(mk) ? 'true' : 'false');
+      // the profile list as last seen (rebuilt only when it changed, so a list the user is reading stays put); a choice still waiting is shown chosen
+      const p = hub.profiles(mk), sel = $('[data-psel="' + mk + '"]'), on = p ? (p.pick != null ? p.pick : p.active) : null, has = !!p && p.list.some(x => x.id === on);
+      const sig = p ? JSON.stringify([p.list.map(x => [x.id, x.name, x.builtin]), has]) : '';
+      if (sel._sig !== sig) { sel._sig = sig; while (sel.firstChild) sel.removeChild(sel.firstChild); const opt = (v, txt) => { const o = doc.createElement('option'); o.value = v; o.textContent = txt; sel.appendChild(o); };
+        if (!p) opt('', 'Open the ' + NAME[mk] + ' tab once'); else { if (!has) opt('', 'No profile chosen'); for (const x of p.list) opt(String(x.id), x.name + (x.builtin ? ' (built in)' : '')); } }
+      sel.disabled = !p; sel.value = has ? String(on) : '';
+      const a = p && p.list.find(x => x.id === p.active), del = $('[data-pdel="' + mk + '"]'); if (!a || armed[mk] !== a.id) armed[mk] = null;
+      const dt = armed[mk] != null ? 'Really delete “' + a.name + '”?' : 'Delete'; if (del.textContent !== dt) del.textContent = dt; }
+    const line = hub.compareLine(), cl = $('[data-cmpline]'); if (cl.textContent !== line) cl.textContent = line; }
+  // a profile choice of the bar: refused in words by the hub, or handed to the frame (or left waiting for its tab, said so); the answer comes later
+  function doProfile(mk, op, arg) { armed[mk] = null; const r = hub.profile(mk, op, arg, { alive: alive(mk), hold: held(mk) });
+    if (!r.ok) { say(mk, r.why, 'refused'); renderBar(); return; }
+    handOver(mk, r.send); say(mk, r.sentence); if (op === 'save-as') $('[data-pname="' + mk + '"]').value = ''; renderBar(); sendState(); }
+  // Delete is asked twice (as in the card): the first press names the profile on the button, the second deletes it; any other press in the
+  // market's part of the bar takes it back. A built-in or no profile goes straight to the hub, which says why it cannot be deleted.
+  function pressDelete(mk) { const p = hub.profiles(mk), a = p && p.list.find(x => x.id === p.active);
+    if (!a || a.builtin || armed[mk] === a.id) { doProfile(mk, 'delete', { id: a ? a.id : null }); return; }
+    armed[mk] = a.id; say(mk, ''); renderBar(); }
   function saveFile(mk) { const text = hub.fileText(mk);
     if (!text) { say(mk, 'Nothing to save yet: open the ' + NAME[mk] + ' tab once, so its settings are known here.'); return; }
     const name = hub.fileName(mk);
@@ -352,8 +548,8 @@ main{flex:1 1 auto;position:relative;min-height:420px}
       doc.body.appendChild(a); a.click(); a.remove(); setTimeout(() => { try { URL.revokeObjectURL(url); } catch (e) { /* gone already */ } }, 30000);
       say(mk, 'Saved as “' + name + '” (your browser puts it with your downloads).'); }
     catch (e) { say(mk, 'This browser did not let the page save a file.', 'refused'); } }
-  function loadText(mk, text, name) { const r = hub.loadFile(mk, text, { alive: !!(frames[mk] && frames[mk].spoke), name });
-    if (!r.ok) { say(mk, r.why, 'refused'); return; } if (r.apply) post(mk, r.apply); say(mk, r.sentence); renderBar(); sendState(); }
+  function loadText(mk, text, name) { const r = hub.loadFile(mk, text, { alive: alive(mk), hold: held(mk), name });
+    if (!r.ok) { say(mk, r.why, 'refused'); return; } handOver(mk, r.send); say(mk, r.sentence); renderBar(); sendState(); }
   function onFile(mk, input) { const file = input.files && input.files[0]; if (!file) return;
     if (file.size > 2e6) { say(mk, H.WHY.big, 'refused'); return; }
     let fr; try { fr = new FileReader(); } catch (e) { say(mk, 'This browser did not let the page read the file. Nothing was changed.', 'refused'); return; }
@@ -367,12 +563,22 @@ main{flex:1 1 auto;position:relative;min-height:420px}
     $('[data-load="' + mk + '"]').addEventListener('click', () => { try { inp.value = ''; } catch (e) { /* some browsers refuse; the same file then does not fire change twice */ } inp.click(); });
     inp.addEventListener('change', () => onFile(mk, inp));
     $('[data-study="' + mk + '"]').addEventListener('click', () => { hub.setUseStudy(mk, !hub.useStudy(mk)); say(mk, ''); renderBar(); sendState(); });
-    $('[data-play-market="' + mk + '"]').addEventListener('click', () => { hub.setPlayMarket(mk); select('label', false); }); }
+    $('[data-play-market="' + mk + '"]').addEventListener('click', () => { hub.setPlayMarket(mk); select('label', false); });
+    const sel = $('[data-psel="' + mk + '"]'), nameIn = $('[data-pname="' + mk + '"]'), del = $('[data-pdel="' + mk + '"]');
+    sel.addEventListener('change', () => { const p = hub.profiles(mk), x = p && p.list.find(y => String(y.id) === sel.value); if (x) doProfile(mk, 'select', { id: x.id }); else renderBar(); });
+    $('[data-psave="' + mk + '"]').addEventListener('click', () => doProfile(mk, 'save', {}));
+    $('[data-psaveas="' + mk + '"]').addEventListener('click', () => doProfile(mk, 'save-as', { name: nameIn.value }));
+    nameIn.addEventListener('keydown', ev => { if (ev.key === 'Enter') { if (ev.preventDefault) ev.preventDefault(); doProfile(mk, 'save-as', { name: nameIn.value }); } });
+    del.addEventListener('click', () => pressDelete(mk));
+    const part = $('[data-market="' + mk + '"]'), disarm = ev => { if (ev && ev.target === del || armed[mk] == null) return; armed[mk] = null; renderBar(); };
+    part.addEventListener('click', disarm); part.addEventListener('input', disarm); part.addEventListener('change', disarm); }
   // ---- the frames' messages
   window.addEventListener('message', ev => { const d = ev && ev.data; if (!d || typeof d !== 'object' || d.ptc !== 1) return;
     const t = FRAMES.find(k => frames[k] && ev.source != null && ev.source === winOf(k)); if (!t) return; spoke(t);
     if (t === 'focus') { if (d.type === 'get-state') sendState(true); else if (d.type === 'open-tab' && MKS.includes(d.tab)) select(d.tab, true); return; }
-    if (d.type === 'settings') { const r = hub.onSettings(t, d); if (r.apply) post(t, r.apply); if (r.ok) { renderBar(); sendState(); } } });
+    if (d.type === 'settings') { const r = hub.onSettings(t, d, { hold: held(t) }); handOver(t, r.send);
+      for (const x of r.done) say(t, hub.answer(t, x), x.ok ? '' : 'refused');
+      if (r.ok) { renderBar(); sendState(); } else if (r.why === 'version') say(t, 'The ' + NAME[t] + ' study open here is a newer version of this page: its settings are not used here.', 'refused'); } });
   renderBar(); select(hub.tab() || 'focus', false);
   try { globalThis.GoldNasdaqShell = Object.freeze({ hub, frames, select, current: () => cur }); } catch (e) { /* tests read the DOM */ }
 })();
