@@ -14,6 +14,7 @@ Interactive static web application for Gold (`GC`) and Nasdaq (`NQ`) futures ses
 3. **Nasdaq** (`price_travel_curves_nq.html`) — 10-year and recent 1-minute Nasdaq (`NQ`) study with configurable Trend / Swing / Whipsaw label settings.
 4. **Label playground** — The labelling part of the Gold or Nasdaq study on its own (a Gold / Nasdaq switch): label real charts from the ten years as whipsaw, swing or trend and the page works out the label settings, with the whipsaw-to-swing scale beside it. It changes the same settings as the Gold and Nasdaq tabs.
 5. **Curve playground** — The simulator on its own: made-up candles from trend, swing, whipsaw and spike knobs, and what the method measures on them. It uses no real prices and changes no settings.
+6. **Session distributions** (`session_distributions.html`) — How far gold and Nasdaq futures travelled inside six fixed clock sessions and the New York lunch (in % of ADR20 or basis points), the 57 quarter-hour slots, what followed the scheduled events, and the four session rules tested on 2022–2026 (none passed; two more pairs are forward-only, not verified). A description of past price movement, not a trading signal.
 
 The two playgrounds are views of the Gold and Nasdaq study pages, not separate files.
 

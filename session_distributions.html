@@ -1,0 +1,853 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Session distributions: gold and Nasdaq futures</title>
+<style>
+:root{
+  color-scheme:light dark;
+  --bg:#f9f9f7;--surface:#fcfcfb;--surface2:#f1f0ec;
+  --ink:#0b0b0b;--ink2:#52514e;--muted:#6d6b66;
+  --grid:#e1e0d9;--axis:#c3c2b7;--ring:rgba(11,11,11,.10);
+  --gc:#b47c00;--nq:#2a78d6;--warn:#8a5a00;--ok:#1f7a4c;--off:#76746e;--bad:#a8332b;
+  --font-ui:system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+  --font-data:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0d0d0d;--surface:#1a1a19;--surface2:#232321;
+    --ink:#f0efec;--ink2:#c3c2b7;--muted:#a3a198;
+    --grid:#2c2c2a;--axis:#4a4a46;--ring:rgba(255,255,255,.10);
+    --gc:#d49214;--nq:#4b96ef;--warn:#e0b050;--ok:#3fb97a;--off:#9a9890;--bad:#e0776e;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--font-ui)}
+main{max-width:1240px;margin:0 auto;padding:16px 16px 56px}
+h1{font-size:1.55rem;line-height:1.25;margin:.3em 0 .25em}
+h2{font-size:1.22rem;margin:0 0 .45em}
+h3{font-size:1rem;margin:1.1em 0 .35em}
+p{margin:.45em 0}
+.sub{color:var(--ink2);font-size:.94rem}
+.small,small{font-size:.84rem;color:var(--ink2)}
+code{overflow-wrap:anywhere}
+section{background:var(--surface);border:1px solid var(--ring);border-radius:10px;padding:16px 18px;margin:16px 0;min-width:0}
+nav.toc{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.88rem;margin:10px 0 4px}
+nav.toc a{color:var(--ink2);text-decoration-thickness:1px;text-underline-offset:2px}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--nq);outline-offset:2px}
+
+/* Controls */
+.ctrlbar{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 0 6px;padding:10px 12px;background:var(--surface2);border:1px solid var(--grid);border-radius:8px}
+.ctrlgrp{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.ctrlgrp .lbl{font-size:.8rem;font-weight:600;color:var(--ink2);text-transform:uppercase;letter-spacing:.03em;margin-right:2px}
+button{font:inherit;font-size:.85rem;padding:5px 11px;border-radius:999px;border:1px solid var(--axis);background:var(--surface);color:var(--ink);cursor:pointer;line-height:1.25}
+button:hover{border-color:var(--ink2)}
+button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink);font-weight:600}
+.unitnote{font-size:.84rem;color:var(--ink2);margin:0 0 4px}
+
+/* Headline strip */
+.kpigrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:10px;margin:8px 0}
+.kpi{border:1px solid var(--grid);border-radius:7px;padding:10px 12px;background:var(--surface2)}
+.kpi-title{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--ink2);margin-bottom:4px}
+.kpi-big{font-family:var(--font-data);font-size:1.35rem;font-weight:700;line-height:1.2}
+.headline{font-size:1rem;margin:.6em 0 .2em}
+
+/* Badges */
+.badge{display:inline-block;font-size:.74rem;font-weight:650;padding:2px 8px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+.b-off{background:color-mix(in oklab,var(--off) 16%,var(--surface));color:var(--ink2);border-color:var(--grid)}
+.b-alert{background:color-mix(in oklab,var(--warn) 18%,var(--surface));color:var(--warn);border-color:color-mix(in oklab,var(--warn) 45%,var(--surface))}
+.b-cond{background:color-mix(in oklab,var(--gc) 20%,var(--surface));color:var(--gc);border-color:color-mix(in oklab,var(--gc) 50%,var(--surface))}
+.b-act{background:color-mix(in oklab,var(--ok) 18%,var(--surface));color:var(--ok);border-color:color-mix(in oklab,var(--ok) 45%,var(--surface))}
+.b-nq{background:color-mix(in oklab,var(--nq) 18%,var(--surface));color:var(--nq);border-color:color-mix(in oklab,var(--nq) 45%,var(--surface))}
+.b-bad{background:color-mix(in oklab,var(--bad) 14%,var(--surface));color:var(--bad);border-color:color-mix(in oklab,var(--bad) 40%,var(--surface))}
+
+/* Tables */
+.tbox{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;border:1px solid var(--grid);border-radius:8px;margin:10px 0}
+table{border-collapse:collapse;width:100%;font-size:.84rem;font-variant-numeric:tabular-nums}
+th,td{padding:6px 8px;border-bottom:1px solid var(--grid);text-align:left;vertical-align:top}
+thead th{background:var(--surface2);font-weight:650;vertical-align:bottom}
+thead tr{--rowbg:var(--surface2)}
+thead th small{display:block;font-weight:400;font-size:.72rem;color:var(--ink2)}
+tbody th{font-weight:600}
+td small,th small{display:block}
+.sm{font-size:.76rem;font-weight:400;color:var(--ink2)}
+.dates{white-space:nowrap}
+.nr{white-space:normal;min-width:7.5em}
+.grpc{white-space:nowrap}
+th .badge{white-space:normal}
+tbody tr:last-child td,tbody tr:last-child th{border-bottom:0}
+td.num,th.num{text-align:right;white-space:nowrap;font-family:var(--font-data);font-size:.81rem}
+td.num small{display:block;font-size:.72rem}
+tr.hl{--rowbg:color-mix(in oklab,var(--warn) 10%,var(--surface))}
+tr.hl td,tr.hl th{background:var(--rowbg)}
+tr.hl td:first-child,tr.hl th:first-child{box-shadow:inset 3px 0 0 var(--warn)}
+tr.grp>*{background:var(--surface2);font-size:.8rem;font-weight:400;color:var(--ink2)}
+tr.grp small{display:inline}
+tr.s2{--rowbg:color-mix(in oklab,var(--nq) 6%,var(--surface))}
+tr.s2 td,tr.s2 th{background:var(--rowbg)}
+.tm{white-space:nowrap;font-weight:600}
+.tm small,.tm .alt{display:block;font-weight:400;font-size:.76rem;color:var(--ink2)}
+.tm .tmain{display:block}
+.dec .tmain{display:inline}
+.na{color:var(--muted);font-style:italic;font-family:var(--font-ui)}
+.pass{color:var(--ok);font-weight:600}
+.fail{color:var(--bad)}
+.gates{white-space:nowrap;font-size:.76rem;line-height:1.35}
+.gates div{display:block}
+
+/* Quantile bar */
+td.barcell,th.barcell{min-width:110px;width:110px}
+.btrack{position:relative;height:24px;background:repeating-linear-gradient(90deg,transparent 0 calc(25% - 1px),var(--grid) calc(25% - 1px) 25%);border-left:1px solid var(--axis);border-right:1px solid var(--grid)}
+.whisk{position:absolute;top:11px;height:2px;background:var(--axis)}
+.iqr{position:absolute;top:4px;height:16px;border-radius:3px}
+.med{position:absolute;top:2px;width:3px;height:20px;border-radius:1px;transform:translateX(-1.5px)}
+.p95dot{position:absolute;top:8px;width:8px;height:8px;border-radius:50%;transform:translateX(-4px);border:2px solid var(--surface)}
+.mk-gc .iqr{background:color-mix(in oklab,var(--gc) 36%,var(--surface));border:1px solid var(--gc)}
+.mk-nq .iqr{background:color-mix(in oklab,var(--nq) 36%,var(--surface));border:1px solid var(--nq)}
+.mk-gc .med,.mk-gc .p95dot{background:var(--gc)}
+.mk-nq .med,.mk-nq .p95dot{background:var(--nq)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.78rem;color:var(--ink2);margin:8px 0 2px;align-items:center}
+.lg-item{display:inline-flex;align-items:center;gap:5px}
+.lg-box{width:16px;height:10px;border-radius:2px;background:color-mix(in oklab,var(--ink2) 25%,var(--surface));border:1px solid var(--ink2)}
+.lg-med{width:3px;height:12px;background:var(--ink)}
+.lg-dot{width:8px;height:8px;border-radius:50%;background:var(--ink)}
+.lg-wh{width:16px;height:2px;background:var(--axis)}
+.sbar-wrap{position:relative;height:12px;min-width:90px;background:var(--surface2);border-radius:3px;overflow:hidden}
+.sbar{position:absolute;left:0;top:2px;bottom:2px;border-radius:2px}
+.mk-gc .sbar{background:var(--gc)}
+.mk-nq .sbar{background:var(--nq)}
+
+.callout{border-left:4px solid var(--warn);background:color-mix(in oklab,var(--warn) 10%,var(--surface));padding:10px 12px;border-radius:0 6px 6px 0;margin:10px 0;font-size:.88rem}
+.note{font-size:.85rem;color:var(--ink2)}
+blockquote{margin:.5em 0;padding:8px 12px;border-left:3px solid var(--axis);background:var(--surface2);border-radius:0 6px 6px 0;font-size:.9rem}
+.finding{margin:12px 0}
+details{margin:8px 0}
+details>summary{cursor:pointer;font-weight:600}
+details.drawer>summary{font-size:1.1rem}
+.limits{font-size:.85rem;color:var(--ink2)}
+.limits li{margin:.3em 0}
+ul.plain{padding-left:1.2em;margin:.4em 0;font-size:.86rem;color:var(--ink2)}
+/* up to 640 px: the first column of a scroll box stays in view (rows under a rowspan cell, class cont, and group rows excepted) */
+@media (max-width:640px){
+  .tbox tr:not(.cont):not(.grp)>:first-child{position:sticky;left:0;z-index:1;background:var(--rowbg,var(--surface));width:132px;max-width:132px;white-space:normal;overflow-wrap:anywhere;box-shadow:inset -1px 0 0 var(--grid)}
+}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Session distributions: gold and Nasdaq futures</h1>
+    <p class="sub">How far price travelled inside fixed clock windows, how often a session was big, what the tested rules found, and what followed a big first move after the scheduled events. Every figure on this page is read from the data file of the study.</p>
+    <nav class="toc" aria-label="Sections">
+      <a href="#headline">Headline</a>
+      <a href="#sessions">Sessions</a>
+      <a href="#rules">Tested rules</a>
+      <a href="#forward">Forward-only pairs</a>
+      <a href="#events">After events</a>
+      <a href="#schedule">Desk schedule</a>
+      <a href="#earlier">Earlier findings</a>
+      <a href="#diag">Diagnostics</a>
+    </nav>
+  </header>
+
+  <div class="ctrlbar" id="controls">
+    <div class="ctrlgrp" role="group" aria-label="Market">
+      <span class="lbl">Market</span>
+      <button type="button" data-market="gc" aria-pressed="true">Gold</button>
+      <button type="button" data-market="nq" aria-pressed="false">Nasdaq</button>
+    </div>
+    <div class="ctrlgrp" role="group" aria-label="Clock">
+      <span class="lbl">Clock</span>
+      <button type="button" data-clock="sgtW" aria-pressed="true">SGT, US winter</button>
+      <button type="button" data-clock="sgtS" aria-pressed="false">SGT, US summer</button>
+      <button type="button" data-clock="ny" aria-pressed="false">New York</button>
+    </div>
+    <div class="ctrlgrp" role="group" aria-label="Unit">
+      <span class="lbl">Unit</span>
+      <button type="button" data-unit="pct" aria-pressed="true">% of ADR</button>
+      <button type="button" data-unit="bps" aria-pressed="false">bps</button>
+    </div>
+    <div class="ctrlgrp" role="group" aria-label="Period">
+      <span class="lbl">Period</span>
+      <button type="button" data-period="hold" aria-pressed="true">Holdout</button>
+      <button type="button" data-period="disc" aria-pressed="false">Discovery</button>
+      <button type="button" data-period="recent" aria-pressed="false">Recent</button>
+      <button type="button" data-period="last252" aria-pressed="false">Last year</button>
+    </div>
+  </div>
+  <p class="unitnote" id="unitnote"></p>
+
+  <section id="headline">
+    <h2>Headline</h2>
+    <div class="kpigrid" id="kpis"></div>
+    <p class="headline" id="headline-text"></p>
+  </section>
+
+  <section id="sessions">
+    <h2>Sessions</h2>
+    <div id="sessions-body"></div>
+  </section>
+
+  <section id="rules">
+    <h2>Tested rules</h2>
+    <div id="rules-body"></div>
+  </section>
+
+  <section id="forward">
+    <h2>Forward-only pairs</h2>
+    <div id="forward-body"></div>
+  </section>
+
+  <section id="events">
+    <h2>After the scheduled events</h2>
+    <div id="events-body"></div>
+  </section>
+
+  <section id="schedule">
+    <h2>The desk schedule</h2>
+    <div id="schedule-body"></div>
+  </section>
+
+  <section id="earlier">
+    <h2>Earlier findings</h2>
+    <div id="earlier-body"></div>
+  </section>
+
+  <section>
+    <details class="drawer" id="diag">
+      <summary>Deep diagnostics</summary>
+      <div id="diag-body"></div>
+    </details>
+  </section>
+</main>
+<script src="data/session_dist_data.js"></script>
+<script>
+(function () {
+  'use strict';
+  // The page is shown in a frame of the combined page: it says it is ready and acts on no message.
+  try { if (window.parent && window.parent !== window) window.parent.postMessage({ ptc: 1, type: 'ready' }, '*'); } catch (e) {}
+
+  var D = window.SessionDistData;
+  if (!D || !D.gc || !D.nq || !D.text) {
+    document.querySelector('main').insertAdjacentHTML('afterbegin', '<p class="callout">Could not load the data file of this page (data/session_dist_data.js).</p>');
+    return;
+  }
+
+  // ------------------------------------------------------------------ state, formatters
+  var state = { market: 'gc', clock: 'sgtW', unit: 'pct', period: 'hold' };
+  var MINUS = '−';
+  function sgn(s) { return s.charAt(0) === '-' ? MINUS + s.slice(1) : s; }
+  // Every number the page prints goes through one of these (the page test traces each printed number to a module value under them).
+  var FMT = {
+    pct: function (v) { return sgn(v.toFixed(1)); },            // % of ADR, whipsaw likelihood, results, half-hour $ / pt
+    share: function (v) { return sgn((v * 100).toFixed(1)); },  // shares and rates (0 to 1) as %
+    ratio: function (v) { return sgn(v.toFixed(2)); },          // ratios, relative risk, efficiency, cuts in ADR
+    p: function (v) { return v.toFixed(3); },                   // p-values, the alpha
+    int: function (v) { return sgn(String(Math.round(v)).replace(/\B(?=(\d{3})+(?!\d))/g, ',')); },   // counts (1,000 and more with a comma), bps, minutes
+    year: function (v) { return String(Math.round(v)); },       // years: never a comma
+    // one more decimal, for a number beside the threshold it is judged against (near)
+    ratioX: function (v) { return sgn(v.toFixed(3)); },
+    shareX: function (v) { return sgn((v * 100).toFixed(2)); },
+    pX: function (v) { return v.toFixed(4); }
+  };
+  // a ratio, p-value, excess, relative risk or fire rate within half a last printed digit of a threshold it is judged against
+  // is printed with one more decimal (0.8526 beside "at most 0.85" prints 0.853): shift rows and gate numbers
+  var NEAR = { ratio: [1, 2, 'ratioX'], share: [100, 1, 'shareX'], p: [1, 3, 'pX'] };
+  function near(kind, v, thr) {
+    var k = NEAR[kind], x = v * k[0], h = 0.5 * Math.pow(10, -k[1]);
+    for (var i = 0; i < thr.length; i++) if (Math.abs(x - thr[i] * k[0]) < h) return FMT[k[2]](v);
+    return FMT[kind](v);
+  }
+  // "about X today": % of ADR x the market's latest ADR20 (price units: $ for gold, index points for Nasdaq)
+  function money(v, m) { var x = v / 100 * D[m].adr.latest.adr20; return m === 'gc' ? '$' + x.toFixed(1) : String(Math.round(x)) + ' pt'; }
+  // the market's latest ADR20 in words, the base of every ≈ figure (round F5, fixes 1 and 3)
+  function adrWords(m) { var a = D[m].adr.latest; return 'the ' + MK[m] + ' ADR20 of ' + esc(a.date) + ' (' + (m === 'gc' ? '$' + FMT.ratio(a.adr20) : FMT.ratio(a.adr20) + ' pt') + ')'; }
+  window.SessionDistPage = { FMT: FMT, money: money, state: state, near: near };
+
+  var S = D.settings, T = D.text;
+  var MK = { gc: 'Gold', nq: 'Nasdaq' };
+  var CLOCK = {
+    sgtW: { view: 'sgt', seasons: ['usWinter'], name: 'SGT, US winter' },
+    sgtS: { view: 'sgt', seasons: ['usSummer', 'mismatch'], name: 'SGT, US summer' },
+    ny: { view: 'ny', seasons: ['usWinter', 'usSummer', 'mismatch'], name: 'New York' }
+  };
+  var SEASON = { usWinter: 'US winter', usSummer: 'US summer', mismatch: 'gap weeks' };
+  var PERIOD = { hold: 'holdout', disc: 'discovery', recent: 'recent', last252: 'last year of sessions' };
+  var STATUS = { 'no-alert-rule': 'no alert rule here', 'not-verified': 'not verified, forward only', 'alert-rule': 'alert rule' };
+  var LABEL = { 'no-material-shift': 'no material shift', shifted: 'shifted', uncertain: 'uncertain', 'too-few': 'too few' };
+
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  // a keyed element: k names the cell, d the controls it depends on (the page test checks that a switch changes only cells naming it)
+  function K(k, d, inner, tag, extra) { tag = tag || 'span'; return '<' + tag + ' data-k="' + k + '" data-d="' + d + '"' + (extra || '') + '>' + inner + '</' + tag + '>'; }
+  function td(k, d, inner, cls, extra) { return K(k, d, inner, 'td', (cls ? ' class="' + cls + '"' : '') + (extra || '')); }
+  function na(words) { return '<span class="na">' + esc(words) + '</span>'; }
+  function whyWords(code) {
+    if (!code) return 'not printable';
+    if (code === 'too-few') return 'too few';
+    if (code === 'no-obs') return 'no observation';
+    if (code === 'undefined') return 'not defined';
+    if (code === 'no-cut') return 'no cut';
+    var m = /^p(\d+)-needs-(\d+)-and-(\d+)-weeks$/.exec(code);
+    if (m) return 'too few for P' + m[1] + ' (needs ' + m[2] + ' and ' + m[3] + ' weeks)';
+    m = /^p(\d+)-needs-(\d+)$/.exec(code);
+    if (m) return 'too few for P' + m[1] + ' (needs ' + m[2] + ')';
+    return code.replace(/-/g, ' ');
+  }
+  function why(o) { var w = o && o.why; if (!w) return null; for (var i = 1; i < arguments.length; i++) if (w[arguments[i]]) return w[arguments[i]]; return w.all || null; }
+  function est(c) { return c == null ? null : Array.isArray(c) ? c[0] : typeof c === 'object' ? c.est : c; }
+  function lohi(c) { if (Array.isArray(c)) return c.length >= 3 ? [c[1], c[2]] : null; if (c && typeof c === 'object') return [c.lo, c.hi]; return null; }
+  // value with its interval in small type; a null as words; "no interval" when the cell could carry one but has none
+  // "no interval" with its own reason: the week count of the interval itself (noun: what falls in those weeks)
+  function noInterval(W, noun) { return W != null && W < S.MIN_WEEKS ? 'no interval: ' + (noun || 'dates') + ' fall in ' + FMT.int(W) + ' weeks, ' + FMT.int(S.MIN_WEEKS) + ' needed' : 'no interval'; }
+  function val(c, f, reason, suf, W, noun, fEst) {
+    var e = est(c); suf = suf || '';
+    if (e == null) return na(whyWords(reason));
+    var s = (fEst || f)(e) + suf, lh = lohi(c);
+    if (lh && lh[0] != null && lh[1] != null) s += '<small>' + f(lh[0]) + ' to ' + f(lh[1]) + '</small>';
+    else if (lh) s += '<small class="nr">' + noInterval(W, noun) + '</small>';
+    return s;
+  }
+  function shareVal(c, reason, W, noun) { var s = val(c, FMT.share, reason, '%', W, noun); if (Array.isArray(c) && c.length >= 5 && c[0] != null) s += '<small>' + FMT.int(c[4]) + ' of ' + FMT.int(c[3]) + '</small>'; return s; }
+  function nW(n, W, unit) { return FMT.int(n) + ' ' + unit + (W != null ? '<small>' + FMT.int(W) + ' weeks</small>' : ''); }
+  function th(k, d, inner, extra) { return K(k, d, inner, 'th', ' scope="row"' + (extra || '')); }
+  function tbox(kind, inner, id) { return '<div class="tbox"><table data-kind="' + kind + '"' + (id ? ' id="' + id + '"' : '') + '>' + inner + '</table></div>'; }
+  function seasonsName(ss) { return ss.map(function (s) { return SEASON[s]; }).join(' and '); }
+  // a window's or decision's label on the chosen clock: one span per group of seasons with the same label
+  function timeSpans(lab) {
+    var C = CLOCK[state.clock], groups = [];
+    C.seasons.forEach(function (s) { if (lab[s] == null) return; var g = groups.filter(function (x) { return x.t === lab[s]; })[0]; if (g) g.s.push(s); else groups.push({ t: lab[s], s: [s] }); });
+    return groups.map(function (g, i) {
+      return '<span class="' + (i ? 'alt' : 'tmain') + '" data-seasons="' + g.s.join(' ') + '">' + esc(g.t) + (groups.length > 1 ? ' <small>' + seasonsName(g.s) + '</small>' : '') + '</span>';
+    }).join('');
+  }
+  function winLabel(id) { var w = D.clocks.windows[id]; return w ? timeSpans(w[CLOCK[state.clock].view]) : null; }
+  function periodLine(p) { return p ? esc(p.from) + ' to ' + esc(p.to) + (p.dates != null ? ', ' + FMT.int(p.dates) + ' trade dates' : '') : ''; }
+  // the open state of each <details id> of the page, kept across a re-render (a control press re-renders the sections)
+  var openD = {};
+  function openAttr(id) { return openD[id] ? ' open' : ''; }
+  function groupOut(name) { return D.groups && D.groups.out && D.groups.out.indexOf(name) >= 0; }
+  // round F5 (fix 2), every period since round F7: a table the study describes for this period but the data file does not carry, with the study file that holds it
+  var OUT_DIR = 'dev/dist_upgrade/out/';
+  function notHere(k, d, what, p, m) { return K(k, d, '<span class="na">' + esc(what + ' of the ' + PERIOD[p] + ' period: not carried on this page (data file limit). The study file ') + '<code>' + esc(OUT_DIR + 'desc_' + p + '_' + m + '.json') + '</code> holds it.</span>', 'p'); }
+  // a shift row in a cell: label, ratio (judged against SHIFT_LO and SHIFT_HI), interval (judged against one), each on its own line
+  function shiftWords(r, brief) {
+    if (!r) return na('no shift row');
+    var s = esc(LABEL[r[9]] || r[9]);
+    if (r[4] == null) return s + '<small>ratio not defined</small>';
+    s += '<small>ratio ' + near('ratio', r[4], [S.SHIFT_LO, S.SHIFT_HI]) + '</small>';
+    if (!brief && r[5] != null && r[6] != null) s += '<small>interval ' + near('ratio', r[5], [1]) + ' to ' + near('ratio', r[6], [1]) + '</small>';
+    return s;
+  }
+  function winName(m, id) { var w = D[m].windows.filter(function (x) { return x.id === id; })[0]; return w ? w.name : id; }
+
+  // ------------------------------------------------------------------ unit line
+  // the name of the last-252 view, as its button says it (the count comes from the module)
+  var LAST_RULE = D.gc.desc.last252 && D.gc.desc.last252.period.rule && D.gc.desc.last252.period.rule.last;
+  var LAST_NAME = LAST_RULE ? 'Last ' + FMT.int(LAST_RULE) + ' sessions' : 'Last year';
+  // reading R48: the ≈ figure converts the selected period's share at the latest ADR20; only the last-252 view is the current regime
+  function renderUnit() {
+    var m = state.market, a = D[m].adr.latest, h;
+    if (state.unit === 'pct') h = 'Unit: % of ADR20, the average daily range of the twenty sessions before the date. The ≈ figure beside a value converts the selected period\'s share (here: ' + PERIOD[state.period] + ') at the latest daily range: the ' + MK[m] + ' ADR20 of ' + esc(a.date) + ' (' + (m === 'gc' ? '$' + FMT.ratio(a.adr20) : FMT.ratio(a.adr20) + ' pt') + '), the latest in the recent file. ' +
+      (state.period === 'last252' ? 'This is the current-regime view.' : 'It is not today\'s typical size: the current regime is the “' + LAST_NAME + '” view.');
+    else h = 'Unit: basis points of price (hundredths of a percent). Only P50 and P90 have a bps form; the quantile bars stay in % of ADR20.';
+    document.getElementById('unitnote').innerHTML = K('unit.note', 'market unit period', h);
+  }
+
+  // ------------------------------------------------------------------ 1. headline strip
+  function renderHeadline() {
+    var c = D.counts, tiles = [['h.rules', 'Rules tested', c.rules], ['h.passed', 'Rules passed', c.alertRules], ['h.forward', 'Forward-only pairs waiting for new data', c.forwardPairs], ['h.tables', 'Described tables looked at', c.describedTables.total]];
+    document.getElementById('kpis').innerHTML = tiles.map(function (t) { return '<div class="kpi"><div class="kpi-title">' + t[1] + '</div><div class="kpi-big">' + K(t[0], '', FMT.int(t[2])) + '</div></div>'; }).join('');
+    document.getElementById('headline-text').innerHTML = K('h.text', '', esc(T.headline));
+  }
+
+  // ------------------------------------------------------------------ 2. sessions
+  function targets(m) {   // target window id -> status chip
+    var out = {};
+    D.tested.family.rules.forEach(function (r) { if (r.market !== m) return; var st = D.tested.stages[m].s2.pairs[r.pair]; out[st.targetWindow] = { status: r.status, cls: r.status === 'alert-rule' ? 'b-act' : 'b-off' }; });
+    var f = D.forward.stages[m].s3.pairs;
+    Object.keys(f).forEach(function (id) { out[f[id].targetWindow] = { status: f[id].status, cls: 'b-alert' }; });
+    return out;
+  }
+  function renderSessions() {
+    var m = state.market, p = state.period, Dm = D[m], d = Dm.desc[p], wins = Dm.windows, unit = state.unit;
+    var sess = function (id) { return d.sessions.filter(function (s) { return s.id === id; })[0]; };
+    var m1 = function (id) { return d.module1.sessions.filter(function (s) { return s.id === id; })[0]; };
+    var m2 = function (id) { return d.module2.duration.sessions.filter(function (s) { return s.id === id; })[0]; };
+    var tg = targets(m);
+    // data tier: the six sessions ranked by clean-big rate within the market and period
+    var ranked = wins.filter(function (w) { return !w.describedOnly; }).map(function (w) { return { id: w.id, v: est(sess(w.id).all.share.cleanBig) }; })
+      .filter(function (x) { return x.v != null; }).sort(function (a, b) { return b.v - a.v; });
+    function tier(id) { var i = -1; ranked.forEach(function (x, j) { if (x.id === id) i = j; }); return i < 0 ? na('no tier: too few') : ['top third', 'middle third', 'bottom third'][Math.floor(i * 3 / ranked.length)]; }
+    var max = 0;
+    wins.forEach(function (w) { var q = sess(w.id).all.pct; [q.p95, q.p90, q.p75].forEach(function (c) { if (est(c) != null && est(c) > max) max = est(c); }); });
+    var pos = function (v) { return (Math.max(0, Math.min(1, v / max)) * 100).toFixed(1) + '%'; };
+    var h = '';
+    h += K('sess.period', 'market period', 'Period: ' + PERIOD[p] + ', ' + periodLine(d.period) + '.', 'p', ' class="note"');
+    h += K('sess.big', '', esc(T.bigNote), 'p', ' class="note"');
+    h += '<div class="legend"><span class="lg-item"><span class="lg-wh"></span>P10 to P90</span><span class="lg-item"><span class="lg-box"></span>P25 to P75</span><span class="lg-item"><span class="lg-med"></span>P50</span><span class="lg-item"><span class="lg-dot"></span>P95</span><span>range in % of ADR20, scale fitted to this market and period</span></div>';
+    var uh = unit === 'pct' ? '% of ADR' : 'bps';
+    h += K('sess.approx', 'market period unit', unit === 'pct'
+      ? 'The ≈ under P50 and P90: this period\'s share (' + PERIOD[p] + ') × ' + adrWords(m) + ', the latest in the recent file. ' + (p === 'last252' ? 'This is the current-regime view.' : 'It is not today\'s size: the current regime is the “' + LAST_NAME + '” view.')
+      : 'P50 and P90 in basis points of price carry no ≈ figure.', 'p', ' class="note"');
+    // one column less than before: the time sits under the session name (round F3, L3); heads wrap to a small second line
+    h += '<div class="tbox"><table data-kind="described" id="sess-table" class="mk-' + m + '"><thead><tr>' + K('sess.th.name', 'clock', 'Session<small>and its time, ' + CLOCK[state.clock].name + '</small>', 'th') +
+      '<th class="barcell">Range<small>% of ADR20</small></th>' + K('sess.th.p50', 'unit', 'P50<small>' + uh + '</small>', 'th', ' class="num"') + K('sess.th.p90', 'unit', 'P90<small>' + uh + '</small>', 'th', ' class="num"') +
+      '<th class="num">Clean-big rate</th><th class="num">Whipsaw likelihood<small>P50</small></th><th class="num">Typical leg<small>P50</small></th><th>Shift<small>of range P50</small></th><th>Data tier</th><th class="num">Sample</th></tr></thead><tbody>';
+    wins.forEach(function (w) {
+      var id = w.id, s = sess(id), a = s.all, q = a.pct, M1 = m1(id), M2 = m2(id), sh = Dm.shift.rows.filter(function (r) { return r[0] === 'sessions.' + id + '.all.pct' && r[1] === 'p50'; })[0];
+      // each part of the cell is its own block (round F3, L1): name, "described only", status chip, time
+      var name = K('s.' + id + '.name', '', esc(w.name), 'div') + (w.describedOnly ? '<div class="sm">described only, no rule</div>' : '');
+      if (tg[id]) name += K('s.' + id + '.chip', 'market', '<span class="badge ' + tg[id].cls + '">' + esc(STATUS[tg[id].status] || tg[id].status) + '</span>', 'div');
+      name += K('s.' + id + '.time', 'clock', winLabel(id) || esc(w.sgt.usWinter), 'div', ' class="tm"');
+      var bar;
+      if ([q.p10, q.p25, q.p50, q.p75, q.p90].every(function (c) { return est(c) != null; })) {
+        var p10 = est(q.p10), p25 = est(q.p25), p50 = est(q.p50), p75 = est(q.p75), p90 = est(q.p90), p95 = est(q.p95);
+        var lab = w.name + ': range in % of ADR20, P10 ' + FMT.pct(p10) + ', P25 ' + FMT.pct(p25) + ', P50 ' + FMT.pct(p50) + ', P75 ' + FMT.pct(p75) + ', P90 ' + FMT.pct(p90) + (p95 != null ? ', P95 ' + FMT.pct(p95) : '');
+        bar = '<div class="btrack" role="img" aria-label="' + esc(lab) + '"><div class="whisk" style="left:' + pos(p10) + ';width:' + pos(p90 - p10) + '"></div><div class="iqr" style="left:' + pos(p25) + ';width:' + pos(p75 - p25) + '"></div><div class="med" style="left:' + pos(p50) + '"></div>' +
+          (p95 != null ? '<div class="p95dot" style="left:' + pos(p95) + '"></div>' : '') + '</div>';
+        bar = K('s.' + id + '.bar', 'market period', bar, 'td', ' class="barcell" data-empty=""');
+      } else bar = td('s.' + id + '.bar', 'market period', na(whyWords(why(q, 'p90', 'p10'))), 'barcell');
+      function lvl(key) {
+        if (unit === 'bps') { var b = a.bps[key]; return est(b) == null ? na(whyWords(why(a.bps, key))) : FMT.int(est(b)); }
+        var c = q[key]; return est(c) == null ? na(whyWords(why(q, key))) : FMT.pct(est(c)) + '<small>≈ ' + money(est(c), m) + '</small>';
+      }
+      var L = M1 && M1.L && M1.L.all, leg = M2;
+      var legTxt = !leg ? na('no observation') : est(leg.q.p50) == null ? na(whyWords(why(leg.q, 'p50'))) + '<small>' + FMT.int(leg.n) + ' legs</small>'
+        : val(leg.q.p50, FMT.int, null, ' min', leg.q.W, 'legs') + '<small>burst ' + (est(leg.class.burst) == null ? whyWords(why(leg, 'class.burst')) : FMT.share(est(leg.class.burst)) + '%') + '</small><small>' + FMT.int(leg.n) + ' legs</small>';
+      h += '<tr' + (id === 'eu_lull' ? ' class="hl"' : '') + '><th scope="row">' + name + '</th>' + bar +
+        td('s.' + id + '.p50', 'market period unit', lvl('p50'), 'num') + td('s.' + id + '.p90', 'market period unit', lvl('p90'), 'num') +
+        td('s.' + id + '.cb', 'market period', est(a.share.cleanBig) == null ? na(whyWords(why(a, 'share.cleanBig', 'cleanBig'))) : shareVal(a.share.cleanBig, null, a.W), 'num') +
+        td('s.' + id + '.L', 'market period', L ? val(L.p50, FMT.pct, why(L, 'p50'), '', L.W, 'rows') : na('no observation'), 'num') +
+        td('s.' + id + '.leg', 'market period', legTxt, 'num') +
+        td('s.' + id + '.shift', 'market', shiftWords(sh)) +
+        td('s.' + id + '.tier', 'market period', w.describedOnly ? na('not ranked: described only') : tier(id)) +
+        td('s.' + id + '.n', 'market period', nW(a.n, a.W, 'dates'), 'num') + '</tr>';
+    });
+    h += '</tbody></table></div>';
+    h += K('sess.tier', '', esc(T.tierNote), 'p', ' class="note"');
+    var ov = d.notes && d.notes.overlapEuLullPreUs;
+    h += K('sess.overlap', 'market period', esc(T.overlapNote) + (ov ? ' In this period: ' + FMT.int(ov.dates) + ' dates (' + ov.runs.map(function (r) { return esc(r[0]) + ' to ' + esc(r[1]); }).join('; ') + ').' : ''), 'p', ' class="note"');
+    h += K('sess.hind', '', 'The whipsaw likelihood is a hindsight label over every whole quarter-hour row of the session; a leg is a zigzag move, its length in minutes, and a burst is a brief leg. The zigzag legs, like the whipsaw likelihood, are hindsight labels: a leg is known only after the reversal that ends it. Shift compares the holdout with the discovery years. The rule numbers are in their own table below.', 'p', ' class="note"');
+    // the chart's table, one click away
+    h += '<details id="sess-numbers"' + openAttr('sess-numbers') + '><summary>The numbers behind the bars</summary>';
+    h += '<div class="tbox"><table data-kind="described"><thead><tr><th>Session</th><th class="num">P10</th><th class="num">P25</th><th class="num">P50</th><th class="num">P75</th><th class="num">P90</th><th class="num">P95</th><th class="num">bps P50</th><th class="num">bps P90</th><th class="num">Tail ratio P90 ÷ P50</th><th class="num">Median efficiency</th><th class="num">Big</th><th class="num">Very big</th><th class="num">Clean</th><th class="num">Clean-big</th><th class="num">Measured</th></tr></thead><tbody>';
+    wins.forEach(function (w) {
+      var id = w.id, s = sess(id), a = s.all, q = a.pct, c = s.counts, k = 'q.' + id + '.', dd = 'market period';
+      h += '<tr><th scope="row">' + K(k + 'name', '', esc(w.name)) + '</th>' + ['p10', 'p25', 'p50', 'p75', 'p90', 'p95'].map(function (l) { return td(k + l, dd, val(q[l], FMT.pct, why(q, l), '', q.W), 'num'); }).join('') +
+        ['p50', 'p90'].map(function (l) { return td(k + 'bps' + l, dd, val(a.bps[l], FMT.int, why(a.bps, l), '', a.bps.W), 'num'); }).join('') +
+        td(k + 'tail', dd, val(a.tail, FMT.ratio, why(a, 'tail'), '', a.W), 'num') + td(k + 'eff', dd, val(a.eff.p50, FMT.ratio, why(a.eff, 'p50'), '', a.eff.W), 'num') +
+        ['big', 'veryBig', 'clean', 'cleanBig'].map(function (l) { return td(k + l, dd, est(a.share[l]) == null ? na(whyWords(why(a, 'share.' + l, l))) : shareVal(a.share[l], null, a.W), 'num'); }).join('') +
+        td(k + 'n', dd, FMT.int(c.measured) + ' of ' + FMT.int(c.dates) + '<small>' + FMT.int(c.weeks) + ' weeks</small>', 'num') + '</tr>';
+    });
+    h += '</tbody></table></div><p class="note">Intervals in small type under each figure; "of" counts are the days in the share and the days measured. Days without an ADR20, without enough bars or not yet ended are not measured.</p></details>';
+    document.getElementById('sessions-body').innerHTML = h;
+  }
+
+  // ------------------------------------------------------------------ 3. tested rules, forward-only pairs
+  var STAGES = [['s1', 'discovery', 'cuts fixed here'], ['s2', 'holdout', 'the test, read once'], ['s3', 'recent', 'after the test, no test']];
+  function decision(pair, k) { var dd = D.clocks.decisions[pair]; return K(k, 'clock', 'decided at ' + timeSpans(dd[CLOCK[state.clock].view]), 'div', ' class="tm dec"'); }
+  // the rule / pair cell: name, market and decision time, each its own block (round F3, L1)
+  // round F5 (fix 3): the condition cut, % of ADR20 (fixed on the discovery years) and ≈ $ or pt at the latest ADR20
+  function cutLine(m, pair) { var c = D[m].cuts.pairs[pair].cond.p75;
+    return '<div class="sm cut">hot at or above ' + FMT.pct(c) + '% of ADR20<small>≈ ' + money(c, m) + ': the cut × ' + adrWords(m) + '</small></div>'; }
+  function condCell(k, name, m, pair) { return K(k + '.cond', 'clock', '<div><strong>' + esc(name) + '</strong></div><div class="sm">' + MK[m] + '</div>' + decision(pair, k + '.dec') + cutLine(m, pair), 'th', ' rowspan="3" scope="rowgroup"'); }
+  // the numbers of one row of a rule, by column; the gate numbers (fire rate, excess, the halves' relative risk) go through near()
+  function ruleNums(k, N, I) {
+    I = I || {};
+    var NOUN = { rateHot: 'hot dates' };
+    var iv = function (key, f, suf, fEst) { var o = I[key]; return o ? val(o, f, null, suf, o.W, NOUN[key] || 'dates', fEst) : (fEst || f)(N[key]) + (suf || ''); };
+    var dLine = function (lbl, key) { var o = I[key], e = N[key] != null ? N[key] : o && o.est;
+      if (e == null) return '<small>' + lbl + ' not defined</small>';
+      return '<small' + (o && (o.lo == null || o.hi == null) ? ' class="nr"' : '') + '>' + lbl + ' ' + FMT.share(e) + (!o ? '' : o.lo != null && o.hi != null ? ' (' + FMT.share(o.lo) + ' to ' + FMT.share(o.hi) + ')' : ' (' + noInterval(o.W, 'dates') + ')') + '</small>'; };
+    var fire = function (v) { return near('share', v, [S.FIRE_LO, S.FIRE_HI]); };
+    // round F5 (fix 3): a share (suf '%') or a ratio on its own small line under the cell's figure
+    var xLine = function (lbl, v, suf) { return '<small class="xl">' + lbl + ' ' + (v == null ? 'not defined' : suf ? FMT.share(v) + suf : FMT.ratio(v)) + '</small>'; };
+    return {
+      ex: td(k + 'ex', '', N.excess == null ? na('not defined') : near('share', N.excess, [S.EXCESS]) + ' pts' + dLine('A', 'dA') + dLine('B', 'dB'), 'num'),
+      rr: td(k + 'rr', '', N.relativeRisk == null ? na('not defined') : iv('relativeRisk', FMT.ratio) + '<small>halves ' + N.halves.map(function (x) { return x.relativeRisk == null ? 'not defined' : near('ratio', x.relativeRisk, [S.RR]); }).join(' · ') + '</small>', 'num'),
+      fire: td(k + 'fire', '', (N.fireRate == null ? na('not defined') : iv('fireRate', FMT.share, '%', fire)) + '<small>' + FMT.int(N.nHot) + ' hot dates</small>', 'num'),
+      hot: td(k + 'hot', '', (N.rateHot == null ? na('too few') : iv('rateHot', FMT.share, '%')) + xLine('fires for nothing', N.firesForNothing, '%') + xLine('clean-big', N.cleanBigHot, '%') + xLine('median efficiency', N.medEffHot), 'num'),
+      cold: td(k + 'cold', '', (N.rateNotHot == null ? na('too few') : FMT.share(N.rateNotHot) + '%') + xLine('clean-big', N.cleanBigNotHot, '%') + xLine('median efficiency', N.medEffNotHot) + xLine('base rate', N.baseRate, '%') + xLine('base-rate lift', N.baseRateLift), 'num'),
+      ba: td(k + 'ba', '', N.rateBenchA == null ? na('too few') : FMT.share(N.rateBenchA) + '%<small>' + FMT.int(N.nBenchAHot) + ' dates</small>', 'num'),
+      bb: td(k + 'bb', '', N.rateBenchB == null ? na('too few') : FMT.share(N.rateBenchB) + '%<small>' + FMT.int(N.nBenchBHot) + ' dates</small>', 'num'),
+      n: td(k + 'n', '', nW(N.n, N.W, 'dates'), 'num')
+    };
+  }
+  // round F5 (fix 6, plan section 7 "Described only"): response over the discovery quantiles, the quiet side, exhaustion, direction and
+  // cleanliness of the condition session; holdout, both markets, the four pairs. Described, not tested: no test figure in it
+  function aroundBlock() {
+    var IDS = ['shanghai_london', 'preus_usopen', 'london_eulull', 'usopen_late'], LV = [['p50', 'P50'], ['p67', 'P67'], ['p75', 'P75'], ['p80', 'P80'], ['p90', 'P90'], ['p25', 'P25']];
+    var nameOf = function (m, id) { return (D.tested.stages[m].s2.pairs[id] || D.forward.stages[m].s2.pairs[id]).name; };
+    var cellOf = function (v) { return shareVal(v.slice(0, 5), null, v[5], 'dates'); };
+    var A0 = D.gc.around.hold, per = ['gc', 'nq'].map(function (m) { return MK[m] + ' ' + periodLine(D[m].around.hold.period); }).join('; ');
+    var x0 = A0.pairs[IDS[0]];
+    var h = '<details id="around"' + openAttr('around') + '><summary>Described around the rules, not tested <small>holdout, both markets, the four pairs</small></summary>';
+    h += K('ar.note', '', 'Holdout (' + per + '). Described, not tested: the holdout dates of the rows above, cut other ways. Response: how often the later session was big when the earlier session reached each of its discovery quantiles (P75 is the hot cut) and, the quiet side, when it stayed under its discovery P25. Each cell: the rate, its interval, the big dates of the dates counted, and the cut in % of ADR20.', 'p', ' class="note"');
+    h += '<div class="tbox"><table data-kind="described" id="around-response"><thead><tr><th>Pair</th>' + LV.map(function (l) { return '<th class="num">' + (l[0] === 'p25' ? 'Under ' + l[1] + '<small>the quiet side</small>' : 'At or above ' + l[1]) + '</th>'; }).join('') + '</tr></thead><tbody>';
+    ['gc', 'nq'].forEach(function (m) { IDS.forEach(function (id) { var P = D[m].around.hold.pairs[id];
+      h += '<tr>' + th('ar.' + m + '.' + id + '.name', '', '<div>' + esc(nameOf(m, id)) + '</div><div class="sm">' + MK[m] + '</div>') +
+        LV.map(function (l) { var r = P.response.filter(function (x) { return x[0] === l[0]; })[0];
+          return td('ar.' + m + '.' + id + '.' + l[0], '', !r ? na('no row') : r[2] == null ? na('too few') + '<small>cut ' + FMT.pct(r[1]) + '%</small>' : shareVal([r[2], r[3], r[4], r[5], r[6]], null, r[7], 'dates') + '<small>cut ' + FMT.pct(r[1]) + '%</small>', 'num'); }).join('') + '</tr>'; }); });
+    h += '</tbody></table></div>';
+    h += K('as.note', '', 'Three splits of the same dates. Exhaustion: the day so far already above ' + FMT.int(x0.exhaustion.above) + '% of ADR20. Direction: the earlier session closed up (with it) or down (without); a session with no net move is left out. Cleanliness: the earlier session clean, efficiency at least ' + FMT.ratio(x0.condition.cleanliness.cleanEff) + '. Each cell: the share, its interval, and the dates of the dates counted.', 'p', ' class="note"');
+    var SP = [['ex', 'Exhaustion', 'day so far above ' + FMT.int(x0.exhaustion.above) + '% of ADR20', function (P) { var e = P.exhaustion; return [e.share, e.big.exhausted, e.big.notExhausted, e.hotBig.exhausted, e.hotBig.notExhausted]; }],
+      ['up', 'Direction', 'earlier session up', function (P) { var d = P.condition.direction; return [d.shareUp, d.big.up, d.big.down, d.hotBig.up, d.hotBig.down]; }],
+      ['cl', 'Cleanliness', 'earlier session clean', function (P) { var c = P.condition.cleanliness; return [c.shareClean, c.big.clean, c.big.notClean, c.hotBig.clean, c.hotBig.notClean]; }]];
+    h += '<div class="tbox"><table data-kind="described" id="around-splits"><thead><tr><th>Pair</th><th>Split</th><th class="num">Dates with it</th><th class="num">Big<small>with it</small></th><th class="num">Big<small>without it</small></th><th class="num">Big when hot<small>with it</small></th><th class="num">Big when hot<small>without it</small></th></tr></thead><tbody>';
+    ['gc', 'nq'].forEach(function (m) { IDS.forEach(function (id) { var P = D[m].around.hold.pairs[id];
+      SP.forEach(function (sp, i) {
+        h += '<tr' + (i ? ' class="cont"' : '') + '>' + (i ? '' : K('as.' + m + '.' + id + '.name', '', '<div>' + esc(nameOf(m, id)) + '</div><div class="sm">' + MK[m] + '</div>', 'th', ' scope="rowgroup" rowspan="3"')) +
+          th('as.' + m + '.' + id + '.' + sp[0], '', sp[1] + '<small>' + sp[2] + '</small>') +
+          sp[3](P).map(function (v, j) { return td('as.' + m + '.' + id + '.' + sp[0] + '.' + j, '', v[0] == null ? na('too few') : cellOf(v), 'num'); }).join('') + '</tr>'; }); }); });
+    return h + '</tbody></table></div></details>';
+  }
+  // the period cell (a row header): period name, dates and note, each its own block (round F3, L1)
+  function stageCell(k, m, br, s) { var st = D[br].stages[m][s];
+    return K(k + 'per', '', '<div>' + PERIOD[s === 's1' ? 'disc' : s === 's2' ? 'hold' : 'recent'] + '</div><div class="sm dates">' + esc(st.period.from) + ' to ' + esc(st.period.to) + '</div><div class="sm">' + STAGES.filter(function (x) { return x[0] === s; })[0][2] + '</div>', 'th', ' scope="row"'); }
+  function renderRules() {
+    var h = K('rules.note', '', esc(T.rulesNote), 'p', ' class="note"');
+    h += '<p class="note">Hot: the earlier session\'s range in its top quarter. Benchmark A: the day so far in its top quarter. Benchmark B: the week\'s volatility (ADR5 ÷ ADR20) in its top quarter. Excess: the smaller of the two differences, hot minus benchmark, in percentage points. Under the rule name: the hot cut. Under Big when hot: how often a hot date was not big (fires for nothing), the clean-big rate and the median efficiency when hot; under Big when not hot: the same two when not hot, the base rate (big on any date) and the base-rate lift (big when hot ÷ base rate). Gates: each with the figure it judges, on the holdout.</p>';
+    // column order of BRIEF_PAGE.md addendum 4 (L2): what decides first, the counts last
+    h += '<div class="tbox"><table data-kind="tested" id="rules-table"><thead><tr><th>Rule</th><th>Period</th><th>Verdict</th><th class="num">Holm p</th><th class="num">Raw p<small>A · B</small></th><th class="num">Excess<small>points</small></th><th class="num">Relative risk<small>and halves</small></th>' +
+      '<th class="num">Fire rate</th><th class="num">Big when hot</th><th class="num">Big when not hot</th><th class="num">Benchmark A<small>big on it</small></th><th class="num">Benchmark B<small>big on it</small></th><th>Gates</th><th class="num">Sample</th></tr></thead><tbody>';
+    var GN = [['p', 'Holm p'], ['excess', 'excess'], ['rr', 'relative risk'], ['fire', 'fire rate'], ['cleanBig', 'clean-big'], ['efficiency', 'efficiency']];
+    // round F5 (fix 3): the figure each gate judges; Holm p, excess, the halves and the fire rate through near()
+    var nd = function (v, f) { return v == null ? 'not defined' : f(v); };
+    var gateFig = function (r, g) {
+      if (g === 'p') return nd(r.pHolm, function (v) { return near('p', v, [S.ALPHA]); });
+      if (g === 'excess') return nd(r.excess, function (v) { return near('share', v, [S.EXCESS]) + ' pts'; });
+      if (g === 'rr') return r.halves.map(function (x) { return nd(x.relativeRisk, function (v) { return near('ratio', v, [S.RR]); }); }).join(' · ');
+      if (g === 'fire') return nd(r.fireRate, function (v) { return near('share', v, [S.FIRE_LO, S.FIRE_HI]) + '%'; });
+      if (g === 'cleanBig') return nd(r.cleanBigHot, function (v) { return FMT.share(v) + '%'; }) + ' vs ' + nd(r.cleanBigNotHot, function (v) { return FMT.share(v) + '%'; });
+      return nd(r.medEffHot, FMT.ratio) + ' vs ' + nd(r.medEffNotHot, FMT.ratio);
+    };
+    D.tested.family.rules.forEach(function (r) {
+      var m = r.market;
+      STAGES.forEach(function (sg, i) {
+        var s = sg[0], st = D.tested.stages[m][s].pairs[r.pair], k = 'r.' + m + '.' + r.pair + '.' + s + '.', R = ruleNums(k, s === 's2' ? r : st.numbers, st.intervals);
+        h += '<tr class="' + s + (i ? ' cont' : '') + '">';
+        if (!i) h += condCell('r.' + m + '.' + r.pair, r.name, m, r.pair);
+        h += stageCell(k, m, 'tested', s);
+        if (s === 's2') {
+          h += td(k + 'verdict', '', '<span class="badge ' + (r.status === 'alert-rule' ? 'b-act' : 'b-off') + '">' + esc(STATUS[r.status] || r.status) + '</span>') +
+            td(k + 'holm', '', r.pHolm == null ? na('not defined') : near('p', r.pHolm, [S.ALPHA]), 'num') +
+            td(k + 'praw', '', r.p == null ? na('not defined') : FMT.p(r.p) + '<small>A ' + (r.pA == null ? 'not defined' : FMT.p(r.pA)) + ' · B ' + (r.pB == null ? 'not defined' : FMT.p(r.pB)) + '</small>', 'num');
+        } else h += td(k + 'note', '', na('no test on this period'), '', ' colspan="3"');
+        h += R.ex + R.rr + R.fire + R.hot + R.cold + R.ba + R.bb;
+        h += s === 's2' ? td(k + 'gates', '', GN.map(function (g) { return '<div class="' + (r.gates[g[0]] ? 'pass' : 'fail') + '">' + g[1] + ' ' + gateFig(r, g[0]) + ' ' + (r.gates[g[0]] ? 'pass' : 'fail') + '</div>'; }).join(''), 'gates') : td(k + 'gates', '', na('not judged'));
+        h += R.n + '</tr>';
+      });
+    });
+    h += '</tbody></table></div>';
+    h += K('rules.gates', '', 'Gates (all six must pass): Holm p at most ' + FMT.p(S.ALPHA) + '; excess at least ' + FMT.share(S.EXCESS) + ' points; relative risk at least ' + FMT.ratio(S.RR) + ' in both halves of the holdout; fire rate from ' + FMT.share(S.FIRE_LO) + '% to ' + FMT.share(S.FIRE_HI) + '%; clean-big rate higher when hot; median efficiency not lower when hot. A figure within half a last digit of its threshold gets one more decimal. Raw p is the larger of the two benchmark p-values (A and B, ' + FMT.int(S.B) + ' resamples of whole weeks); Holm adjusts it for the ' + FMT.int(D.tested.family.counts.rules) + ' rules. The holdout was read once, on ' + esc(D.tested.family.ran) + '.', 'p', ' class="note"');
+    document.getElementById('rules-body').innerHTML = h;
+
+    // forward-only pairs: no p-value, no verdict
+    var f = K('fwd.note', '', esc(T.forwardNote), 'p', ' class="note"');
+    f += '<div class="tbox"><table data-kind="forward" id="forward-table"><thead><tr><th>Pair</th><th>Period</th><th>Status</th><th class="num">Excess<small>points</small></th><th class="num">Relative risk<small>and halves</small></th><th class="num">Fire rate</th><th class="num">Big when hot</th><th class="num">Big when not hot</th><th class="num">Benchmark A<small>big on it</small></th><th class="num">Benchmark B<small>big on it</small></th><th class="num">Sample</th></tr></thead><tbody>';
+    var nPairs = 0, withDates = 0, most = 0;
+    ['gc', 'nq'].forEach(function (m) {
+      var pairs = D.forward.stages[m].s3.pairs;
+      Object.keys(pairs).forEach(function (pair) {
+        var p3 = pairs[pair], fr = p3.forwardReady || {};
+        nPairs++; if (fr.nDates > 0) { withDates++; if (fr.nDates > most) most = fr.nDates; }
+        STAGES.forEach(function (sg, i) {
+          var s = sg[0], st = D.forward.stages[m][s].pairs[pair], k = 'f.' + m + '.' + pair + '.' + s + '.', R = ruleNums(k, st.numbers, st.intervals);
+          f += '<tr' + (i ? ' class="cont"' : '') + '>';
+          if (!i) f += condCell('f.' + m + '.' + pair, p3.name, m, pair);
+          f += stageCell(k, m, 'forward', s);
+          if (!i) f += td('f.' + m + '.' + pair + '.status', '', '<div><span class="badge b-alert">' + esc(STATUS[p3.status] || p3.status) + '</span></div><small>after ' + esc(fr.after) + ':</small><small>' + FMT.int(fr.nDates) + ' of ' + FMT.int(fr.needDates) + ' dates</small><small>' + FMT.int(fr.nHot) + ' of ' + FMT.int(fr.needHot) + ' hot dates</small>', '', ' rowspan="3"');
+          f += R.ex + R.rr + R.fire + R.hot + R.cold + R.ba + R.bb + R.n + '</tr>';
+        });
+      });
+    });
+    f += '</tbody></table></div>';
+    f += '<h3>Forward record</h3>';
+    f += '<div class="tbox"><table data-kind="forward" id="forward-record"><thead><tr><th>Pair</th><th>Dates after the release</th><th>Hot dates</th><th>Ready</th></tr></thead><tbody>';
+    ['gc', 'nq'].forEach(function (m) {
+      var pairs = D.forward.stages[m].s3.pairs;
+      Object.keys(pairs).forEach(function (pair) {
+        var fr = pairs[pair].forwardReady, k = 'fr.' + m + '.' + pair + '.';
+        f += '<tr>' + th(k + 'name', '', esc(pairs[pair].name) + '<small>' + MK[m] + '</small>') + td(k + 'dates', '', FMT.int(fr.nDates) + ' of ' + FMT.int(fr.needDates)) + td(k + 'hot', '', FMT.int(fr.nHot) + ' of ' + FMT.int(fr.needHot)) + td(k + 'ready', '', fr.ready ? 'ready' : 'not yet') + '</tr>';
+      });
+    });
+    f += '</tbody></table></div>';
+    // the first sentence comes from the counts above, not a fixed text
+    var lead = !withDates ? 'The forward record is empty.' : 'The forward record is not empty: ' + FMT.int(withDates) + ' of ' + FMT.int(nPairs) + ' pairs have dates, at most ' + FMT.int(most) + '.';
+    f += K('fwd.rule', '', lead + ' It counts only trade dates after ' + esc(S.FORWARD_AFTER) + ', with the cuts already fixed; a pair is looked at again when it has ' + FMT.int(S.FORWARD_DATES) + ' such dates and ' + FMT.int(S.FORWARD_HOT) + ' hot ones. Until then it has no p-value and no verdict.', 'p', ' class="note"');
+    f += aroundBlock();   // round F7: after the forward record's note, still inside the forward-only section
+    document.getElementById('forward-body').innerHTML = f;
+  }
+
+  // ------------------------------------------------------------------ 4. after events
+  var SUBSET = { all: 'every day', release: 'release days', other: 'other days', fomc: 'Fed decision days' };
+  var GROUP = { big: 'big first move', clean: 'big and clean first move' };
+  function anchorTime(a) {
+    if (state.clock === 'ny') return esc(a.ny) + ' <small>New York</small>';
+    var lab = a.m1Sgt[state.clock === 'sgtW' ? 'usWinter' : 'usSummer'];
+    return lab ? esc(lab) + ' <small>SGT, first quarter-hour</small>' : na('no SGT label in the file');
+  }
+  function eventTable(E, kp, dd, kind) {
+    var stop = E.params.stopsPctAdr[0];
+    var h = '<div class="tbox"><table data-kind="' + kind + '" id="' + kp.replace(/\.$/, '') + '-table"><thead><tr><th>Days</th><th>Group</th><th class="num">Horizon</th><th class="num">Cases</th><th class="num">Result P25</th><th class="num">Result P50</th><th class="num">Result P75</th><th class="num">Above zero</th><th class="num">Win ÷ loss</th><th class="num">Worst point, median</th><th class="num">Worst point, deeper quarter</th>' +
+      K(kp + 'th.stop', dd, 'Went ' + FMT.int(stop) + '% of ADR against', 'th', ' class="num"') + '<th class="num">Low before high</th></tr></thead><tbody>';
+    var i = 0;
+    E.anchors.forEach(function (a, ai) {
+      var c = a.counts;
+      h += '<tr class="grp">' + K(kp + 'a' + ai, dd, '<strong>' + anchorTime(a) + '</strong> · big first move: the first quarter-hour moved at least ' + FMT.pct(a.cut) + '% of ADR (fixed on discovery) · ' + FMT.int(c.slots) + ' dates, ' + FMT.int(c.ok) + ' measured, ' + FMT.int(c.big) + ' big, ' + FMT.int(c.clean) + ' clean', 'th', ' colspan="13" scope="rowgroup"') + '</tr>';
+      a.tables.forEach(function (t) {
+        var k = kp + (i++) + '.';
+        h += '<tr>' + th(k + 'days', dd, esc(SUBSET[t.subset] || t.subset)) + td(k + 'group', dd, esc(GROUP[t.group] || t.group), 'grpc') + td(k + 'hz', dd, FMT.int(t.horizon) + ' min', 'num');
+        if (t.tooFew || !t.r) {
+          h += td(k + 'n', dd, FMT.int(t.n) + ' cases<small>' + FMT.int(t.W) + ' weeks: too few</small>', 'num') + td(k + 'na', dd, na(t.tooFew ? 'too few to print' : whyWords(why(t, 'r')) + ' to print'), '', ' colspan="9"');
+        } else {
+          var r = t.r, mae = t.mae || {};   // the worst point is at or below zero: P25 is its deeper quarter (R47)
+          h += td(k + 'n', dd, nW(t.n, t.W, 'cases'), 'num') +
+            ['p25', 'p50', 'p75'].map(function (l) { return td(k + 'r' + l, dd, val(r[l], FMT.pct, why(t, 'r.' + l), '', t.W, 'cases'), 'num'); }).join('') +
+            td(k + 'up', dd, shareVal(t.shareAbove0, why(t, 'shareAbove0'), t.W, 'cases'), 'num') +
+            td(k + 'wl', dd, val(t.winLoss, FMT.ratio, why(t, 'winLoss'), '', t.W, 'cases'), 'num') +
+            ['p50', 'p25'].map(function (l) { return td(k + 'mae' + l, dd, val(mae[l], FMT.pct, why(t, 'mae.' + l), '', t.W, 'cases'), 'num'); }).join('') +
+            td(k + 'stop', dd, shareVal(t.stop25, why(t, 'stop25'), t.W, 'cases'), 'num') + td(k + 'wf', dd, shareVal(t.worstFirst, why(t, 'worstFirst'), t.W, 'cases'), 'num');
+        }
+        h += '</tr>';
+      });
+    });
+    return h + '</tbody></table></div>' + K(kp + 'maenote', dd, 'Worst point, deeper quarter: a quarter of the cases went at least this far against the first move.', 'p', ' class="note"');
+  }
+  function renderEvents() {
+    var m = state.market, p = state.period, Ev = D[m].events, E = Ev[p], h = '';
+    h += K('ev.note', '', esc(T.afterEventNote), 'p', ' class="note"');
+    var any = Ev.hold || Ev.disc;
+    h += K('ev.def', 'market', 'Result: the move from the start of the minute after the first quarter-hour, in the direction of the first move, at the horizon, in % of ADR. Worst point: the lowest point of that path against the first move. ' + (any ? 'Low before high: ' + esc(any.notes.worstFirstWording) + '.' : ''), 'p', ' class="note"');
+    if (!E) h += K('ev.none', 'period', na('The after-event block was described for the holdout, discovery and recent periods only; the last year of sessions has no table of its own.'), 'p');
+    else {
+      h += K('ev.period', 'market period', 'Period: ' + PERIOD[p] + ', ' + periodLine(E.period) + '. ' + esc(E.note), 'p', ' class="note"');
+      h += K('ev.wrap', 'market period clock', eventTable(E, 'ev.', 'market period clock', 'described'), 'div');
+      // the forward count table follows the clock like the table above (round F3, A3); a count missing from the file is said in words
+      var by = E.forward && E.forward.byAnchor;
+      h += K('evf.wrap', 'market period clock', '<h3>Forward table</h3><div class="tbox"><table data-kind="forward" id="evf-table"><thead><tr>' + K('evf.th', 'market period clock', 'Anchor<small>' + CLOCK[state.clock].name + '</small>', 'th') + '<th class="num">Cases after ' + esc(E.forward.after) + '</th></tr></thead><tbody>' +
+        E.anchors.map(function (a) { var n = by ? by[a.id] : null; return '<tr>' + th('evf.' + a.id + '.t', 'market period clock', anchorTime(a)) + td('evf.' + a.id + '.n', 'market period', n == null ? na('not in the file') : FMT.int(n), 'num') + '</tr>'; }).join('') +
+        '</tbody></table></div>' + K('evf.rule', 'market period', esc(E.forward.rule), 'p', ' class="note"'), 'div');
+    }
+    if (Ev.events) {
+      h += '<h3>Release days and Fed decision days, pooled</h3>';
+      h += K('evp.period', 'market', 'Period: ' + periodLine(Ev.events.period) + '. Only the event days, every year in one table. P90 is not shown on this page.', 'p', ' class="note"');
+      h += K('evp.wrap', 'market clock', eventTable(Ev.events, 'evp.', 'market clock', 'described'), 'div');
+    }
+    document.getElementById('events-body').innerHTML = h;
+  }
+
+  // ------------------------------------------------------------------ 5. schedule (the user's text, quoted), 6. earlier findings
+  function renderSchedule() {
+    var c = state.clock, f = c === 'sgtW' ? 'winter' : c === 'sgtS' ? 'summer' : 'ny', sc = T.schedule;
+    var h = K('sch.intro', '', esc(sc.intro), 'p', ' class="note"');
+    h += '<div class="tbox"><table data-kind="quoted" id="sched-table"><thead><tr>' + K('sch.th.time', 'clock', c === 'ny' ? 'Time (New York)' : 'Time (' + CLOCK[c].name + ')', 'th') + '<th>Session</th><th>Mode</th><th>Gold</th><th>Nasdaq</th></tr></thead><tbody id="sched-body">';
+    sc.rows.forEach(function (r, i) {
+      h += '<tr class="' + (r.hl ? 'hl' : '') + '">' + K('sch.' + i + '.time', 'clock', esc(r[f]) + (c !== 'ny' ? '<small>' + esc(r.ny) + '</small>' : ''), 'td', ' class="tm"') +
+        th('sch.' + i + '.session', '', '<strong>' + esc(r.session) + '</strong>') + td('sch.' + i + '.badge', '', '<span class="badge ' + esc(r.badge[1]) + '">' + esc(r.badge[0]) + '</span>') +
+        td('sch.' + i + '.gc', '', esc(r.gc), '', ' data-quoted=""') + td('sch.' + i + '.nq', '', esc(r.nq), '', ' data-quoted=""') + '</tr>';
+    });
+    h += '</tbody></table></div>';
+    document.getElementById('schedule-body').innerHTML = h;
+  }
+  var EST = { reproduced: ['reproduced', 'b-act'], 'reproduced-narrow': ['reproduced, narrow', 'b-alert'], 'reproduced-small-sample': ['reproduced, small sample', 'b-alert'], 'not-verified': ['not verified', 'b-off'] };
+  function renderEarlier() {
+    var h = K('early.intro', '', esc(T.earlierIntro), 'p', ' class="note"');
+    T.earlier.forEach(function (e) {
+      var st = EST[e.status] || [e.status.replace(/-/g, ' '), 'b-off'];
+      h += '<div class="finding">' + K('early.' + e.id + '.text', '', esc(e.text), 'blockquote', ' data-quoted=""') +
+        K('early.' + e.id + '.status', '', '<span class="badge ' + st[1] + '">' + esc(st[0]) + '</span> ' + esc(e.statusText), 'p', ' class="note"') + '</div>';
+    });
+    document.getElementById('earlier-body').innerHTML = h;
+  }
+
+  // ------------------------------------------------------------------ 7. diagnostics
+  function renderDiag() {
+    var m = state.market, p = state.period, Dm = D[m], d = Dm.desc[p], h = '', dd = 'market period';
+    var sessIds = Dm.windows.map(function (w) { return w.id; });
+    var find = function (arr, id) { return (arr || []).filter(function (x) { return x.id === id; })[0]; };
+    h += K('dg.period', dd, 'Diagnostics for ' + MK[m] + ', ' + PERIOD[p] + ': ' + periodLine(d.period) + '.', 'p', ' class="note"');
+
+    // slots
+    h += '<h3>Quarter-hour slots</h3>';
+    if (d.slots) {
+      var M1s = d.module1.slots, years = d.module1.years || [];
+      var hold = p === 'hold' && d.slots[0] && d.slots[0].pct90 !== undefined;
+      var smax = 0; d.slots.forEach(function (s) { var v = est(s.pct50); if (v != null && v > smax) smax = v; });   // the P50 bar: scaled by the largest P50 (A4)
+      var sh = function (id) { return Dm.shift.rows.filter(function (r) { return r[0] === 'slots.' + id + '.pct' && r[1] === 'p50'; })[0]; };
+      var t = '<thead><tr>' + K('slot.th.time', 'market period clock', 'Time (' + CLOCK[state.clock].name + ')', 'th') + '<th class="num">Sample</th><th class="num">Range P50</th>' + (hold ? '<th class="num">Range P90</th><th>P50 bar</th><th class="num">Clean-big</th>' +
+        (M1s ? years.map(function (y) { return K('slot.th.y' + y, dd, 'Score ' + FMT.year(y), 'th', ' class="num"'); }).join('') + '<th class="num">Years above zero</th>' : '') + '<th>Shift of range P50</th>' : '') + '</tr></thead><tbody>';
+      d.slots.forEach(function (s) {
+        var k = 'slot.' + s.id + '.', lab = winLabel(s.id);
+        t += '<tr data-slot="' + s.id + '">' + K(k + 'time', 'market period clock', lab || esc(s.label) + ' <small>New York</small>', 'th', ' scope="row" class="tm"') + td(k + 'n', dd, nW(s.n, s.W, 'dates'), 'num') +
+          td(k + 'p50', dd, val(s.pct50, FMT.pct, why(s, 'pct50')), 'num');
+        if (hold) {
+          var x = M1s && find(M1s, s.id), r = sh(s.id);
+          t += td(k + 'p90', dd, val(s.pct90, FMT.pct, why(s, 'pct90')), 'num') +
+            (est(s.pct50) != null ? K(k + 'bar', dd, '<div class="sbar-wrap" role="img" aria-label="range P50 ' + FMT.pct(est(s.pct50)) + '% of ADR20' + (est(s.pct90) != null ? ', P90 ' + FMT.pct(est(s.pct90)) + '%' : '') + '"><div class="sbar" style="width:' + (Math.min(1, est(s.pct50) / smax) * 100).toFixed(1) + '%"></div></div>', 'td', ' data-empty=""') : td(k + 'bar', dd, na('too few'))) +
+            td(k + 'cb', dd, est(s.share && s.share.cleanBig) == null ? na(whyWords(why(s, 'share.cleanBig'))) : FMT.share(est(s.share.cleanBig)) + '%', 'num');
+          if (M1s) t += years.map(function (y, yi) { var v = x && x.score ? x.score[yi] : null; return td(k + 'y' + y, dd, v == null ? na('too few rows') : FMT.ratio(v), 'num'); }).join('') + td(k + 'ya', dd, x ? FMT.int(x.yearsAbove) + ' of ' + FMT.int(x.nYears) : na('no score'), 'num');
+          t += td(k + 'shift', dd, shiftWords(r, true));
+        }
+        t += '</tr>';
+      });
+      h += K('slot.wrap', 'market period clock', '<div class="tbox"><table data-kind="described" class="mk-' + m + '">' + t + '</tbody></table></div>' + (hold && M1s ? '<p class="note">' + esc(d.notes.pageStatements.scoreWeights) + '. A year with too few rows of the slot is left out.</p>' : ''), 'div');
+    } else h += notHere('slot.none', dd, 'The quarter-hour slots', p, m);
+
+    // period comparisons (shift)
+    h += '<h3>Period comparisons: holdout against discovery</h3>';
+    var rows = Dm.shift.rows.filter(function (r) { return r[0].indexOf('sessions.') === 0; });
+    var stat = function (key, lvl) { var parts = key.split('.'), nm = winName(m, parts[1]), what = parts.slice(3).join('.'); return esc(nm) + ', ' + (what === 'pct' ? 'range ' + lvl.toUpperCase() : what === 'share.cleanBig' ? 'clean-big share' : what === 'tail' ? 'tail ratio' : esc(what)); };
+    // each row states its unit on its own line; shares carry % (round F3, N6); ratio and interval go through near() (N3)
+    var UNIT = { share: 'in % of dates', tail: 'a ratio, P90 ÷ P50' };
+    h += K('sh.wrap', 'market', '<div class="tbox"><table data-kind="described" id="shift-table"><thead><tr><th>Statistic<small>and its unit</small></th><th class="num">Discovery</th><th class="num">Holdout</th><th class="num">Ratio<small>holdout ÷ discovery</small></th><th class="num">Interval</th><th class="num">Weeks<small>discovery · holdout</small></th><th>Label</th></tr></thead><tbody>' +
+      rows.map(function (r, i) {
+        var f = r[1] === 'share' ? function (v) { return FMT.share(v) + '%'; } : r[1] === 'tail' ? FMT.ratio : FMT.pct, k = 'sh.' + i + '.';
+        return '<tr>' + th(k + 'stat', 'market', '<div>' + stat(r[0], r[1]) + '</div><div class="sm">' + (UNIT[r[1]] || 'in % of ADR20') + '</div>') + td(k + 'd', 'market', r[2] == null ? na('too few') : f(r[2]), 'num') + td(k + 'h', 'market', r[3] == null ? na('too few') : f(r[3]), 'num') +
+          td(k + 'r', 'market', r[4] == null ? na('not defined') : near('ratio', r[4], [S.SHIFT_LO, S.SHIFT_HI]), 'num') + td(k + 'i', 'market', r[5] == null || r[6] == null ? na('no interval') : near('ratio', r[5], [1]) + ' to ' + near('ratio', r[6], [1]), 'num') +
+          td(k + 'w', 'market', FMT.int(r[7]) + ' · ' + FMT.int(r[8]), 'num') + td(k + 'l', 'market', esc(LABEL[r[9]] || r[9])) + '</tr>';
+      }).join('') + '</tbody></table></div>' + '<p class="note">' + esc(Dm.shift.rule) + '. Efficiency, the minute of the furthest point and the whipsaw likelihood get no shift label.</p>', 'div');
+
+    // module 1
+    h += '<h3>Whipsaw likelihood and labels (hindsight)</h3>';
+    var M1 = d.module1, st1 = M1.settings;
+    h += K('m1.set', dd, 'Profile: ' + esc(st1.profile) + ' (' + esc(st1.profileCall) + '). Weights: trend ' + FMT.int(st1.scale.T) + ', swing ' + FMT.int(st1.scale.S) + ', whipsaw ' + FMT.int(st1.scale.W) + '. ' + esc(d.notes.pageStatements.lPopulation) + '.', 'p', ' class="note"');
+    var hasR4 = M1.sessions.some(function (s) { return s.L && s.L.rule4; });
+    h += K('m1.wrap', dd, '<div class="tbox"><table data-kind="described"><thead><tr><th>Session</th><th class="num">Rows</th><th class="num">L P50, every row</th><th class="num">Rows reaching rule four</th><th class="num">L P50, rows reaching rule four</th></tr></thead><tbody>' +
+      M1.sessions.map(function (s) {
+        var k = 'm1.' + s.id + '.';
+        return '<tr>' + th(k + 'name', '', esc(winName(m, s.id))) + td(k + 'rows', dd, FMT.int(s.rows.all), 'num') + td(k + 'L', dd, val(s.L.all.p50, FMT.pct, why(s.L.all, 'p50'), '', s.L.all.W, 'rows'), 'num') +
+          (hasR4 ? td(k + 'r4rows', dd, FMT.int(s.rows.rule4), 'num') + td(k + 'r4', dd, s.L.rule4 ? val(s.L.rule4.p50, FMT.pct, why(s.L.rule4, 'p50'), '', s.L.rule4.W, 'rows') : na('too few'), 'num')
+            : td(k + 'r4', dd, na('not carried on this page'), '', ' colspan="2"')) + '</tr>';
+      }).join('') + '</tbody></table></div>', 'div');
+    if (!hasR4) h += notHere('m1.none', dd, 'The rule-four population of the whipsaw likelihood', p, m);
+
+    // module 2
+    h += '<h3>Zigzag legs (hindsight)</h3>';
+    var M2 = d.module2, st2 = M2.settings;
+    h += K('m2.set', dd, 'Legs of at least ' + FMT.ratio(st2.size) + ' ADR, turning on a pull-back of ' + FMT.ratio(st2.pull) + ' ADR; burst: at most ' + FMT.int(st2.burstMax) + ' minutes; grind: over ' + FMT.int(st2.grindOver) + ' minutes. ' + esc(d.notes.pageStatements.legSession) + '. ' + esc(d.notes.pageStatements.zigzagAdr) + '.', 'p', ' class="note"');
+    h += K('m2.wrap', dd, '<div class="tbox"><table data-kind="described"><thead><tr><th>Session</th><th class="num">Legs</th><th class="num">Length P50 (minutes)</th><th class="num">Burst share</th></tr></thead><tbody>' +
+      M2.duration.sessions.map(function (s) { var k = 'm2.' + s.id + '.'; return '<tr>' + th(k + 'name', '', esc(winName(m, s.id))) + td(k + 'n', dd, nW(s.n, s.W, 'legs'), 'num') + td(k + 'q', dd, val(s.q.p50, FMT.int, why(s.q, 'p50'), '', s.q.W, 'legs'), 'num') + td(k + 'b', dd, est(s.class.burst) == null ? na(whyWords(why(s, 'class.burst'))) : shareVal(s.class.burst, null, s.W, 'legs'), 'num') + '</tr>'; }).join('') +
+      '</tbody></table></div>', 'div');
+    var SB = M2.sizeByDuration;
+    if (SB) {
+      var sizeName = function (c) { return FMT.ratio(c.from) + (c.to != null ? ' to ' + FMT.ratio(c.to) : ' and over') + ' ADR'; };
+      var durName = function (c) { return c.over == null ? 'up to ' + FMT.int(c.max) + ' min' : c.max == null ? 'over ' + FMT.int(c.over) + ' min' : 'over ' + FMT.int(c.over) + ' to ' + FMT.int(c.max) + ' min'; };
+      h += K('sbd.wrap', dd, '<p class="note">Size × duration: legs per size class (rows) and duration class (columns), with the share of all the session\'s legs.</p><div class="tbox"><table data-kind="described"><thead><tr><th>Session</th><th>Size</th>' + SB.durationClasses.map(function (c) { return '<th class="num">' + esc(c.id) + ' <small>' + durName(c) + '</small></th>'; }).join('') + '</tr></thead><tbody>' +
+        SB.sessions.map(function (s) { return SB.sizeClasses.map(function (c, i) { return '<tr' + (i ? ' class="cont"' : '') + '>' + (i ? '' : K('sbd.' + s.id + '.name', dd, esc(winName(m, s.id)) + '<small>' + FMT.int(s.n) + ' legs</small>', 'th', ' scope="rowgroup" rowspan="' + SB.sizeClasses.length + '"')) + '<th scope="row">' + esc(c.id) + ' <small>' + sizeName(c) + '</small></th>' +
+          SB.durationClasses.map(function (dc, j) { var sc = s.share && s.share[i] && s.share[i][j]; return td('sbd.' + s.id + '.' + i + '.' + j, dd, FMT.int(s.count[i][j]) + (est(sc) != null ? '<small>' + FMT.share(est(sc)) + '%</small>' : ''), 'num'); }).join('') + '</tr>'; }).join(''); }).join('') +
+        '</tbody></table></div>', 'div');
+    } else h += notHere('sbd.none', dd, 'The size × duration table', p, m);
+
+    // regimes
+    h += '<h3>Low and high volatility regimes</h3>';
+    var withReg = d.sessions.some(function (s) { return s.lo || s.hi; });
+    if (withReg) {
+      h += K('reg.wrap', dd, '<p class="note">A date\'s regime: ADR20 as a share of price, against its median over the earlier dates. Estimates and counts.</p><div class="tbox"><table data-kind="described"><thead><tr><th>Session</th><th>Regime</th><th class="num">Sample</th><th class="num">Range P50</th><th class="num">Range P90</th><th class="num">Clean-big</th></tr></thead><tbody>' +
+        d.sessions.map(function (s) { return ['lo', 'hi'].map(function (g, i) { var x = s[g], k = 'reg.' + s.id + '.' + g + '.';
+          return '<tr' + (i ? ' class="cont"' : '') + '>' + (i ? '' : K('reg.' + s.id + '.name', dd, esc(winName(m, s.id)), 'th', ' scope="rowgroup" rowspan="2"')) + th(k + 'g', dd, g === 'lo' ? 'low' : 'high') +
+            (x ? td(k + 'n', dd, nW(x.n, x.W, 'dates'), 'num') + td(k + 'p50', dd, val(x.pct.p50, FMT.pct, why(x.pct, 'p50')), 'num') + td(k + 'p90', dd, val(x.pct.p90, FMT.pct, why(x.pct, 'p90')), 'num') +
+              td(k + 'cb', dd, est(x.share.cleanBig) == null ? na(whyWords(why(x, 'share.cleanBig'))) : FMT.share(est(x.share.cleanBig)) + '%' + (x.share.cleanBig.length >= 5 ? '<small>' + FMT.int(x.share.cleanBig[4]) + ' of ' + FMT.int(x.share.cleanBig[3]) + '</small>' : ''), 'num')
+              : td(k + 'na', dd, na('no regime table'), '', ' colspan="4"')) + '</tr>'; }).join(''); }).join('') + '</tbody></table></div>', 'div');
+    } else h += notHere('reg.none', dd, 'The regime tables', p, m);
+
+    // ADR sensitivity
+    h += '<h3>ADR sensitivity</h3>';
+    if (d.adrSensitivity) {
+      h += K('adrs.wrap', dd, '<p class="note">The range measured against ADR20 and against the twenty-day median range, on the same days; the ratio is median-based ÷ ADR-based.</p><div class="tbox"><table data-kind="described"><thead><tr><th>Session</th><th class="num">Sample</th><th class="num">P50, ADR20</th><th class="num">P50, median range</th><th class="num">Ratio P50</th><th class="num">P90, ADR20</th><th class="num">P90, median range</th><th class="num">Ratio P90</th></tr></thead><tbody>' +
+        d.adrSensitivity.map(function (s) { var k = 'adrs.' + s.id + '.';
+          return '<tr data-adrs="' + s.id + '">' + th(k + 'name', dd, esc(winName(m, s.id))) + td(k + 'n', dd, nW(s.n, s.W, 'dates'), 'num') +
+            td(k + 'a50', dd, val(s.adr.p50, FMT.pct, why(s, 'p50'), '', s.W), 'num') + td(k + 'm50', dd, val(s.med.p50, FMT.pct, why(s, 'p50'), '', s.W), 'num') + td(k + 'r50', dd, val(s.ratio.p50, FMT.ratio, why(s, 'p50'), '', s.W), 'num') +
+            td(k + 'a90', dd, val(s.adr.p90, FMT.pct, why(s, 'p90'), '', s.W), 'num') + td(k + 'm90', dd, val(s.med.p90, FMT.pct, why(s, 'p90'), '', s.W), 'num') + td(k + 'r90', dd, val(s.ratio.p90, FMT.ratio, why(s, 'p90'), '', s.W), 'num') + '</tr>'; }).join('') +
+        '</tbody></table></div>', 'div');
+    } else h += notHere('adrs.none', dd, 'The ADR sensitivity table', p, m);
+
+    // half-hour strip and reproduction
+    h += '<h3>Half-hour strip, regenerated from the bars</h3>';
+    var Sp = Dm.strip30, u = function (v) { return m === 'gc' ? '$' + FMT.pct(v) : FMT.pct(v) + ' pt'; }, col = state.clock === 'sgtW' ? 'winter' : state.clock === 'sgtS' ? 'summer' : 'ny';
+    var rmax = 0; Sp.strip30.forEach(function (r) { if (r.r50 > rmax) rmax = r.r50; });   // the P50 bar: scaled by the largest P50 (A4)
+    h += K('st.note', 'market', 'Nominal prices (' + esc(Sp.unit) + '), ' + periodLine(Sp.period) + '. A half hour with fewer than ' + FMT.int(Sp.minBars) + ' one-minute bars is dropped. Clean: range at least ' + u(Sp.thresholds.t30) + ' with efficiency at least ' + FMT.ratio(S.CLEAN_EFF) + '. This is the earlier page\'s table, rebuilt; it does not follow the period switch.', 'p', ' class="note"');
+    h += K('st.wrap', 'market clock', '<div class="tbox"><table data-kind="described" class="mk-' + m + '"><thead><tr>' + K('st.th.time', 'clock', 'Half hour (' + CLOCK[state.clock].name + ')', 'th') + '<th class="num">Half hours</th><th class="num">Range P25</th><th class="num">Range P50</th><th class="num">Range P75</th><th class="num">Range P90</th><th>P50 bar</th><th class="num">Net P50</th><th class="num">Net P75</th><th class="num">Net P90</th><th class="num">Clean</th></tr></thead><tbody>' +
+      Sp.strip30.map(function (r, i) { var k = 'st.' + i + '.';
+        return '<tr>' + K(k + 'time', 'clock', esc(r[col]) + (col !== 'ny' ? '<small>' + esc(r.ny) + ' New York</small>' : ''), 'th', ' scope="row" class="tm"') + td(k + 'n', 'market', FMT.int(r.n) + '<small>' + FMT.int(r.dropped) + ' dropped</small>', 'num') +
+          ['r25', 'r50', 'r75', 'r90'].map(function (c) { return td(k + c, 'market', u(r[c]), 'num'); }).join('') +
+          K(k + 'bar', 'market', '<div class="sbar-wrap" role="img" aria-label="range P50 ' + esc(u(r.r50)) + ', P90 ' + esc(u(r.r90)) + '"><div class="sbar" style="width:' + (r.r50 / rmax * 100).toFixed(1) + '%"></div></div>', 'td', ' data-empty=""') +
+          ['n50', 'n75', 'n90'].map(function (c) { return td(k + c, 'market', u(r[c]), 'num'); }).join('') + td(k + 'clean', 'market', FMT.pct(r.clean30) + '%<small>' + FMT.int(r.cleanN) + ' half hours</small>', 'num') + '</tr>'; }).join('') +
+      '</tbody></table></div>', 'div');
+    h += '<h3>Reproduction of the earlier page</h3>';
+    h += K('rp.note', '', esc(T.reproductionNote), 'p', ' class="note"');
+    var CLS = [['match', 'match'], ['near', 'near'], ['differs', 'differs'], ['cannot-infer', 'cannot infer']];
+    h += '<div class="tbox"><table data-kind="described"><thead><tr><th>Market</th>' + CLS.map(function (c) { return '<th class="num">' + c[1] + '</th>'; }).join('') + '<th class="num">Figures</th><th class="num">Dates match · differ</th></tr></thead><tbody>' +
+      ['gc', 'nq'].map(function (mm) { var tt = D[mm].repro.totals, k = 'rp.' + mm + '.'; return '<tr>' + th(k + 'name', '', MK[mm]) + CLS.map(function (c) { return td(k + c[0], '', FMT.int(tt[c[0]]), 'num'); }).join('') + td(k + 'numbers', '', FMT.int(tt.numbers), 'num') + td(k + 'dates', '', FMT.int(tt.dates.match) + ' · ' + FMT.int(tt.dates.differs), 'num') + '</tr>'; }).join('') +
+      '</tbody></table></div>';
+
+    // method: cuts, settings, statements; limits; counts
+    h += '<h3>Not on this page</h3>';
+    h += notOnPage(m);
+    h += '<h3>Method</h3>';
+    var C = Dm.cuts;
+    h += K('cut.wrap', 'market', '<p class="note">Cuts fixed on the discovery years, in % of ADR20: a session is big at or above its own big cut, very big at or above the very-big cut. Clean: efficiency (net move ÷ range) at least ' + FMT.ratio(S.CLEAN_EFF) + '. A window needs at least ' + FMT.share(S.MIN_SHARE) + '% of its minutes as real bars.</p>' +
+      '<div class="tbox"><table data-kind="described"><thead><tr><th>Window</th><th class="num">Discovery dates</th><th class="num">Big cut</th><th class="num">Very-big cut</th></tr></thead><tbody>' +
+      Object.keys(C.windows).map(function (id) { var c = C.windows[id], k = 'cut.' + id + '.'; return '<tr>' + th(k + 'name', '', id === 'us_open_1100' ? 'US open to 11:00 New York (a condition window)' : esc(winName(m, id))) + td(k + 'n', 'market', FMT.int(c.n), 'num') + td(k + 'big', 'market', c.big == null ? na('no cut') : FMT.pct(c.big), 'num') + td(k + 'vb', 'market', c.veryBig == null ? na('no cut') : FMT.pct(c.veryBig), 'num') + '</tr>'; }).join('') +
+      '</tbody></table></div>' +
+      '<div class="tbox"><table data-kind="described"><thead><tr><th>Pair</th><th class="num">Condition P75 (hot at or above)</th><th class="num">Benchmark A P75</th><th class="num">Benchmark B P75</th></tr></thead><tbody>' +
+      Object.keys(C.pairs).map(function (id) { var c = C.pairs[id], k = 'cutp.' + id + '.', nm = (D.tested.stages[m].s1.pairs[id] || D.forward.stages[m].s1.pairs[id] || {}).name || id;
+        return '<tr>' + th(k + 'name', '', esc(nm)) + td(k + 'cond', 'market', FMT.pct(c.cond.p75), 'num') + td(k + 'a', 'market', FMT.pct(c.benchA.p75), 'num') + td(k + 'b', 'market', FMT.ratio(c.benchB.p75), 'num') + '</tr>'; }).join('') +
+      '</tbody></table></div>', 'div');
+    var PS = d.notes.pageStatements;
+    h += K('meth.list', dd, '<ul class="plain">' + Object.keys(PS).map(function (k) { return '<li>' + esc(PS[k]) + '.</li>'; }).join('') +
+      '<li>Intervals: ' + FMT.int(S.B) + ' resamples of whole ISO weeks; none under ' + FMT.int(S.MIN_WEEKS) + ' weeks.</li><li>Shift labels: shifted when the interval of the ratio excludes one and the ratio is at most ' + FMT.ratio(S.SHIFT_LO) + ' or at least ' + FMT.ratio(S.SHIFT_HI) + '; uncertain when the interval is wider than ' + FMT.ratio(S.WIDE) + ' times.</li></ul>', 'div');
+    h += '<h3>Limits</h3>';
+    h += K('lim.list', '', '<ul class="limits">' + T.limits.map(function (l) { return '<li>' + esc(l) + '</li>'; }).join('') + '</ul>', 'div');
+    h += '<h3>Counts</h3>';
+    h += '<div class="tbox"><table data-kind="described"><thead><tr><th>Result file</th><th class="num">Described tables</th></tr></thead><tbody>' +
+      D.counts.describedTables.parts.map(function (x, i) { return '<tr>' + th('cnt.' + i + '.file', '', esc(x.file)) + td('cnt.' + i + '.n', '', FMT.int(x.tables), 'num') + '</tr>'; }).join('') +
+      '<tr>' + th('cnt.total.file', '', '<strong>All</strong>') + td('cnt.total.n', '', FMT.int(D.counts.describedTables.total), 'num') + '</tr></tbody></table></div>';
+    h += K('cnt.groups', '', 'In this data file: ' + D.groups['in'].map(esc).join(', ') + (D.groups.out.length ? '. Left out for size: ' + D.groups.out.map(esc).join(', ') : '') + '.', 'p', ' class="note"');
+    document.getElementById('diag-body').innerHTML = h;
+  }
+
+  // round F5 (fix 6): the described tables of plan sections 3, 4 and 7 this page does not show, and the groups left out of the data file
+  function notOnPage(m) {
+    var all = '{disc,hold,recent,last252}', df = function (p) { return OUT_DIR + 'desc_' + p + '_' + m + '.json'; };
+    var items = [
+      ['Whipsaw likelihood: the session size by label (trend, swing, whipsaw), per session and per slot', df(all) + ', module1.sessions[].rangeByLabel and module1.slots[].range50'],
+      ['Whipsaw likelihood: the share of rows at or above the L cut, per session and per slot', df(all) + ', module1.sessions[].atCut and module1.slots[].atCut'],
+      ['Whipsaw likelihood: L quantiles other than P50 (P10, P25, P75, P90, P95)', df(all) + ', module1.sessions[].L and module1.slots[].L'],
+      ['Slot score steadiness: the interquartile range of the score across years', df(all) + ', module1.slots[].iqr'],
+      ['The extreme-trend share per slot', df(all) + ', module1.slots[].extreme'],
+      ['Zigzag legs: leg size quantiles and tail ratio, up legs and down legs apart, by regime', df(all) + ', module2.size'],
+      ['Zigzag legs: the middle and grind shares of the duration classes', df(all) + ', module2.duration'],
+      ['The minute of the furthest point in each session', df(all) + ', sessions[].all.far'],
+      ['Described around the rules for the discovery and recent periods (this page carries the holdout)', OUT_DIR + 'stage1_' + m + '.json and ' + OUT_DIR + 'stage3_' + m + '.json, pairs.<id>.response, exhaustion and condition'],
+      ['The rule-four whipsaw likelihood, size × duration, regime tables and ADR sensitivity of the discovery, recent and last-year periods', df('{disc,recent,last252}')]];
+    var stops = D[m].events && D[m].events.hold.params.stopsPctAdr;
+    if (stops) items.push(['After-event tables: the furthest point in favour, the asymmetry, the share that went ' + FMT.int(stops[1]) + '% of ADR against, the result P10, P90 and P95, the worst point P10, P75 and P90, and the horizon counts (cases dropped or not yet ended at the horizon)', OUT_DIR + 'event_{disc,hold,recent,events}_' + m + '.json']);
+    if (groupOut('hold-detail')) items.push(['The holdout\'s rule-four whipsaw likelihood, size × duration, regime tables and ADR sensitivity (hold-detail)', df('hold')]);
+    if (groupOut('slots-other')) items.push(['The quarter-hour slots of the discovery, recent and last-year periods (slots-other)', df('{disc,recent,last252}')]);
+    return K('nothere', 'market', '<ul class="plain" id="not-here">' + items.map(function (x) { return '<li>' + esc(x[0]) + ': <code>' + esc(x[1]) + '</code></li>'; }).join('') + '</ul>', 'div');
+  }
+
+  // ------------------------------------------------------------------ controls
+  function renderAll() { renderUnit(); renderHeadline(); renderSessions(); renderRules(); renderEvents(); renderSchedule(); renderEarlier(); renderDiag(); }
+  var lastBtn = document.querySelector('[data-period="last252"]');
+  if (lastBtn && LAST_RULE) lastBtn.textContent = LAST_NAME;
+  ['market', 'clock', 'unit', 'period'].forEach(function (key) {
+    var attr = 'data-' + key, btns = document.querySelectorAll('[' + attr + ']');
+    btns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        state[key] = btn.getAttribute(attr);
+        document.querySelectorAll('details').forEach(function (d) { if (d.id) openD[d.id] = !!d.open; });
+        document.querySelectorAll('[' + attr + ']').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute(attr) === state[key] ? 'true' : 'false'); });
+        renderAll();
+      });
+    });
+  });
+  renderAll();
+})();
+</script>
+</body>
+</html>
